@@ -746,14 +746,56 @@ function setupTodayFocus() {
   const descElem = document.getElementById('today-workout-desc');
   const btnStart = document.getElementById('btn-start-today-workout');
   const btnTreadmill = document.getElementById('btn-start-treadmill-alt');
+  const btnMarkDone = document.getElementById('btn-mark-today-done');
+  const banner = document.getElementById('today-workout-banner');
 
-  if (dayNameElem) dayNameElem.textContent = todayData.dayName;
-  if (titleElem) titleElem.textContent = todayData.title;
-  if (descElem) descElem.textContent = todayData.desc;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const allWorkouts = getStoredWorkouts();
+  const todayCompleted = allWorkouts.find(w => w.date === todayStr);
+
+  if (todayCompleted) {
+    if (banner) {
+      banner.style.border = '2px solid #34d399';
+      banner.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(15, 23, 42, 0.98))';
+    }
+    if (dayNameElem) {
+      dayNameElem.innerHTML = `<span style="color: #34d399; font-weight: 800;">✔ COMPLETADA HOY</span> (${todayData.dayName})`;
+    }
+    if (titleElem) {
+      titleElem.innerHTML = `🎉 ¡Sesión de Hoy Registrada! (${todayCompleted.category})`;
+    }
+    if (descElem) {
+      descElem.innerHTML = `Completaste <strong>${todayCompleted.duration} min</strong> · Esfuerzo RPE: <strong>${todayCompleted.rpe}/10</strong> · Estado: <strong style="color: #34d399;">${todayCompleted.noPain ? '100% Cero dolor articular' : 'Con observaciones'}</strong>${todayCompleted.notes ? `<br><span style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; display: inline-block;">Notas: "${todayCompleted.notes}"</span>` : ''}`;
+    }
+    if (btnMarkDone) {
+      btnMarkDone.innerHTML = '✔ Sesión Chequeada (Done)';
+      btnMarkDone.style.background = 'rgba(16, 185, 129, 0.2)';
+      btnMarkDone.style.border = '1px solid #10b981';
+      btnMarkDone.style.color = '#34d399';
+      btnMarkDone.onclick = () => {
+        showSyncToast('ℹ️ Esta sesión ya está registrada y sincronizada en tu nube', 'info');
+      };
+    }
+  } else {
+    if (banner) {
+      banner.style.border = '2px solid #10b981';
+      banner.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(15, 23, 42, 0.95))';
+    }
+    if (dayNameElem) dayNameElem.textContent = todayData.dayName;
+    if (titleElem) titleElem.textContent = todayData.title;
+    if (descElem) descElem.textContent = todayData.desc;
+    if (btnMarkDone) {
+      btnMarkDone.innerHTML = '✅ Marcar como Completada (Done)';
+      btnMarkDone.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      btnMarkDone.style.border = '1px solid #34d399';
+      btnMarkDone.style.color = '#fff';
+      btnMarkDone.onclick = () => openQuickDoneModal(todayData);
+    }
+  }
 
   // Botón para abrir la rutina del día
   if (btnStart) {
-    btnStart.addEventListener('click', () => {
+    btnStart.onclick = () => {
       const navBtnRutinas = document.querySelector('[data-tab="tab-rutinas"]');
       if (navBtnRutinas) navBtnRutinas.click();
 
@@ -762,12 +804,12 @@ function setupTodayFocus() {
 
       const routineContent = document.getElementById('routine-content');
       if (routineContent) routineContent.scrollIntoView({ behavior: 'smooth' });
-    });
+    };
   }
 
   // Botón alternativo para abrir la caminadora Altera
   if (btnTreadmill) {
-    btnTreadmill.addEventListener('click', () => {
+    btnTreadmill.onclick = () => {
       const navBtnRutinas = document.querySelector('[data-tab="tab-rutinas"]');
       if (navBtnRutinas) navBtnRutinas.click();
 
@@ -776,7 +818,7 @@ function setupTodayFocus() {
 
       const routineContent = document.getElementById('routine-content');
       if (routineContent) routineContent.scrollIntoView({ behavior: 'smooth' });
-    });
+    };
   }
 
   // Resaltar el día de hoy en la tabla de agenda semanal
@@ -801,7 +843,7 @@ window.handleImageError = function(img, origSrc) {
   }
 };
 
-// Visor de Rutinas
+// Visor de Rutinas con Verificación de Ejercicios y Finalización Rápida
 function setupRoutinesViewer(initialKey) {
   const subBtns = document.querySelectorAll('.sub-tab-btn');
   const container = document.getElementById('routine-content');
@@ -811,10 +853,14 @@ function setupRoutinesViewer(initialKey) {
     if (!routine) return;
 
     let exercisesHtml = routine.exercises.map((ex, idx) => `
-      <div class="routine-exercise-card">
+      <div class="routine-exercise-card" id="card-${key}-${idx}">
         <div class="exercise-left-col">
           <div class="exercise-num">${idx + 1}</div>
           ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onerror="window.handleImageError(this, '${ex.image}')" onclick="window.open(this.src, '_blank')" title="Clic para ampliar ilustración">` : ''}
+          <label class="exercise-done-pill" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); font-size: 0.75rem; color: #cbd5e1; margin-top: 8px;">
+            <input type="checkbox" onchange="window.toggleExerciseCardCheck(this, '${key}', ${idx})" style="accent-color: #10b981; cursor: pointer;">
+            <span>Hecho</span>
+          </label>
         </div>
         <div class="exercise-details">
           <h4>${ex.name}</h4>
@@ -841,14 +887,24 @@ function setupRoutinesViewer(initialKey) {
     `).join('');
 
     container.innerHTML = `
-      <div class="card-header">
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
         <div>
           <h3>${routine.title}</h3>
           <p class="text-muted">${routine.subtitle}</p>
         </div>
+        <button type="button" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 700;" onclick="window.openQuickDoneModalForRoutine('${key}')">
+          ✅ Marcar Rutina como Hecha (Done)
+        </button>
       </div>
       <div class="routine-list">
         ${exercisesHtml}
+      </div>
+      <div class="routine-completion-box" style="margin-top: 24px; text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.95)); border: 2px dashed rgba(16, 185, 129, 0.4); border-radius: 12px;">
+        <h4 style="font-size: 1.15rem; color: #fff; margin: 0 0 6px;">🎯 ¿Terminaste esta sesión de ${routine.title.split('(')[0].trim()}?</h4>
+        <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 14px;">Márcala como completada para registrar tus minutos, sumar tu racha y sincronizar con tu nube en GitHub.</p>
+        <button type="button" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 800; padding: 12px 28px; font-size: 1rem; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); cursor: pointer;" onclick="window.openQuickDoneModalForRoutine('${key}')">
+          ✅ Marcar Rutina como Completada (Done ✔)
+        </button>
       </div>
     `;
   }
@@ -863,7 +919,170 @@ function setupRoutinesViewer(initialKey) {
 
   render(initialKey);
   setupVideoModal();
+  setupQuickDoneModal();
 }
+
+// Modal y Control de Sesión Completada (Quick Done)
+function setupQuickDoneModal() {
+  const modal = document.getElementById('quick-done-modal');
+  const closeBtn = document.getElementById('quick-done-modal-close');
+  const cancelBtn = document.getElementById('btn-quick-done-cancel');
+
+  function closeModal() {
+    if (modal) modal.classList.remove('open');
+  }
+
+  if (closeBtn) closeBtn.onclick = closeModal;
+  if (cancelBtn) cancelBtn.onclick = closeModal;
+  if (modal) {
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+  }
+}
+
+window.openQuickDoneModal = function(todayData) {
+  const modal = document.getElementById('quick-done-modal');
+  const catSelect = document.getElementById('quick-done-category');
+  const durInput = document.getElementById('quick-done-duration');
+  if (!modal) return;
+
+  if (todayData && catSelect) {
+    if (todayData.routineKey === 'caminadora') catSelect.value = 'Caminadora';
+    else if (todayData.routineKey === 'fuerza-a') catSelect.value = 'Fuerza A';
+    else if (todayData.routineKey === 'fuerza-b') catSelect.value = 'Fuerza B';
+    else if (todayData.routineKey === 'fuerza-c') catSelect.value = 'Fuerza C';
+    else if (todayData.routineKey === 'boxing') catSelect.value = 'Fitness Boxing (Switch)';
+  }
+
+  if (durInput) durInput.value = '30';
+  modal.classList.add('open');
+};
+
+window.openQuickDoneModalForRoutine = function(routineKey) {
+  const routineMap = {
+    'caminadora': 'Caminadora',
+    'fuerza-a': 'Fuerza A',
+    'fuerza-b': 'Fuerza B',
+    'fuerza-c': 'Fuerza C',
+    'boxing': 'Fitness Boxing (Switch)'
+  };
+  window.openQuickDoneModal({ routineKey: routineKey });
+  const catSelect = document.getElementById('quick-done-category');
+  if (catSelect && routineMap[routineKey]) {
+    catSelect.value = routineMap[routineKey];
+  }
+};
+
+window.setQuickDuration = function(mins) {
+  const durInput = document.getElementById('quick-done-duration');
+  if (durInput) durInput.value = mins;
+};
+
+// Sonido de campana para celebrar fin de entrenamiento
+function playCelebrationChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    
+    // Tono 1
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.frequency.setValueAtTime(523.25, now);
+    gain1.gain.setValueAtTime(0.2, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.3);
+
+    // Tono 2
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.frequency.setValueAtTime(659.25, now + 0.15);
+    gain2.gain.setValueAtTime(0.25, now + 0.15);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.15);
+    osc2.stop(now + 0.5);
+
+    // Tono 3
+    const osc3 = ctx.createOscillator();
+    const gain3 = ctx.createGain();
+    osc3.frequency.setValueAtTime(783.99, now + 0.3);
+    gain3.gain.setValueAtTime(0.3, now + 0.3);
+    gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+    osc3.connect(gain3);
+    gain3.connect(ctx.destination);
+    osc3.start(now + 0.3);
+    osc3.stop(now + 0.8);
+  } catch (e) {}
+}
+
+window.handleQuickDoneSubmit = async function(e) {
+  if (e) e.preventDefault();
+  const category = document.getElementById('quick-done-category').value;
+  const duration = parseInt(document.getElementById('quick-done-duration').value, 10) || 30;
+  const rpe = parseInt(document.getElementById('quick-done-rpe').value, 10) || 6;
+  const notes = (document.getElementById('quick-done-notes').value || '').trim();
+  const noPain = document.getElementById('quick-done-nopain').checked;
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const newWorkout = {
+    id: 'wk_' + Date.now(),
+    date: todayStr,
+    timestamp: new Date().toISOString(),
+    category: category,
+    duration: duration,
+    rpe: rpe,
+    notes: notes || 'Sesión recomendada completada con éxito',
+    noPain: noPain,
+    wearable: {},
+    source: 'quick_done'
+  };
+
+  const workouts = getStoredWorkouts();
+  workouts.unshift(newWorkout);
+  saveStoredWorkouts(workouts);
+
+  // Cerrar modal
+  const modal = document.getElementById('quick-done-modal');
+  if (modal) modal.classList.remove('open');
+
+  // Celebración sonora
+  playCelebrationChime();
+
+  // Actualizar dashboard y vistas
+  setupTodayFocus();
+  renderDashboard();
+  renderHistoryTable();
+
+  showSyncToast('🎉 ¡Excelente trabajo! Sesión guardada y marcada como completada (Done ✔)', 'success');
+
+  // Sincronizar inmediatamente a GitHub
+  try {
+    showSyncToast('☁️ Sincronizando con tu nube en GitHub...', 'info');
+    await autoSyncPush();
+    showSyncToast('✅ Datos sincronizados y validados en la nube exitosamente', 'success');
+  } catch (err) {
+    console.error('Error sincronizando:', err);
+  }
+};
+
+window.toggleExerciseCardCheck = function(checkbox, routineKey, exerciseIndex) {
+  const card = document.getElementById(`card-${routineKey}-${exerciseIndex}`);
+  if (!card) return;
+  if (checkbox.checked) {
+    card.style.borderColor = 'rgba(16, 185, 129, 0.6)';
+    card.style.background = 'rgba(16, 185, 129, 0.08)';
+    card.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.2)';
+  } else {
+    card.style.borderColor = '';
+    card.style.background = '';
+    card.style.boxShadow = '';
+  }
+};
 
 // Selector Dinámico de Videos Locales desde PC/Móvil
 window.selectAndPlayCustomLocalVideo = function(title, routineTitle, cue) {
