@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fitness Tracker & Plan a Largo Plazo</title>
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Barra Lateral -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
+        </div>
+        <div>
+          <h2>VitalTrack</h2>
+          <span class="badge-sub">Salud y Longevidad</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-dashboard" id="nav-btn-dash">
+          <span class="nav-icon">📊</span>
+          <span>Panel Principal</span>
+        </button>
+        <button class="nav-item" data-tab="tab-rutinas" id="nav-btn-routines">
+          <span class="nav-icon">📋</span>
+          <span>Plan y Rutinas</span>
+        </button>
+        <button class="nav-item" data-tab="tab-registro" id="nav-btn-log">
+          <span class="nav-icon">✍️</span>
+          <span>Registrar Sesión</span>
+        </button>
+        <button class="nav-item" data-tab="tab-historial" id="nav-btn-history">
+          <span class="nav-icon">📈</span>
+          <span>Historial y Datos Duros</span>
+        </button>
+        <button class="nav-item" data-tab="tab-metricas" id="nav-btn-metrics">
+          <span class="nav-icon">⚖️</span>
+          <span>Control de Peso / Cintura</span>
+        </button>
+      </nav>
+
+      <div class="profile-summary-box">
+        <div class="profile-header">
+          <div class="avatar">38y</div>
+          <div>
+            <strong>Perfil de Usuario</strong>
+            <div class="text-muted">1.75 m · Inicial: 95 kg</div>
+          </div>
+        </div>
+        <div class="profile-status">
+          <div class="stat-mini">
+            <span class="lbl">Equipo:</span>
+            <span class="val">1 Mancuerna 10lb + Caminadora</span>
+          </div>
+          <div class="stat-mini">
+            <span class="lbl">Estrategia:</span>
+            <span class="val accent-green">Cero Impacto / Zona 2</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+      <!-- Top header -->
+      <header class="top-bar">
+        <div>
+          <h1 id="page-title">Panel de Control General</h1>
+          <p class="text-muted" id="page-subtitle">Progreso acumulado, métricas biomecánicas y plan activo</p>
+        </div>
+        <div class="header-actions">
+          <button id="btn-quick-workout" class="btn btn-primary">
+            <span>⚡ Iniciar Cronómetro de Sesión</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- SECCIÓN 1: PANEL PRINCIPAL -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Peso Actual Registrado</div>
+            <div class="stat-value" id="dash-current-weight">95.0 <span class="unit">kg</span></div>
+            <div class="stat-caption text-neutral" id="dash-weight-diff">Punto de partida establecido</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">IMC Actual</div>
+            <div class="stat-value" id="dash-imc">31.0</div>
+            <div class="stat-caption text-yellow">Objetivo a largo plazo: &lt; 25.0</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Sesiones Completadas</div>
+            <div class="stat-value text-green" id="dash-total-sessions">0</div>
+            <div class="stat-caption">Sin interrupciones ni lesiones</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Minutos en Caminadora</div>
+            <div class="stat-value text-blue" id="dash-treadmill-mins">0 <span class="unit">min</span></div>
+            <div class="stat-caption">Impacto seguro en Zona 2</div>
+          </div>
+        </div>
+
+        <!-- Banner de Filosofía de Seguridad -->
+        <div class="safety-banner">
+          <div class="banner-icon">🛡️</div>
+          <div class="banner-body">
+            <h3>Regla de Oro a Largo Plazo: La consistencia vence a la intensidad</h3>
+            <p>Con 95 kg, tu prioridad absoluta es proteger cartílagos, ligamentos y lumbares. No trotes ni corras todavía en la caminadora: <strong>la caminata con inclinación al 2% - 4%</strong> a velocidad moderada es óptima para quemar grasa oxidativa sin machacar tus rodillas.</p>
+          </div>
+        </div>
+
+        <!-- Entrenador Fisiológico Adaptativo (Semáforo de Recuperación y Cargas) -->
+        <div class="coach-card" id="adaptive-coach-section">
+          <div class="coach-header">
+            <div class="coach-title-area">
+              <div class="coach-avatar">🩺</div>
+              <div>
+                <h3>Entrenador Fisiológico Adaptativo</h3>
+                <p class="text-muted">Ajuste automático de cargas e inclinación según tu pulso y recuperación</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button type="button" id="btn-sync-health-connect" class="btn btn-secondary btn-sm" title="Leer métricas automáticamente de Health Connect">🔄 Sincronizar Health Connect</button>
+              <div id="coach-readiness-pill" class="readiness-pill readiness-green">
+                <span>🟢 Estado Óptimo (92/100)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="coach-inputs-row">
+            <div class="coach-input-item">
+              <label for="coach-rhr">FC en Reposo de Hoy (Samsung Watch)</label>
+              <input type="number" id="coach-rhr" value="68" placeholder="Ej. 68 BPM">
+            </div>
+            <div class="coach-input-item">
+              <label for="coach-sleep">Horas de Sueño Anoche</label>
+              <input type="number" step="0.5" id="coach-sleep" value="7.5" placeholder="Ej. 7.5 h">
+            </div>
+            <div class="coach-input-item">
+              <label for="coach-soreness">Sensación Articular / Muscular</label>
+              <select id="coach-soreness">
+                <option value="none" selected>Cero dolor / Perfecto</option>
+                <option value="mild">Fatiga muscular leve normal</option>
+                <option value="joint-ache">Molestia en rodilla o espalda</option>
+              </select>
+            </div>
+            <div class="coach-input-item" style="justify-content: flex-end;">
+              <button type="button" id="btn-recalculate-coach" class="btn btn-primary btn-sm" style="height: 38px;">Recalcular Adaptación</button>
+            </div>
+          </div>
+
+          <div class="adaptive-verdict" id="coach-verdict-box">
+            <div class="verdict-headline">
+              <span id="verdict-title">✅ Prescripción para Hoy: Sesión Completa en Zona 2</span>
+              <span class="badge-tag" id="verdict-tag">Zona 2 Objetivo: 110-128 BPM</span>
+            </div>
+            <p class="verdict-body" id="verdict-text">
+              Tu ritmo cardíaco en reposo y sueño indican excelente recuperación del sistema nervioso. Hoy tu corazón y articulaciones están listos para el trabajo estándar sin riesgo.
+            </p>
+            <div class="adaptive-params-grid">
+              <div class="param-item">
+                <div class="param-label">Velocidad Sugerida</div>
+                <div class="param-value" id="param-speed">4.5 km/h</div>
+              </div>
+              <div class="param-item">
+                <div class="param-label">Inclinación Caminadora</div>
+                <div class="param-value" id="param-incline">2.5%</div>
+              </div>
+              <div class="param-item">
+                <div class="param-label">Volumen de Fuerza</div>
+                <div class="param-value" id="param-sets">3 series x 8-10 reps</div>
+              </div>
+              <div class="param-item">
+                <div class="param-label">Límite Seguro Switch</div>
+                <div class="param-value" id="param-boxing-hr">&lt; 145 BPM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acceso rápido a las fases y agenda de hoy -->
+        <div class="dashboard-columns">
+          <div class="card col-left">
+            <div class="card-header">
+              <h3>Distribución Semanal Recomendada</h3>
+              <span class="badge-tag">Ciclo Sostenible</span>
+            </div>
+            <div class="weekly-schedule">
+              <div class="day-row" data-day="1">
+                <span class="day-name">Lunes</span>
+                <span class="day-task">Fuerza A (Piernas + Empuje suelo + Maleta)</span>
+                <span class="day-time">30m</span>
+              </div>
+              <div class="day-row" data-day="2">
+                <span class="day-name">Martes</span>
+                <span class="day-task">Caminadora Zona 2 O Fitness Boxing (Switch)</span>
+                <span class="day-time">30-35m</span>
+              </div>
+              <div class="day-row" data-day="3">
+                <span class="day-name">Miércoles</span>
+                <span class="day-task">Fuerza B (Remo unilateral + Glúteo + Hombro)</span>
+                <span class="day-time">30m</span>
+              </div>
+              <div class="day-row" data-day="4">
+                <span class="day-name">Jueves</span>
+                <span class="day-task">Caminadora Zona 2 O Fitness Boxing (Switch)</span>
+                <span class="day-time">30-35m</span>
+              </div>
+              <div class="day-row" data-day="5">
+                <span class="day-name">Viernes</span>
+                <span class="day-task">Fuerza C (Split Squat asistido + Brazos + Core)</span>
+                <span class="day-time">30m</span>
+              </div>
+              <div class="day-row" data-day="6">
+                <span class="day-name">Sábado</span>
+                <span class="day-task">Fitness Boxing en Switch O Caminata Libre</span>
+                <span class="day-time">25m</span>
+              </div>
+              <div class="day-row" data-day="0">
+                <span class="day-name">Domingo</span>
+                <span class="day-task text-muted">Descanso Total y Recuperación</span>
+                <span class="day-time">Relax</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card col-right">
+            <div class="card-header">
+              <h3>Últimas Sesiones Registradas</h3>
+              <button class="btn-text" id="btn-view-all-history">Ver todo</button>
+            </div>
+            <div id="dash-recent-list" class="recent-list">
+              <p class="empty-state">No hay sesiones registradas aún. ¡Hoy es el mejor día para registrar la primera!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: PLAN Y RUTINAS DETALLADAS -->
+      <section id="tab-rutinas" class="tab-pane">
+        <div class="routines-nav">
+          <button class="sub-tab-btn active" data-routine="caminadora">🚶‍♂️ Caminadora (Cardio Zona 2)</button>
+          <button class="sub-tab-btn" data-routine="boxing">🥊 Fitness Boxing (Nintendo Switch)</button>
+          <button class="sub-tab-btn" data-routine="fuerza-a">💪 Rutina A (Piernas & Empuje)</button>
+          <button class="sub-tab-btn" data-routine="fuerza-b">🛡️ Rutina B (Espalda & Cadera)</button>
+          <button class="sub-tab-btn" data-routine="fuerza-c">⚖️ Rutina C (Cuerpo Completo & Core)</button>
+        </div>
+
+        <div id="routine-content" class="routine-viewer card">
+          <!-- Se inyecta dinámicamente con app.js -->
+        </div>
+
+        <!-- Cronómetro y Temporizador Flotante/Integrado -->
+        <div class="timer-card card">
+          <div class="timer-header">
+            <h3>⏱️ Asistente de Sesión & Descanso</h3>
+            <span class="text-muted">Controla tus descansos entre series (60-90 seg) o tu caminata</span>
+          </div>
+          <div class="timer-display" id="timer-display">00:00</div>
+          <div class="timer-controls">
+            <button class="btn btn-secondary" id="timer-btn-start">Iniciar</button>
+            <button class="btn btn-secondary" id="timer-btn-pause">Pausa</button>
+            <button class="btn btn-secondary" id="timer-btn-reset">Reiniciar</button>
+            <div class="timer-presets">
+              <span>Descanso rápido:</span>
+              <button class="btn-chip" data-secs="60">60s</button>
+              <button class="btn-chip" data-secs="90">90s</button>
+              <button class="btn-chip" data-secs="120">2 min</button>
+              <button class="btn-chip" data-secs="1800">30 min (Caminadora)</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: REGISTRAR SESIÓN -->
+      <section id="tab-registro" class="tab-pane">
+        <div class="form-container card">
+          <div class="card-header">
+            <h3>📝 Registrar Nueva Sesión de Entrenamiento</h3>
+            <span class="text-muted">Guarda datos duros para monitorear tu volumen y sensaciones</span>
+          </div>
+
+          <form id="workout-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="input-date">Fecha de la Sesión</label>
+                <input type="date" id="input-date" required>
+              </div>
+
+              <div class="form-group">
+                <label for="input-category">Tipo de Entrenamiento</label>
+                <select id="input-category" required>
+                  <option value="Caminadora">Caminadora (Cardio Inclinación / Zona 2)</option>
+                  <option value="Fitness Boxing (Switch)">🥊 Fitness Boxing (Nintendo Switch)</option>
+                  <option value="Fuerza A">Rutina A (Pierna + Suelo + Maleta 10lb)</option>
+                  <option value="Fuerza B">Rutina B (Remo + Glúteo + Hombro 10lb)</option>
+                  <option value="Fuerza C">Rutina C (Split Squat + Brazos + Core)</option>
+                  <option value="Movilidad">Movilidad / Estiramientos articulares</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="input-duration">Duración Total (minutos)</label>
+                <input type="number" id="input-duration" min="5" max="180" placeholder="Ej. 30" required>
+              </div>
+
+              <div class="form-group">
+                <label for="input-rpe">Esfuerzo Percibido (RPE de 1 a 10)</label>
+                <select id="input-rpe">
+                  <option value="4">4 - Muy ligero (Calentamiento)</option>
+                  <option value="5">5 - Ligero (Puedo hablar sin problemas)</option>
+                  <option value="6" selected>6 - Moderado (Zona 2 perfecta, cómodo y constante)</option>
+                  <option value="7">7 - Vigoroso (Respiración más rápida pero controlada)</option>
+                  <option value="8">8 - Exigente (Cuesta mantener conversación)</option>
+                  <option value="9">9 - Muy duro (Cerca del límite, evitar por ahora)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Campos específicos de caminadora -->
+            <div id="treadmill-fields" class="subform-box">
+              <h4>Parámetros de Caminadora (Datos Duros)</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-distance">Distancia (km)</label>
+                  <input type="number" step="0.01" id="input-distance" placeholder="Ej. 2.40">
+                </div>
+                <div class="form-group">
+                  <label for="input-speed">Velocidad media (km/h)</label>
+                  <input type="number" step="0.1" id="input-speed" placeholder="Ej. 4.5">
+                </div>
+                <div class="form-group">
+                  <label for="input-incline">Inclinación promedio (%)</label>
+                  <input type="number" step="0.5" id="input-incline" placeholder="Ej. 2.5">
+                </div>
+                <div class="form-group">
+                  <label for="input-calories">Calorías estimadas (opcional)</label>
+                  <input type="number" id="input-calories" placeholder="Ej. 180">
+                </div>
+            <!-- Biometría de Samsung Health / Google Fit -->
+            <div class="subform-box wearable-box">
+              <h4>⌚ Datos de Wearable (Samsung Health / Google Fit)</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-hr-avg">FC Promedio (BPM) <span class="badge-tag">Zona 2: 110-128</span></label>
+                  <input type="number" id="input-hr-avg" placeholder="Ej. 118">
+                </div>
+                <div class="form-group">
+                  <label for="input-hr-max">FC Máxima (BPM)</label>
+                  <input type="number" id="input-hr-max" placeholder="Ej. 132">
+                </div>
+                <div class="form-group">
+                  <label for="input-steps">Pasos del Día (Reloj / Celular)</label>
+                  <input type="number" id="input-steps" placeholder="Ej. 7200">
+                </div>
+                <div class="form-group">
+                  <label for="input-active-cal">Calorías Activas (Samsung / Fit)</label>
+                  <input type="number" id="input-active-cal" placeholder="Ej. 240">
+                </div>
+              </div>
+            </div>
+
+            <!-- Notas de fuerza o sensaciones -->
+            <div class="form-group">
+              <label for="input-notes">Notas de la sesión, pesos, repeticiones y estado articular</label>
+              <textarea id="input-notes" rows="3" placeholder="Ejemplo: 'Sentadillas a la silla 3x12 con mancuerna 10lb al pecho. Cero molestia en rodillas. En caminadora mantuve 4.5 km/h a 2% inclinación sin fatiga lumbar.'"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="input-no-pain" checked>
+                <span>✅ Sesión completada <strong>sin dolores articulares</strong> (solo fatiga muscular normal).</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="btn-save-workout">Guardar Registro en la Base de Datos</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 4: HISTORIAL Y DATOS DUROS -->
+      <section id="tab-historial" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Historial Completo de Entrenamientos</h3>
+              <p class="text-muted">Todos los registros guardados en tu espacio de trabajo local</p>
+            </div>
+            <div class="filter-actions">
+              <select id="filter-category" class="select-sm">
+                <option value="all">Todas las categorías</option>
+                <option value="Caminadora">Caminadora</option>
+                <option value="Fitness Boxing (Switch)">Fitness Boxing (Switch)</option>
+                <option value="Fuerza A">Fuerza A</option>
+                <option value="Fuerza B">Fuerza B</option>
+                <option value="Fuerza C">Fuerza C</option>
+                <option value="Movilidad">Movilidad</option>
+              </select>
+              <button id="btn-export-json" class="btn btn-secondary btn-sm">Exportar JSON</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="table-history">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Duración</th>
+                  <th>Datos Caminadora</th>
+                  <th>RPE</th>
+                  <th>Estado Articular</th>
+                  <th>Notas</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Se llena con app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 5: MÉTRICAS Y PESO -->
+      <section id="tab-metricas" class="tab-pane">
+        <div class="metrics-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Registro Periódico de Peso y Medidas</h3>
+              <span class="text-muted">Recomendación: Pésate 1 vez a la semana en ayunas</span>
+            </div>
+
+            <form id="metrics-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="metric-date">Fecha de Medición</label>
+                  <input type="date" id="metric-date" required>
+                </div>
+                <div class="form-group">
+                  <label for="metric-weight">Peso Corporal (kg)</label>
+                  <input type="number" step="0.1" id="metric-weight" placeholder="Ej. 94.5" required>
+                </div>
+                <div class="form-group">
+                  <label for="metric-waist">Cintura a nivel del ombligo (cm)</label>
+                  <input type="number" step="0.5" id="metric-waist" placeholder="Ej. 102">
+                </div>
+                <div class="form-group">
+                  <label for="metric-energy">Nivel de Energía General</label>
+                  <select id="metric-energy">
+                    <option value="Excelente">Excelente (vital, descansado)</option>
+                    <option value="Bueno" selected>Bueno (normal y activo)</option>
+                    <option value="Regular">Regular (algo de fatiga acumulada)</option>
+                    <option value="Bajo">Bajo (requiere más descanso/sueño)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="metric-rhr">FC en Reposo al Despertar (BPM)</label>
+                  <input type="number" id="metric-rhr" placeholder="Ej. 68 (Samsung Health)">
+                </div>
+                <div class="form-group">
+                  <label for="metric-sleep">Horas de Sueño Anoche</label>
+                  <input type="number" step="0.5" id="metric-sleep" placeholder="Ej. 7.5">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Registrar Medición</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Evolución de Datos Corporales</h3>
+              <span class="badge-tag">Histórico</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Peso (kg)</th>
+                    <th>IMC</th>
+                    <th>Cintura (cm)</th>
+                    <th>FC Reposo (BPM)</th>
+                    <th>Sueño (h)</th>
+                    <th>Energía</th>
+                    <th>Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody id="metrics-tbody">
+                  <!-- Se llena con JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Reproductor de Video Local -->
+  <div id="video-modal" class="video-modal-backdrop">
+    <div class="video-modal-content">
+      <div class="video-modal-header">
+        <h3 id="video-modal-title">Video Demostración de Técnica</h3>
+        <button id="video-modal-close" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="video-modal-body">
+        <video id="local-video-player" controls preload="metadata">
+          Tu navegador no soporta el elemento de video.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

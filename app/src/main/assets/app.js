@@ -1,0 +1,959 @@
+// Constantes de usuario iniciales
+const USER_PROFILE = {
+  age: 38,
+  heightM: 1.75,
+  initialWeightKg: 95.0,
+  dumbbellWeightLb: 10
+};
+
+// Rutinas detalladas con enfoque de cero impacto, guías visuales y videos locales MP4
+const ROUTINES_DATA = {
+  "caminadora": {
+    title: "Cardio Zona 2 en Caminadora (Cero Impacto)",
+    subtitle: "Quema de grasa oxidativa, salud mitocondrial y protección total de rodillas y lumbares.",
+    exercises: [
+      {
+        name: "1. Calentamiento Articular y Rampa",
+        details: "Velocidad: 3.5 a 4.0 km/h · Inclinación: 0% a 1.0%",
+        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados.",
+        meta: "3 a 5 min",
+        image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+      },
+      {
+        name: "2. Fase Principal en Zona 2 (Inclinación Moderada)",
+        details: "Velocidad: 4.2 a 4.8 km/h · Inclinación: 2.0% a 3.5%",
+        cue: "Test de la voz: debes poder pronunciar una frase completa sin ahogarte. NO te sujetes a las barras fijas.",
+        meta: "25 a 35 min",
+        image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+      },
+      {
+        name: "3. Vuelta a la Calma (Descompresión)",
+        details: "Velocidad: 3.0 km/h · Inclinación: 0%",
+        cue: "Respira hondo por la nariz, deja que las pulsaciones bajen gradualmente.",
+        meta: "3 min",
+        image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+      }
+    ]
+  },
+  "boxing": {
+    title: "🥊 Fitness Boxing 3 en Nintendo Switch (Cardio Rítmico)",
+    subtitle: "Quema de grasa cardiovascular, agilidad y core rotacional sin impacto articular.",
+    exercises: [
+      {
+        name: "1. Calentamiento y Estiramiento Dinámico (In-Game o Previo)",
+        details: "Movilidad de hombros, cuello, muñecas y tobillos · Nivel ligero",
+        cue: "Nunca empieces tirando golpes fuertes en frío. Deja que el juego o tu cuerpo caliente 3 minutos.",
+        meta: "3 a 5 min",
+        image: "assets/bird_dog.jpg",
+        localVideo: "assets/videos/deadbug.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
+      },
+      {
+        name: "2. Bloque Principal: Combinaciones de Jabs, Straights y Hooks",
+        details: "2 a 3 canciones o rutina diaria estándar (20-25 min) · Solo con Joy-Cons",
+        cue: "REGLA DE ORO: No hiperextiendas ni bloquees los codos. Frena el golpe al 90% usando el músculo, no la articulación.",
+        meta: "20 a 25 min",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/suitcase_carry.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
+      },
+      {
+        name: "3. Esquives Suaves (Ducks & Weaves con Bisagra de Cadera)",
+        details: "Control del centro de gravedad con tenis deportivos en pie",
+        cue: "Flexiona ligeramente la cadera y rodillas suaves. No des saltos bruscos ni gires las rodillas hacia adentro.",
+        meta: "Continuo",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
+      },
+      {
+        name: "4. Vuelta a la Calma y Respiración",
+        details: "Estiramientos suaves de pectorales, tríceps y lumbares",
+        cue: "Baja las pulsaciones lentamente y bebe agua fresca.",
+        meta: "3 min",
+        image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+      }
+    ]
+  },
+  "fuerza-a": {
+    title: "Rutina A: Piernas, Empuje y Estabilidad Unilateral",
+    subtitle: "Lunes · Foco en cuadríceps protegidos, pecho y estabilidad de la columna con mancuerna de 10 lb.",
+    exercises: [
+      {
+        name: "Sentadilla a la Silla (Box Squat) con Mancuerna Copa",
+        details: "3 series x 10-12 repeticiones · Mancuerna 10 lb sostenida vertical al pecho",
+        cue: "Toca la silla con los glúteos de forma controlada (sin dejarte caer) y empuja el suelo con los talones.",
+        meta: "Descanso: 90s",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
+      },
+      {
+        name: "Floor Press Unilateral (Pecho en el Suelo)",
+        details: "3 series x 10 repeticiones por cada brazo · Mancuerna 10 lb",
+        cue: "El suelo frena el codo de forma natural, protegiendo el manguito rotador del hombro de hiperextensión.",
+        meta: "Descanso: 60s",
+        image: "assets/floor_press.jpg",
+        localVideo: "assets/videos/floor_press.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=csvfESQaMeU"
+      },
+      {
+        name: "Paseo del Granjero Asimétrico (Suitcase Carry)",
+        details: "3 series x 40 pasos por mano · Mancuerna 10 lb",
+        cue: "Camina erguido con la mancuerna a un solo lado. Evita que el torso se incline; tu abdomen oblicuo trabaja al 100%.",
+        meta: "Descanso: 60s",
+        image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/suitcase_carry.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
+      },
+      {
+        name: "Elevación de Talones de Pie (Gemelos)",
+        details: "3 series x 15 repeticiones · Con apoyo suave en pared si se requiere",
+        cue: "Pausa de 1 segundo en la contracción máxima arriba. Fortalece el tendón de Aquiles y la pisada.",
+        meta: "Descanso: 45s",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+      }
+    ]
+  },
+  "fuerza-b": {
+    title: "Rutina B: Tracción de Espalda, Glúteos y Hombro",
+    subtitle: "Miércoles · Postura erguida, descompresión dorsal y cadena posterior.",
+    exercises: [
+      {
+        name: "Remo Unilateral con Apoyo en Mesa o Respaldo",
+        details: "3 series x 10-12 reps por brazo · Mancuerna 10 lb",
+        cue: "Espalda totalmente recta a 45°. Lleva el codo hacia el bolsillo de tu pantalón apretando la escápula.",
+        meta: "Descanso: 60s",
+        image: "assets/single_arm_row.jpg",
+        localVideo: "assets/videos/single_arm_row.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=tLnlWj7LQ34"
+      },
+      {
+        name: "Puente de Glúteos con Mancuerna en Pelvis",
+        details: "3 series x 12 reps · Mancuerna 10 lb apoyada sobre la pelvis",
+        cue: "Aprieta los glúteos 2 segundos en el punto más alto. No arquees la espalda baja, usa la cadera.",
+        meta: "Descanso: 60s",
+        image: "assets/floor_press.jpg",
+        localVideo: "assets/videos/floor_press.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=8bbE64NuDTU"
+      },
+      {
+        name: "Press de Hombro Unilateral Sentado en Silla",
+        details: "3 series x 8-10 reps por brazo · Mancuerna 10 lb",
+        cue: "Realiza el empuje con el codo a 45° con respecto al torso (plano escapular, libre de pinzamientos).",
+        meta: "Descanso: 75s",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=B-aVuyhvLHU"
+      },
+      {
+        name: "Bird-Dog (Pájaro-Perro en el Suelo)",
+        details: "3 series x 8 reps controladas por lado · Solo peso corporal",
+        cue: "Extiende brazo y pierna opuesta. La columna no se balancea en ningún momento.",
+        meta: "Descanso: 45s",
+        image: "assets/bird_dog.jpg",
+        localVideo: "assets/videos/bird_dog.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=XOD87c1-DLI"
+      }
+    ]
+  },
+  "fuerza-c": {
+    title: "Rutina C: Integración Funcional, Brazos y Core Profundo",
+    subtitle: "Viernes · Coordinación motriz, tendones de brazos y movilidad activa.",
+    exercises: [
+      {
+        name: "Split Squat Asistido (Zancada estática con apoyo)",
+        details: "3 series x 8 reps por pierna · Mancuerna 10 lb en una mano, otra en pared/silla",
+        cue: "Baja la rodilla trasera verticalmente sin golpear el suelo. El apoyo en la pared evita pérdida de equilibrio.",
+        meta: "Descanso: 75s",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=SGHbhdwsA1I"
+      },
+      {
+        name: "Curl de Bíceps Excéntrico + Extensión Tríceps Suave",
+        details: "3 series x 10 reps por brazo · Mancuerna 10 lb",
+        cue: "Baja la mancuerna en 3 segundos (fase excéntrica lenta). Crea tendones fuertes y sin tendinitis.",
+        meta: "Descanso: 60s",
+        image: "assets/single_arm_row.jpg",
+        localVideo: "assets/videos/single_arm_row.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=ykJmrZ5v0Oo"
+      },
+      {
+        name: "Halo con Mancuerna alrededor de la Cabeza",
+        details: "3 series x 8 círculos (4 en cada sentido) · Mancuerna 10 lb sostenida con ambas manos",
+        cue: "Gira la mancuerna en círculo suave alrededor del cráneo manteniendo el abdomen firme. Salud de hombros.",
+        meta: "Descanso: 60s",
+        image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=z81fA66Wb7A"
+      },
+      {
+        name: "Deadbug (Bicho Muerto en el Suelo)",
+        details: "3 series x 8 reps alternadas · Sin peso",
+        cue: "Pega la zona lumbar al suelo como si quisieras aplastar un billete debajo de tu espalda.",
+        meta: "Descanso: 45s",
+        image: "assets/bird_dog.jpg",
+        localVideo: "assets/videos/deadbug.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
+      }
+    ]
+  }
+};
+
+// Claves de Almacenamiento Local
+const STORAGE_KEYS = {
+  WORKOUTS: 'vitaltrack_workouts_v1',
+  METRICS: 'vitaltrack_metrics_v1'
+};
+
+// Estado del Temporizador
+let timerInterval = null;
+let timerSeconds = 0;
+let isTimerCountdown = false;
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  setupNavigation();
+  setupRoutinesViewer('caminadora');
+  setupTimer();
+  setupFormEvents();
+  setupMetricsEvents();
+  setupAdaptiveCoach();
+  renderDashboard();
+  renderHistoryTable();
+  renderMetricsTable();
+
+  // Registro de Service Worker para App Móvil Offline / PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+
+  // Receptor del Puente Nativo Android Health Connect
+  window.onHealthConnectDataReceived = function(data) {
+    if (!data) return;
+    if (data.restingHeartRate && document.getElementById('coach-rhr')) {
+      document.getElementById('coach-rhr').value = data.restingHeartRate;
+    }
+    if (data.steps && document.getElementById('input-steps')) {
+      document.getElementById('input-steps').value = data.steps;
+    }
+    if (data.avgHeartRate && document.getElementById('input-hr-avg')) {
+      document.getElementById('input-hr-avg').value = data.avgHeartRate;
+    }
+    if (typeof calculateAdaptivePrescription === 'function') {
+      calculateAdaptivePrescription();
+    }
+    alert('✅ Métricas recibidas de Health Connect. Parámetros adaptados con éxito.');
+  };
+
+  const btnSyncHC = document.getElementById('btn-sync-health-connect');
+  if (btnSyncHC) {
+    btnSyncHC.addEventListener('click', () => {
+      if (window.AndroidHealthConnect && window.AndroidHealthConnect.isAvailable()) {
+        window.AndroidHealthConnect.syncData();
+      } else {
+        alert('ℹ️ Health Connect Nativo está activo en la versión APK de Android. Aquí puedes pulsar "Recalcular Adaptación" o ajustar tu FC de reposo.');
+      }
+    });
+  }
+
+  // Fecha predeterminada de hoy en inputs
+  const todayStr = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('input-date');
+  const metricDateInput = document.getElementById('metric-date');
+  if (dateInput) dateInput.value = todayStr;
+  if (metricDateInput) metricDateInput.value = todayStr;
+
+  // Toggle de campos de caminadora según categoría
+  const categorySelect = document.getElementById('input-category');
+  if (categorySelect) {
+    categorySelect.addEventListener('change', (e) => {
+      const treadmillFields = document.getElementById('treadmill-fields');
+      if (e.target.value === 'Caminadora') {
+        treadmillFields.style.display = 'block';
+      } else {
+        treadmillFields.style.display = 'none';
+      }
+    });
+  }
+});
+
+// Navegación entre pestañas
+function setupNavigation() {
+  const navButtons = document.querySelectorAll('.nav-item');
+  const panes = document.querySelectorAll('.tab-pane');
+  const pageTitle = document.getElementById('page-title');
+  const pageSubtitle = document.getElementById('page-subtitle');
+
+  const titles = {
+    'tab-dashboard': { title: 'Panel de Control General', sub: 'Progreso acumulado, métricas biomecánicas y plan activo' },
+    'tab-rutinas': { title: 'Plan y Rutinas Paso a Paso', sub: 'Guías de ejecución técnica sin riesgo de lesiones' },
+    'tab-registro': { title: 'Registro de Sesión', sub: 'Captura de datos duros (tiempo, inclinación, velocidad, RPE)' },
+    'tab-historial': { title: 'Historial y Datos Duros', sub: 'Registro histórico completo y exportación' },
+    'tab-metricas': { title: 'Control de Peso y Medidas', sub: 'Evolución de peso corporal, IMC y cintura a nivel de ombligo' }
+  };
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab');
+      navButtons.forEach(b => b.classList.remove('active'));
+      panes.forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const targetPane = document.getElementById(targetId);
+      if (targetPane) targetPane.classList.add('active');
+
+      if (titles[targetId]) {
+        pageTitle.textContent = titles[targetId].title;
+        pageSubtitle.textContent = titles[targetId].sub;
+      }
+    });
+  });
+
+  const btnQuick = document.getElementById('btn-quick-workout');
+  if (btnQuick) {
+    btnQuick.addEventListener('click', () => {
+      document.getElementById('nav-btn-routines').click();
+    });
+  }
+
+  const btnViewHistory = document.getElementById('btn-view-all-history');
+  if (btnViewHistory) {
+    btnViewHistory.addEventListener('click', () => {
+      document.getElementById('nav-btn-history').click();
+    });
+  }
+}
+
+// Visor de Rutinas
+function setupRoutinesViewer(initialKey) {
+  const subBtns = document.querySelectorAll('.sub-tab-btn');
+  const container = document.getElementById('routine-content');
+
+  function render(key) {
+    const routine = ROUTINES_DATA[key];
+    if (!routine) return;
+
+    let exercisesHtml = routine.exercises.map((ex, idx) => `
+      <div class="routine-exercise-card">
+        <div class="exercise-left-col">
+          <div class="exercise-num">${idx + 1}</div>
+          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onclick="window.open('${ex.image}', '_blank')" title="Clic para ampliar ilustración">` : ''}
+        </div>
+        <div class="exercise-details">
+          <h4>${ex.name}</h4>
+          <p>${ex.details}</p>
+          <span class="exercise-cue">💡 Técnica segura: ${ex.cue}</span>
+          <div class="exercise-actions-bar">
+            ${ex.localVideo ? `<button type="button" class="btn-video-guide" onclick="playExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}')">🎬 Reproducir Video Local</button>` : ''}
+            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt">🌐 Ver en YouTube</a>` : ''}
+          </div>
+        </div>
+        <div class="exercise-meta">${ex.meta}</div>
+      </div>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="card-header">
+        <div>
+          <h3>${routine.title}</h3>
+          <p class="text-muted">${routine.subtitle}</p>
+        </div>
+      </div>
+      <div class="routine-list">
+        ${exercisesHtml}
+      </div>
+    `;
+  }
+
+  subBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      subBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render(btn.getAttribute('data-routine'));
+    });
+  });
+
+  render(initialKey);
+  setupVideoModal();
+}
+
+// Modal de Video Local
+function setupVideoModal() {
+  const modal = document.getElementById('video-modal');
+  const closeBtn = document.getElementById('video-modal-close');
+  const player = document.getElementById('local-video-player');
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      if (player) {
+        player.pause();
+        player.src = '';
+      }
+      if (modal) modal.classList.remove('open');
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        if (player) {
+          player.pause();
+          player.src = '';
+        }
+        modal.classList.remove('open');
+      }
+    });
+  }
+}
+
+window.playExerciseVideo = function(videoPath, title) {
+  const modal = document.getElementById('video-modal');
+  const player = document.getElementById('local-video-player');
+  const titleElem = document.getElementById('video-modal-title');
+
+  if (modal && player) {
+    if (titleElem) titleElem.textContent = title;
+    player.src = videoPath;
+    modal.classList.add('open');
+    player.play().catch(() => {});
+  }
+};
+
+// Asistente Temporizador con Síntesis de Sonido Web Audio
+function setupTimer() {
+  const display = document.getElementById('timer-display');
+  const btnStart = document.getElementById('timer-btn-start');
+  const btnPause = document.getElementById('timer-btn-pause');
+  const btnReset = document.getElementById('timer-btn-reset');
+  const presetBtns = document.querySelectorAll('.btn-chip');
+
+  function formatTime(totalSecs) {
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
+  function playChime() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.8);
+    } catch (e) {
+      // Audio fallback silencioso si el navegador lo bloquea
+    }
+  }
+
+  btnStart.addEventListener('click', () => {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      if (isTimerCountdown) {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          display.textContent = formatTime(timerSeconds);
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          isTimerCountdown = false;
+          playChime();
+          alert('⏰ ¡Tiempo completado! Listo para la siguiente serie o fin de sesión.');
+        }
+      } else {
+        timerSeconds++;
+        display.textContent = formatTime(timerSeconds);
+      }
+    }, 1000);
+  });
+
+  btnPause.addEventListener('click', () => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  });
+
+  btnReset.addEventListener('click', () => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    timerSeconds = 0;
+    isTimerCountdown = false;
+    display.textContent = '00:00';
+  });
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      const s = parseInt(btn.getAttribute('data-secs'), 10);
+      timerSeconds = s;
+      isTimerCountdown = true;
+      display.textContent = formatTime(timerSeconds);
+    });
+  });
+}
+
+// Almacenamiento y Formulario de Sesiones
+function getStoredWorkouts() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.WORKOUTS);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveStoredWorkouts(workouts) {
+  localStorage.setItem(STORAGE_KEYS.WORKOUTS, JSON.stringify(workouts));
+}
+
+function setupFormEvents() {
+  const form = document.getElementById('workout-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const date = document.getElementById('input-date').value;
+    const category = document.getElementById('input-category').value;
+    const duration = parseInt(document.getElementById('input-duration').value, 10);
+    const rpe = parseInt(document.getElementById('input-rpe').value, 10);
+    const notes = document.getElementById('input-notes').value.trim();
+    const noPain = document.getElementById('input-no-pain').checked;
+
+    const distance = document.getElementById('input-distance').value ? parseFloat(document.getElementById('input-distance').value) : null;
+    const speed = document.getElementById('input-speed').value ? parseFloat(document.getElementById('input-speed').value) : null;
+    const incline = document.getElementById('input-incline').value ? parseFloat(document.getElementById('input-incline').value) : null;
+    const calories = document.getElementById('input-calories').value ? parseInt(document.getElementById('input-calories').value, 10) : null;
+
+    const hrAvg = document.getElementById('input-hr-avg').value ? parseInt(document.getElementById('input-hr-avg').value, 10) : null;
+    const hrMax = document.getElementById('input-hr-max').value ? parseInt(document.getElementById('input-hr-max').value, 10) : null;
+    const steps = document.getElementById('input-steps').value ? parseInt(document.getElementById('input-steps').value, 10) : null;
+    const activeCal = document.getElementById('input-active-cal').value ? parseInt(document.getElementById('input-active-cal').value, 10) : null;
+
+    const newWorkout = {
+      id: Date.now().toString(),
+      date,
+      category,
+      duration,
+      rpe,
+      noPain,
+      notes,
+      treadmill: {
+        distance,
+        speed,
+        incline,
+        calories
+      },
+      wearable: {
+        hrAvg,
+        hrMax,
+        steps,
+        activeCal
+      }
+    };
+
+    const workouts = getStoredWorkouts();
+    workouts.unshift(newWorkout);
+    saveStoredWorkouts(workouts);
+
+    form.reset();
+    document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('input-no-pain').checked = true;
+
+    renderDashboard();
+    renderHistoryTable();
+
+    alert('✅ Sesión registrada exitosamente.');
+    document.getElementById('nav-btn-dash').click();
+  });
+
+  // Filtro de historial
+  const filterCat = document.getElementById('filter-category');
+  if (filterCat) {
+    filterCat.addEventListener('change', () => {
+      renderHistoryTable();
+    });
+  }
+
+  // Exportar JSON
+  const btnExport = document.getElementById('btn-export-json');
+  if (btnExport) {
+    btnExport.addEventListener('click', () => {
+      const data = {
+        profile: USER_PROFILE,
+        workouts: getStoredWorkouts(),
+        metrics: getStoredMetrics(),
+        exportedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `registro_ejercicio_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+}
+
+// Almacenamiento y Formulario de Métricas Corporales
+function getStoredMetrics() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.METRICS);
+    if (data) return JSON.parse(data);
+  } catch (e) {}
+  
+  // Baseline inicial por defecto
+  return [
+    {
+      id: 'init-0',
+      date: '2026-10-08',
+      weight: 95.0,
+      waist: null,
+      energy: 'Bueno',
+      imc: +(95.0 / (1.75 * 1.75)).toFixed(1)
+    }
+  ];
+}
+
+function saveStoredMetrics(metrics) {
+  localStorage.setItem(STORAGE_KEYS.METRICS, JSON.stringify(metrics));
+}
+
+function setupMetricsEvents() {
+  const form = document.getElementById('metrics-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const date = document.getElementById('metric-date').value;
+    const weight = parseFloat(document.getElementById('metric-weight').value);
+    const waist = document.getElementById('metric-waist').value ? parseFloat(document.getElementById('metric-waist').value) : null;
+    const energy = document.getElementById('metric-energy').value;
+    const rhr = document.getElementById('metric-rhr') && document.getElementById('metric-rhr').value ? parseInt(document.getElementById('metric-rhr').value, 10) : null;
+    const sleep = document.getElementById('metric-sleep') && document.getElementById('metric-sleep').value ? parseFloat(document.getElementById('metric-sleep').value) : null;
+
+    const imc = +(weight / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1);
+
+    const newMetric = {
+      id: Date.now().toString(),
+      date,
+      weight,
+      waist,
+      energy,
+      rhr,
+      sleep,
+      imc
+    };
+
+    const metrics = getStoredMetrics();
+    metrics.unshift(newMetric);
+    saveStoredMetrics(metrics);
+
+    form.reset();
+    document.getElementById('metric-date').value = new Date().toISOString().split('T')[0];
+
+    renderDashboard();
+    renderMetricsTable();
+
+    alert('✅ Métrica corporal guardada exitosamente.');
+  });
+}
+
+// Renderizado de Dashboard
+function renderDashboard() {
+  const workouts = getStoredWorkouts();
+  const metrics = getStoredMetrics();
+
+  // Peso actual
+  const currentMetric = metrics[0] || { weight: 95.0, imc: 31.0 };
+  const currentWeightElem = document.getElementById('dash-current-weight');
+  const imcElem = document.getElementById('dash-imc');
+  const weightDiffElem = document.getElementById('dash-weight-diff');
+
+  if (currentWeightElem) currentWeightElem.innerHTML = `${currentMetric.weight.toFixed(1)} <span class="unit">kg</span>`;
+  if (imcElem) imcElem.textContent = currentMetric.imc.toFixed(1);
+
+  const diff = currentMetric.weight - USER_PROFILE.initialWeightKg;
+  if (weightDiffElem) {
+    if (diff === 0) {
+      weightDiffElem.textContent = 'Punto de partida (95.0 kg)';
+      weightDiffElem.className = 'stat-caption text-neutral';
+    } else if (diff < 0) {
+      weightDiffElem.textContent = `📉 -${Math.abs(diff).toFixed(1)} kg desde el inicio`;
+      weightDiffElem.className = 'stat-caption text-green';
+    } else {
+      weightDiffElem.textContent = `+${diff.toFixed(1)} kg`;
+      weightDiffElem.className = 'stat-caption text-yellow';
+    }
+  }
+
+  // Sesiones totales
+  const totalSessionsElem = document.getElementById('dash-total-sessions');
+  if (totalSessionsElem) totalSessionsElem.textContent = workouts.length;
+
+  // Minutos en caminadora
+  const treadmillMins = workouts
+    .filter(w => w.category === 'Caminadora')
+    .reduce((acc, w) => acc + (w.duration || 0), 0);
+  const treadmillElem = document.getElementById('dash-treadmill-mins');
+  if (treadmillElem) treadmillElem.innerHTML = `${treadmillMins} <span class="unit">min</span>`;
+
+  // Lista reciente
+  const recentContainer = document.getElementById('dash-recent-list');
+  if (recentContainer) {
+    if (workouts.length === 0) {
+      recentContainer.innerHTML = '<p class="empty-state">No hay sesiones registradas aún. ¡Hoy es el mejor día para registrar la primera!</p>';
+    } else {
+      const recent = workouts.slice(0, 4);
+      recentContainer.innerHTML = recent.map(w => `
+        <div class="day-row">
+          <span class="day-name">${w.date.substring(5)}</span>
+          <span class="day-task">${w.category} (${w.duration}m · RPE ${w.rpe})</span>
+          <span class="day-time">${w.noPain ? '🛡️ Seguro' : '⚠️ Molestia'}</span>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+// Renderizado de Tabla de Historial
+function renderHistoryTable() {
+  const tbody = document.getElementById('history-tbody');
+  if (!tbody) return;
+
+  const workouts = getStoredWorkouts();
+  const filterCat = document.getElementById('filter-category') ? document.getElementById('filter-category').value : 'all';
+
+  const filtered = workouts.filter(w => {
+    if (filterCat === 'all') return true;
+    return w.category === filterCat;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No se encontraron sesiones registradas con este filtro.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(w => {
+    let treadmillInfo = '-';
+    if (w.category === 'Caminadora' && w.treadmill) {
+      const parts = [];
+      if (w.treadmill.incline) parts.push(`Inc: ${w.treadmill.incline}%`);
+      if (w.treadmill.speed) parts.push(`Vel: ${w.treadmill.speed} km/h`);
+      if (w.treadmill.distance) parts.push(`Dist: ${w.treadmill.distance} km`);
+      if (w.treadmill.calories) parts.push(`${w.treadmill.calories} kcal`);
+      treadmillInfo = parts.length > 0 ? parts.join(' | ') : 'Zona 2 estándar';
+    }
+
+    let wearableBadge = '';
+    if (w.wearable) {
+      const wParts = [];
+      if (w.wearable.hrAvg) wParts.push(`FC Prom: ${w.wearable.hrAvg} bpm`);
+      if (w.wearable.hrMax) wParts.push(`Max: ${w.wearable.hrMax}`);
+      if (w.wearable.steps) wParts.push(`${w.wearable.steps} pasos`);
+      if (w.wearable.activeCal) wParts.push(`${w.wearable.activeCal} kcal`);
+      if (wParts.length > 0) {
+        wearableBadge = `<div style="font-size:0.75rem; color:var(--accent-teal); margin-top:4px;">⌚ ${wParts.join(' · ')}</div>`;
+      }
+    }
+
+    let badgeClass = 'badge-strength';
+    if (w.category === 'Caminadora') badgeClass = 'badge-cardio';
+    if (w.category.includes('Boxing')) badgeClass = 'badge-boxing';
+    if (w.category === 'Movilidad') badgeClass = 'badge-mobility';
+
+    return `
+      <tr>
+        <td><strong>${w.date}</strong></td>
+        <td>
+          <span class="badge-pill ${badgeClass}">${w.category}</span>
+          ${wearableBadge}
+        </td>
+        <td>${w.duration} min</td>
+        <td>${treadmillInfo}</td>
+        <td>RPE ${w.rpe}/10</td>
+        <td>${w.noPain ? '<span class="badge-safe">✅ 0 Dolores</span>' : '<span style="color:var(--accent-rose)">⚠️ Molestia reportada</span>'}</td>
+        <td style="max-width: 220px; font-size: 0.82rem; color: var(--text-muted);">${w.notes || '-'}</td>
+        <td><button class="btn-del" onclick="deleteWorkout('${w.id}')">Eliminar</button></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Renderizado de Tabla de Métricas
+function renderMetricsTable() {
+  const tbody = document.getElementById('metrics-tbody');
+  if (!tbody) return;
+
+  const metrics = getStoredMetrics();
+  tbody.innerHTML = metrics.map(m => `
+    <tr>
+      <td>${m.date}</td>
+      <td><strong>${m.weight.toFixed(1)}</strong> kg</td>
+      <td>${m.imc.toFixed(1)}</td>
+      <td>${m.waist ? `${m.waist} cm` : '-'}</td>
+      <td>${m.rhr ? `${m.rhr} bpm` : '-'}</td>
+      <td>${m.sleep ? `${m.sleep} h` : '-'}</td>
+      <td>${m.energy}</td>
+      <td>
+        ${m.id === 'init-0' ? '<span class="text-dim">Base</span>' : `<button class="btn-del" onclick="deleteMetric('${m.id}')">Eliminar</button>`}
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Funciones Globales para botones en tablas
+window.deleteWorkout = function(id) {
+  if (!confirm('¿Seguro que deseas eliminar esta sesión?')) return;
+  let workouts = getStoredWorkouts();
+  workouts = workouts.filter(w => w.id !== id);
+  saveStoredWorkouts(workouts);
+  renderDashboard();
+  renderHistoryTable();
+};
+
+window.deleteMetric = function(id) {
+  if (!confirm('¿Seguro que deseas eliminar este registro de métrica?')) return;
+  let metrics = getStoredMetrics();
+  metrics = metrics.filter(m => m.id !== id);
+  saveStoredMetrics(metrics);
+  renderDashboard();
+  renderMetricsTable();
+};
+
+// ==========================================
+// Entrenador Fisiológico Adaptativo
+// ==========================================
+function setupAdaptiveCoach() {
+  const btnRecalc = document.getElementById('btn-recalculate-coach');
+  const rhrInput = document.getElementById('coach-rhr');
+  const sleepInput = document.getElementById('coach-sleep');
+  const sorenessSelect = document.getElementById('coach-soreness');
+
+  if (btnRecalc) {
+    btnRecalc.addEventListener('click', calculateAdaptivePrescription);
+  }
+  if (rhrInput) rhrInput.addEventListener('change', calculateAdaptivePrescription);
+  if (sleepInput) sleepInput.addEventListener('change', calculateAdaptivePrescription);
+  if (sorenessSelect) sorenessSelect.addEventListener('change', calculateAdaptivePrescription);
+
+  calculateAdaptivePrescription();
+}
+
+function calculateAdaptivePrescription() {
+  const rhrVal = document.getElementById('coach-rhr') ? parseInt(document.getElementById('coach-rhr').value, 10) || 68 : 68;
+  const sleepVal = document.getElementById('coach-sleep') ? parseFloat(document.getElementById('coach-sleep').value) || 7.5 : 7.5;
+  const sorenessVal = document.getElementById('coach-soreness') ? document.getElementById('coach-soreness').value : 'none';
+
+  // Analizar última sesión de caminadora
+  const workouts = getStoredWorkouts();
+  const lastTreadmill = workouts.find(w => w.category === 'Caminadora');
+  let hrZoneFeedback = '';
+  let speedPenalty = 0;
+  let inclineBonus = 0;
+
+  if (lastTreadmill && lastTreadmill.wearable && lastTreadmill.wearable.hrAvg) {
+    if (lastTreadmill.wearable.hrAvg > 128) {
+      hrZoneFeedback = ' ⚠️ En tu sesión previa tu pulso promedio superó la Zona 2 (' + lastTreadmill.wearable.hrAvg + ' BPM). Hemos calibrado -0.4 km/h de velocidad sugerida para devolverte a la Zona 2 lipolítica pura.';
+      speedPenalty = 0.4;
+    } else if (lastTreadmill.wearable.hrAvg < 110 && lastTreadmill.wearable.hrAvg > 80) {
+      hrZoneFeedback = ' 💡 Tu pulso previo fue muy holgado (' + lastTreadmill.wearable.hrAvg + ' BPM). Calibramos +0.5% de inclinación para maximizar la quema calórica segura.';
+      inclineBonus = 0.5;
+    }
+  }
+
+  // Puntuación de recuperación (Readiness Score)
+  let score = 100;
+  if (rhrVal > 72) score -= 10;
+  if (rhrVal > 76) score -= 15;
+  if (rhrVal > 82) score -= 25;
+
+  if (sleepVal < 7.0) score -= 10;
+  if (sleepVal < 6.0) score -= 20;
+  if (sleepVal < 5.0) score -= 30;
+
+  if (sorenessVal === 'mild') score -= 10;
+  if (sorenessVal === 'joint-ache') score -= 45;
+
+  score = Math.max(25, Math.min(100, score));
+
+  // Elementos del DOM
+  const pillElem = document.getElementById('coach-readiness-pill');
+  const verdictBox = document.getElementById('coach-verdict-box');
+  const verdictTitle = document.getElementById('verdict-title');
+  const verdictTag = document.getElementById('verdict-tag');
+  const verdictText = document.getElementById('verdict-text');
+  const paramSpeed = document.getElementById('param-speed');
+  const paramIncline = document.getElementById('param-incline');
+  const paramSets = document.getElementById('param-sets');
+  const paramBoxing = document.getElementById('param-boxing-hr');
+
+  if (!pillElem || !verdictBox) return;
+
+  if (score >= 80) {
+    pillElem.className = 'readiness-pill readiness-green';
+    pillElem.innerHTML = `<span>🟢 Estado Óptimo (${score}/100)</span>`;
+    verdictBox.className = 'adaptive-verdict';
+    verdictTitle.textContent = '✅ Prescripción: Sesión Completa en Zona 2';
+    verdictTag.textContent = 'Zona 2 Óptima: 110-128 BPM';
+    verdictText.textContent = 'Tu frecuencia cardíaca matutina y horas de sueño confirman un sistema nervioso autónomo descansado. Tus tendones y corazón toleran el estímulo programado al 100%.' + hrZoneFeedback;
+    
+    const baseSpeed = Math.max(4.0, (4.5 - speedPenalty)).toFixed(1);
+    const baseIncline = (2.5 + inclineBonus).toFixed(1);
+    if (paramSpeed) paramSpeed.textContent = `${baseSpeed} km/h`;
+    if (paramIncline) paramIncline.textContent = `${baseIncline}%`;
+    if (paramSets) paramSets.textContent = '3 series x 8-10 reps';
+    if (paramBoxing) paramBoxing.textContent = '< 145 BPM';
+  } else if (score >= 60) {
+    pillElem.className = 'readiness-pill readiness-yellow';
+    pillElem.innerHTML = `<span>🟡 Alerta de Fatiga (${score}/100)</span>`;
+    verdictBox.className = 'adaptive-verdict verdict-yellow';
+    verdictTitle.textContent = '⚠️ Prescripción Adaptada: Intensidad y Volumen Moderados';
+    verdictTag.textContent = 'Zona 2 Conservadora: 105-120 BPM';
+    verdictText.textContent = 'Se detecta descanso incompleto o pulso matutino ligeramente elevado. Adaptación automática médica: reducimos la inclinación y eliminamos la 3ª serie de fuerza para evitar sobrecarga del sistema simpático.' + hrZoneFeedback;
+    
+    if (paramSpeed) paramSpeed.textContent = '4.0 km/h';
+    if (paramIncline) paramIncline.textContent = '1.5%';
+    if (paramSets) paramSets.textContent = '2 series x 8 reps (sin fallo)';
+    if (paramBoxing) paramBoxing.textContent = '< 135 BPM (técnico)';
+  } else {
+    pillElem.className = 'readiness-pill readiness-rose';
+    pillElem.innerHTML = `<span>🔴 Protocolo Regenerativo (${score}/100)</span>`;
+    verdictBox.className = 'adaptive-verdict verdict-rose';
+    verdictTitle.textContent = '🛡️ Protección Articular: Protocolo Regenerativo sin Carga';
+    verdictTag.textContent = 'Regenerativo: < 110 BPM';
+    verdictText.textContent = 'Alerta clínica: Se reportó molestia articular o pulso en reposo anormalmente alto. A 95 kg, entrenar con dolor lesiona cartílagos de rodilla o zona lumbar. Adaptación de hoy: 0 mancuerna, solo 20 min de caminata plana suave y ejercicios de suelo de estabilización McGill (Bird-Dog y Deadbug).';
+    
+    if (paramSpeed) paramSpeed.textContent = '3.5 km/h';
+    if (paramIncline) paramIncline.textContent = '0.0% (plano)';
+    if (paramSets) paramSets.textContent = '0 mancuernas · 3x Bird-dog';
+    if (paramBoxing) paramBoxing.textContent = 'Pausa / Solo sombra suave';
+  }
+}
+
