@@ -500,9 +500,40 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 
+  // Visualizador y Persistencia de Métricas de Health Connect
+  function updateHealthConnectUI(data) {
+    if (!data) return;
+    try {
+      localStorage.setItem('vitaltrack_hc_cache', JSON.stringify(data));
+    } catch (e) {}
+
+    const stepsElem = document.getElementById('hc-live-steps');
+    const rhrElem = document.getElementById('hc-live-rhr');
+    const avgHrElem = document.getElementById('hc-live-avghr');
+    const timeElem = document.getElementById('hc-live-time');
+    const descElem = document.getElementById('hc-live-status-desc');
+
+    if (stepsElem) stepsElem.textContent = (data.steps || 0).toLocaleString() + ' pasos';
+    if (rhrElem) rhrElem.textContent = data.restingHeartRate ? `${data.restingHeartRate} BPM` : 'Normal';
+    if (avgHrElem) avgHrElem.textContent = data.avgHeartRate ? `${data.avgHeartRate} BPM` : '-- BPM';
+    if (timeElem) timeElem.textContent = data.syncTime || formatSyncTime();
+    if (descElem) descElem.textContent = '✅ Sincronizado en vivo con Samsung Health / Health Connect';
+  }
+
+  // Cargar métricas de Health Connect previas si existen
+  try {
+    const cachedHC = localStorage.getItem('vitaltrack_hc_cache');
+    if (cachedHC) {
+      updateHealthConnectUI(JSON.parse(cachedHC));
+    }
+  } catch (e) {}
+
   // Receptor del Puente Nativo Android Health Connect
   window.onHealthConnectDataReceived = function(data) {
     if (!data) return;
+    data.syncTime = formatSyncTime();
+    updateHealthConnectUI(data);
+
     if (data.restingHeartRate && document.getElementById('coach-rhr')) {
       document.getElementById('coach-rhr').value = data.restingHeartRate;
     }
@@ -515,13 +546,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof calculateAdaptivePrescription === 'function') {
       calculateAdaptivePrescription();
     }
-    alert('✅ Métricas recibidas de Health Connect. Parámetros adaptados con éxito.');
+    showSyncToast(`⌚ Health Connect: ${(data.steps || 0).toLocaleString()} pasos y FC recibidos`, 'success');
   };
 
   const btnSyncHC = document.getElementById('btn-sync-health-connect');
   if (btnSyncHC) {
     btnSyncHC.addEventListener('click', () => {
       if (window.AndroidHealthConnect && window.AndroidHealthConnect.isAvailable()) {
+        showSyncToast('🔄 Leyendo datos de Health Connect...', 'syncing');
         window.AndroidHealthConnect.syncData();
       } else {
         alert('ℹ️ Health Connect Nativo está activo en la versión APK de Android. Aquí puedes pulsar "Recalcular Adaptación" o ajustar tu FC de reposo.');
