@@ -823,9 +823,13 @@ function setupRoutinesViewer(initialKey) {
           <div class="exercise-actions-bar">
             ${ex.localVideo ? `
               <button type="button" class="btn-video-guide btn-video-local" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
-                🎬 Reproducir Video Local (MP4)
+                🎬 Video Local MP4
               </button>
-            ` : ''}
+            ` : `
+              <button type="button" class="btn-video-guide" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px dashed rgba(16, 185, 129, 0.35);" onclick="selectAndPlayCustomLocalVideo('${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')" title="Cargar y reproducir archivo MP4 desde tu PC">
+                📂 Cargar MP4 Local
+              </button>
+            `}
             <button type="button" class="btn-video-guide btn-video-drive" onclick="openDriveExerciseVideo('${key}', ${idx})">
               📁 Google Drive
             </button>
@@ -860,6 +864,28 @@ function setupRoutinesViewer(initialKey) {
   render(initialKey);
   setupVideoModal();
 }
+
+// Selector Dinámico de Videos Locales desde PC/Móvil
+window.selectAndPlayCustomLocalVideo = function(title, routineTitle, cue) {
+  let fileInput = document.getElementById('custom-video-file-input');
+  if (!fileInput) {
+    fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = 'custom-video-file-input';
+    fileInput.accept = 'video/mp4,video/webm,video/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+  }
+  fileInput.onchange = function(e) {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      window.playLocalExerciseVideo(blobUrl, `${title} (${file.name})`, routineTitle, cue);
+    }
+    fileInput.value = '';
+  };
+  fileInput.click();
+};
 
 // Helpers para Enlaces Personalizados de Google Drive
 function getCustomDriveVideos() {
@@ -994,7 +1020,7 @@ window.openDriveExerciseVideo = function(routineKey, exerciseIndex) {
   if (!modal || !container) return;
 
   if (titleElem) titleElem.textContent = ex.name;
-  if (subElem) subElem.textContent = `${routine.title} · Integración Google Drive`;
+  if (subElem) subElem.textContent = `${routine.title} · Integración de Video`;
   if (cueTextElem) cueTextElem.textContent = `${ex.cue} (${ex.details})`;
   if (btnYtExt) {
     btnYtExt.style.display = ex.videoUrl ? 'inline-flex' : 'none';
@@ -1019,12 +1045,12 @@ window.openDriveExerciseVideo = function(routineKey, exerciseIndex) {
       `;
     } else if (ex.localVideo) {
       container.innerHTML = `
-        <div style="padding: 24px; text-align: center; color: #cbd5e1;">
-          <p style="margin-bottom: 14px; font-size: 1rem;">🎬 Este ejercicio cuenta con video local MP4 en tu PC:</p>
+        <div style="padding: 24px; text-align: center; color: #cbd5e1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
+          <p style="margin-bottom: 14px; font-size: 1.05rem; font-weight: 600;">🎬 Este ejercicio cuenta con video local MP4 en tu PC:</p>
           <button type="button" class="btn btn-primary" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
-            ▶️ Ver Video Local (MP4)
+            ▶️ Reproducir Video Local (${ex.localVideo.split('/').pop()})
           </button>
-          <div style="margin-top: 16px;">
+          <div style="margin-top: 20px;">
             <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px;">O puedes vincular tu video personal desde Google Drive:</p>
             <button type="button" class="btn btn-secondary btn-sm" id="btn-prompt-drive-now">📁 Vincular Enlace de Google Drive</button>
           </div>
@@ -1036,9 +1062,20 @@ window.openDriveExerciseVideo = function(routineKey, exerciseIndex) {
       }, 50);
     } else {
       container.innerHTML = `
-        <div style="padding: 24px; text-align: center; color: #cbd5e1;">
-          <p style="margin-bottom: 12px; font-size: 1rem;">📁 ¿Tienes tu video en Google Drive para este ejercicio?</p>
-          <button type="button" class="btn btn-primary btn-sm" id="btn-prompt-drive-now">📁 Vincular Enlace de Google Drive</button>
+        <div style="padding: 24px 16px; text-align: center; color: #cbd5e1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
+          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" style="max-height: 150px; border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.5);" onerror="window.handleImageError(this, '${ex.image}')">` : ''}
+          <div style="font-size: 0.95rem; font-weight: 700; color: #fbbf24; margin-bottom: 6px;">ℹ️ Este ejercicio no incluye video MP4 de fábrica</div>
+          <p style="font-size: 0.85rem; color: #94a3b8; max-width: 440px; margin: 0 auto 16px; line-height: 1.45;">
+            Puedes reproducir cualquier archivo de video desde tu computadora/celular, o vincular un enlace de Google Drive.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <button type="button" class="btn btn-primary" onclick="selectAndPlayCustomLocalVideo('${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
+              📂 Cargar Video MP4 de tu PC
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-prompt-drive-now">
+              📁 Vincular Enlace de Google Drive
+            </button>
+          </div>
         </div>
       `;
       setTimeout(() => {
