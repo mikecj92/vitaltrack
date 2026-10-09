@@ -358,6 +358,36 @@ async function autoSyncPull(isManual = false) {
   }
 }
 
+async function checkAppLiveUpdate() {
+  if (window.AndroidHealthConnect && typeof window.AndroidHealthConnect.checkForUpdates === 'function') {
+    try {
+      window.AndroidHealthConnect.checkForUpdates();
+    } catch (e) {}
+  }
+
+  if (!CLOUD_CONFIG.token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${CLOUD_CONFIG.owner}/${CLOUD_CONFIG.repo}/contents/version.json`, {
+      headers: {
+        'Authorization': `Bearer ${CLOUD_CONFIG.token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const contentStr = base64ToUtf8(data.content);
+      const vObj = JSON.parse(contentStr);
+      const lastVersion = localStorage.getItem('vitaltrack_last_version');
+      if (vObj.version && lastVersion && vObj.version !== lastVersion) {
+        showSyncToast(`✨ ¡VitalTrack se actualizó automáticamente (v${vObj.version})!`, 'success');
+      }
+      if (vObj.version) {
+        localStorage.setItem('vitaltrack_last_version', vObj.version);
+      }
+    }
+  } catch (e) {}
+}
+
 async function autoSyncPush(isDelete = false) {
   if (!CLOUD_CONFIG.token) return;
   try {
@@ -486,6 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderMetricsTable();
   setupTodayFocus();
   autoSyncPull();
+  checkAppLiveUpdate();
 
   const syncStatusElem = document.getElementById('sync-cloud-status');
   if (syncStatusElem) {
@@ -493,6 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
     syncStatusElem.title = 'Haz clic para sincronizar ahora con la nube';
     syncStatusElem.addEventListener('click', () => {
       autoSyncPull(true);
+      checkAppLiveUpdate();
     });
   }
 
