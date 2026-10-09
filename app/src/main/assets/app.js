@@ -484,6 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
   renderHistoryTable();
   renderMetricsTable();
+  setupTodayFocus();
   autoSyncPull();
 
   const syncStatusElem = document.getElementById('sync-cloud-status');
@@ -627,6 +628,112 @@ function setupNavigation() {
       document.getElementById('nav-btn-history').click();
     });
   }
+}
+
+// Configuración de la Sesión Programada para Hoy
+function setupTodayFocus() {
+  const WEEKLY_PLAN = {
+    0: {
+      dayName: "DOMINGO",
+      routineKey: "caminadora",
+      title: "Descanso Total y Recuperación Activa",
+      desc: "Día de regeneración del sistema nervioso. Puedes hacer caminata libre suave, movilidad articular o descansar completamente.",
+      isRest: true
+    },
+    1: {
+      dayName: "LUNES",
+      routineKey: "fuerza-a",
+      title: "Rutina A: Piernas, Empuje al Suelo y Maleta Asimétrica (10 lb)",
+      desc: "Sentadilla a la silla (Box Squat 10 lb) + Floor Press de pecho en suelo + Paseo del Granjero unilateral.",
+      duration: "30 min"
+    },
+    2: {
+      dayName: "MARTES",
+      routineKey: "caminadora",
+      title: "Cardio Zona 2 en Caminadora Altera CE-8610 (Cero Impacto)",
+      desc: "30-35 min en Tacón Nivel 2 o 3 a 4.2 - 4.6 km/h (pulso 110-128 BPM). Quema lipolítica pura sin impacto en rodillas.",
+      duration: "30-35 min"
+    },
+    3: {
+      dayName: "MIÉRCOLES",
+      routineKey: "fuerza-b",
+      title: "Rutina B: Tracción de Espalda, Glúteos y Hombro Escapular (10 lb)",
+      desc: "Remo unilateral apoyado + Puente de glúteos con mancuerna 10 lb + Press de hombro en silla + Bird-Dog.",
+      duration: "30 min"
+    },
+    4: {
+      dayName: "JUEVES",
+      routineKey: "caminadora",
+      title: "Cardio Zona 2 en Caminadora Altera CE-8610 O Fitness Boxing Switch",
+      desc: "Caminadora en rampa Tacón Nivel 3 a 4.4 km/h O combinaciones rítmicas de boxeo sin impacto articular.",
+      duration: "30-35 min"
+    },
+    5: {
+      dayName: "VIERNES",
+      routineKey: "fuerza-c",
+      title: "Rutina C: Split Squat Asistido, Brazos y Core Profundo (10 lb)",
+      desc: "Split Squat asistido en pared + Curl de bíceps & tríceps excéntrico (10 lb) + Halo escapular + Deadbug de suelo.",
+      duration: "30 min"
+    },
+    6: {
+      dayName: "SÁBADO",
+      routineKey: "boxing",
+      title: "Fitness Boxing 3 en Nintendo Switch O Caminata Libre",
+      desc: "25 min de boxeo rítmico con Joy-Cons (cero hiperextensión de codos) o caminata recreativa en rampa.",
+      duration: "25 min"
+    }
+  };
+
+  const todayIndex = new Date().getDay(); // 5 = Viernes
+  const todayData = WEEKLY_PLAN[todayIndex] || WEEKLY_PLAN[5];
+
+  const dayNameElem = document.getElementById('today-day-name');
+  const titleElem = document.getElementById('today-workout-title');
+  const descElem = document.getElementById('today-workout-desc');
+  const btnStart = document.getElementById('btn-start-today-workout');
+  const btnTreadmill = document.getElementById('btn-start-treadmill-alt');
+
+  if (dayNameElem) dayNameElem.textContent = todayData.dayName;
+  if (titleElem) titleElem.textContent = todayData.title;
+  if (descElem) descElem.textContent = todayData.desc;
+
+  // Botón para abrir la rutina del día
+  if (btnStart) {
+    btnStart.addEventListener('click', () => {
+      const navBtnRutinas = document.querySelector('[data-tab="tab-rutinas"]');
+      if (navBtnRutinas) navBtnRutinas.click();
+
+      const subBtn = document.querySelector(`[data-routine="${todayData.routineKey}"]`);
+      if (subBtn) subBtn.click();
+
+      const routineContent = document.getElementById('routine-content');
+      if (routineContent) routineContent.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Botón alternativo para abrir la caminadora Altera
+  if (btnTreadmill) {
+    btnTreadmill.addEventListener('click', () => {
+      const navBtnRutinas = document.querySelector('[data-tab="tab-rutinas"]');
+      if (navBtnRutinas) navBtnRutinas.click();
+
+      const subBtn = document.querySelector('[data-routine="caminadora"]');
+      if (subBtn) subBtn.click();
+
+      const routineContent = document.getElementById('routine-content');
+      if (routineContent) routineContent.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Resaltar el día de hoy en la tabla de agenda semanal
+  const allDayRows = document.querySelectorAll('.day-row');
+  allDayRows.forEach(row => {
+    if (row.getAttribute('data-day') === String(todayIndex)) {
+      row.classList.add('active-today');
+    } else {
+      row.classList.remove('active-today');
+    }
+  });
 }
 
 // Visor de Rutinas
