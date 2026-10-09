@@ -37,11 +37,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private var healthConnectClient: HealthConnectClient? = null
     private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
-    private lateinit var wwwDir: File
+    private lateinit var updateDir: File
 
     private val GITHUB_TOKEN = "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"
     private val REPO_OWNER = "mikecj92"
     private val REPO_NAME = "vitaltrack"
+    private val CURRENT_APK_VERSION_CODE = 2
 
     private val PERMISSIONS = setOf(
         HealthPermission.getReadPermission(HeartRateRecord::class),
@@ -63,6 +64,9 @@ class MainActivity : AppCompatActivity() {
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
 
+        // Limpiar caché vieja de WebView para garantizar ver los cambios más recientes
+        webView.clearCache(true)
+
         // Inyectar el puente nativo para JavaScript
         webView.addJavascriptInterface(HealthConnectWebBridge(), "AndroidHealthConnect")
 
@@ -81,62 +85,38 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Configurar almacenamiento dinámico para Live Updates
-        wwwDir = File(filesDir, "www")
-        if (!wwwDir.exists()) {
-            wwwDir.mkdirs()
+        // Gestión de actualizaciones en vivo (Live Update)
+        updateDir = File(filesDir, "live_update")
+        val prefs = getSharedPreferences("vitaltrack_prefs", Context.MODE_PRIVATE)
+        val lastApkVersion = prefs.getInt("apk_version_code", 0)
+
+        // Si se acaba de instalar un APK nuevo, borrar archivos de actualización viejos
+        if (lastApkVersion < CURRENT_APK_VERSION_CODE) {
+            updateDir.deleteRecursively()
+            // También limpiar la carpeta www vieja si existía
+            File(filesDir, "www").deleteRecursively()
+            prefs.edit().putInt("apk_version_code", CURRENT_APK_VERSION_CODE).apply()
         }
 
-        val indexFile = File(wwwDir, "index.html")
-        if (!indexFile.exists()) {
-            copyAssetsToInternalStorage()
-        }
-
-        // Cargar interfaz desde almacenamiento interno para permitir Live Updates
-        if (indexFile.exists()) {
-            webView.loadUrl("file://${indexFile.absolutePath}")
+        val updatedIndex = File(updateDir, "index.html")
+        if (updatedIndex.exists()) {
+            webView.loadUrl("file://${updatedIndex.absolutePath}")
         } else {
+            // Cargar directamente desde assets empaquetados en el APK
             webView.loadUrl("file:///android_asset/index.html")
         }
 
-        // Iniciar comprobación silenciosa de actualizaciones en la nube
-        checkForLiveUpdates()
-    }
+        Toast.makeText(this, "VitalTrack v1.2.1 iniciado", Toast.LENGTH_SHORT).show()
 
-    private fun copyAssetsToInternalStorage() {
-        try {
-            val assetFiles = listOf("index.html", "app.js", "styles.css", "manifest.json", "version.json")
-            for (fileName in assetFiles) {
-                try {
-                    assets.open(fileName).use { input ->
-                        val target = File(wwwDir, fileName)
-                        FileOutputStream(target).use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-                } catch (_: Exception) {}
-            }
-            val subAssetsDir = File(wwwDir, "assets")
-            if (!subAssetsDir.exists()) subAssetsDir.mkdirs()
-            val imgFiles = listOf("treadmill.jpg", "box_squat.jpg", "floor_press.jpg", "single_arm_row.jpg", "bird_dog.jpg")
-            for (img in imgFiles) {
-                try {
-                    assets.open("assets/$img").use { input ->
-                        val target = File(subAssetsDir, img)
-                        FileOutputStream(target).use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-                } catch (_: Exception) {}
-            }
-        } catch (_: Exception) {}
+        // Comprobación en segundo plano de actualizaciones en la nube
+        checkForLiveUpdates()
     }
 
     private fun checkForLiveUpdates() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val prefs = getSharedPreferences("vitaltrack_prefs", Context.MODE_PRIVATE)
-                val currentVersion = prefs.getString("app_version", "1.0.0") ?: "1.0.0"
+                val currentVersion = prefs.getString("live_version", "1.2.0") ?: "1.2.0"
 
                 val versionUrl = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/version.json")
                 val conn = versionUrl.openConnection() as HttpURLConnection
@@ -153,12 +133,14 @@ class MainActivity : AppCompatActivity() {
                     val remoteVersion = versionObj.optString("version", "")
 
                     if (remoteVersion.isNotEmpty() && remoteVersion != currentVersion) {
+                        if (!updateDir.exists()) updateDir.mkdirs()
+
                         downloadAssetFile("index.html", "app/src/main/assets/index.html")
                         downloadAssetFile("app.js", "app/src/main/assets/app.js")
                         downloadAssetFile("styles.css", "app/src/main/assets/styles.css")
                         downloadAssetFile("version.json", "version.json")
 
-                        prefs.edit().putString("app_version", remoteVersion).apply()
+                        prefs.edit().putString("live_version", remoteVersion).apply()
 
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
@@ -167,10 +149,12 @@ class MainActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
 
-                            webView.evaluateJavascript(
-                                "if (typeof showSyncToast === 'function') { showSyncToast('✨ ¡VitalTrack se actualizó automáticamente a v$remoteVersion!', 'success'); } setTimeout(function() { location.reload(); }, 1800);",
-                                null
-                            )
+                            val updatedIndex = File(updateDir, "index.html")
+                            if (updatedIndex.exists()) {
+                                webView.loadUrl("file://${updatedIndex.absolutePath}")
+                            } else {
+                                webView.reload()
+                            }
                         }
                     }
                 }
@@ -192,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                 val contentBase64 = json.getString("content").replace("\n", "").replace("\r", "")
                 val bytes = Base64.decode(contentBase64, Base64.DEFAULT)
 
-                val target = File(wwwDir, localName)
+                val target = File(updateDir, localName)
                 FileOutputStream(target).use { it.write(bytes) }
             }
         } catch (_: Exception) {}
