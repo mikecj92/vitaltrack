@@ -87,7 +87,10 @@
           <h1 id="page-title">Panel de Control General</h1>
           <p class="text-muted" id="page-subtitle">Progreso acumulado, métricas biomecánicas y plan activo</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span id="sync-cloud-status" class="readiness-pill readiness-green" style="font-size: 0.75rem; padding: 5px 12px; font-weight: 600;">
+            ☁️ Nube Activa
+          </span>
           <button id="btn-quick-workout" class="btn btn-primary">
             <span>⚡ Iniciar Cronómetro de Sesión</span>
           </button>
@@ -410,7 +413,7 @@
               <h3>Historial Completo de Entrenamientos</h3>
               <p class="text-muted">Todos los registros guardados en tu espacio de trabajo local</p>
             </div>
-            <div class="filter-actions">
+            <div class="filter-actions" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
               <select id="filter-category" class="select-sm">
                 <option value="all">Todas las categorías</option>
                 <option value="Caminadora">Caminadora</option>
@@ -420,7 +423,8 @@
                 <option value="Fuerza C">Fuerza C</option>
                 <option value="Movilidad">Movilidad</option>
               </select>
-              <button id="btn-export-json" class="btn btn-secondary btn-sm">Exportar JSON</button>
+              <button id="btn-sync-cloud-action" class="btn btn-primary btn-sm" title="Sincronizar ahora con la nube en tiempo real">☁️ Sincronizar Nube</button>
+              <button id="btn-save-drive" class="btn btn-secondary btn-sm" title="Descargar copia local de respaldo en archivo JSON">💾 Copia JSON</button>
             </div>
           </div>
 
