@@ -1,4 +1,4 @@
-package com.vitaltrack.salud
+﻿package com.vitaltrack.salud
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private val GITHUB_TOKEN = "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"
     private val REPO_OWNER = "mikecj92"
     private val REPO_NAME = "vitaltrack"
-    private val CURRENT_APK_VERSION_CODE = 2
+    private val CURRENT_APK_VERSION_CODE = 3
 
     private val PERMISSIONS = setOf(
         HealthPermission.getReadPermission(HeartRateRecord::class),
@@ -61,10 +61,13 @@ class MainActivity : AppCompatActivity() {
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
         webView.settings.allowContentAccess = true
+        webView.settings.textZoom = 100
+        webView.settings.useWideViewPort = true
+        webView.settings.loadWithOverviewMode = true
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
 
-        // Limpiar caché vieja de WebView para garantizar ver los cambios más recientes
+        // Limpiar cache vieja de WebView
         webView.clearCache(true)
 
         // Inyectar el puente nativo para JavaScript
@@ -93,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         // Si se acaba de instalar un APK nuevo, borrar archivos de actualización viejos
         if (lastApkVersion < CURRENT_APK_VERSION_CODE) {
             updateDir.deleteRecursively()
-            // También limpiar la carpeta www vieja si existía
             File(filesDir, "www").deleteRecursively()
             prefs.edit().putInt("apk_version_code", CURRENT_APK_VERSION_CODE).apply()
         }
@@ -102,11 +104,10 @@ class MainActivity : AppCompatActivity() {
         if (updatedIndex.exists()) {
             webView.loadUrl("file://${updatedIndex.absolutePath}")
         } else {
-            // Cargar directamente desde assets empaquetados en el APK
             webView.loadUrl("file:///android_asset/index.html")
         }
 
-        Toast.makeText(this, "VitalTrack v1.2.1 iniciado", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "VitalTrack v1.3.0 iniciado", Toast.LENGTH_SHORT).show()
 
         // Comprobación en segundo plano de actualizaciones en la nube
         checkForLiveUpdates()
@@ -135,10 +136,21 @@ class MainActivity : AppCompatActivity() {
                     if (remoteVersion.isNotEmpty() && remoteVersion != currentVersion) {
                         if (!updateDir.exists()) updateDir.mkdirs()
 
-                        downloadAssetFile("index.html", "app/src/main/assets/index.html")
-                        downloadAssetFile("app.js", "app/src/main/assets/app.js")
-                        downloadAssetFile("styles.css", "app/src/main/assets/styles.css")
+                        // Descargar archivos web raíz
+                        downloadAssetFile("index.html", "index.html")
+                        downloadAssetFile("app.js", "app.js")
+                        downloadAssetFile("styles.css", "styles.css")
                         downloadAssetFile("version.json", "version.json")
+
+                        // Descargar todas las ilustraciones médicas
+                        val images = listOf(
+                            "bird_dog.jpg", "box_squat.jpg", "floor_press.jpg", "single_arm_row.jpg", "treadmill.jpg",
+                            "boxing_punch.jpg", "calf_raises.jpg", "glute_bridge.jpg", "shoulder_press.jpg",
+                            "split_squat.jpg", "bicep_curl.jpg", "dumbbell_halo.jpg"
+                        )
+                        for (img in images) {
+                            downloadAssetFile("assets/$img", "assets/$img")
+                        }
 
                         prefs.edit().putString("live_version", remoteVersion).apply()
 
@@ -177,6 +189,7 @@ class MainActivity : AppCompatActivity() {
                 val bytes = Base64.decode(contentBase64, Base64.DEFAULT)
 
                 val target = File(updateDir, localName)
+                target.parentFile?.mkdirs()
                 FileOutputStream(target).use { it.write(bytes) }
             }
         } catch (_: Exception) {}
