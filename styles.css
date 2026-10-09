@@ -583,6 +583,30 @@ body {
   border-color: #38bdf8;
 }
 
+.btn-video-local {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+  font-weight: 700 !important;
+}
+
+.btn-video-local:hover {
+  background: rgba(16, 185, 129, 0.35) !important;
+  color: #fff !important;
+  border-color: #10b981 !important;
+}
+
+.btn-video-drive {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+.btn-video-drive:hover {
+  background: rgba(56, 189, 248, 0.25) !important;
+  color: #fff !important;
+}
+
 .exercise-meta {
   text-align: right;
   font-family: 'JetBrains Mono', monospace;
