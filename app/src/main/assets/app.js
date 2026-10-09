@@ -9,31 +9,31 @@ const USER_PROFILE = {
 // Rutinas detalladas con enfoque de cero impacto, guías visuales y videos locales MP4
 const ROUTINES_DATA = {
   "caminadora": {
-    title: "Cardio Zona 2 en Caminadora (Cero Impacto)",
-    subtitle: "Quema de grasa oxidativa, salud mitocondrial y protección total de rodillas y lumbares.",
+    title: "Cardio Zona 2 en Caminadora Altera CE-8610 (Cero Impacto)",
+    subtitle: "Quema de grasa oxidativa, salud mitocondrial y protección total de rodillas y lumbares a 95 kg.",
     exercises: [
       {
-        name: "1. Calentamiento Articular y Rampa",
-        details: "Velocidad: 3.5 a 4.0 km/h · Inclinación: 0% a 1.0%",
-        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados.",
+        name: "1. Calentamiento Articular y Rampa Suave",
+        details: "Velocidad: 3.2 a 3.8 km/h · Tacón Hexagonal: Nivel 1 (Más bajo / plano)",
+        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados para aclimatar las articulaciones.",
         meta: "3 a 5 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
       {
-        name: "2. Fase Principal en Zona 2 (Inclinación Moderada)",
-        details: "Velocidad: 4.2 a 4.8 km/h · Inclinación: 2.0% a 3.5%",
-        cue: "Test de la voz: debes poder pronunciar una frase completa sin ahogarte. NO te sujetes a las barras fijas.",
+        name: "2. Fase Principal en Zona 2 (Rampa Lipolítica)",
+        details: "Velocidad: 4.2 a 4.6 km/h (sugerido: 4.4 km/h) · Tacón: Nivel 2 o 3",
+        cue: "Test de la voz: debes poder pronunciar frases completas sin jadear. NO te sujetes a las barras fijas para que tu columna y core trabajen de forma natural.",
         meta: "25 a 35 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
       {
-        name: "3. Vuelta a la Calma (Descompresión)",
-        details: "Velocidad: 3.0 km/h · Inclinación: 0%",
-        cue: "Respira hondo por la nariz, deja que las pulsaciones bajen gradualmente.",
+        name: "3. Vuelta a la Calma (Descompresión Cardíaca)",
+        details: "Velocidad: 2.8 a 3.2 km/h · Tacón: Nivel 1",
+        cue: "Inhala profundo por la nariz y exhala por la boca. Permite que tus pulsaciones bajen a menos de 100 BPM.",
         meta: "3 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
@@ -1231,10 +1231,9 @@ function calculateAdaptivePrescription() {
     verdictTag.textContent = 'Zona 2 Óptima: 110-128 BPM';
     verdictText.textContent = 'Tu frecuencia cardíaca matutina y horas de sueño confirman un sistema nervioso autónomo descansado. Tus tendones y corazón toleran el estímulo programado al 100%.' + hrZoneFeedback;
     
-    const baseSpeed = Math.max(4.0, (4.5 - speedPenalty)).toFixed(1);
-    const baseIncline = (2.5 + inclineBonus).toFixed(1);
+    const baseSpeed = Math.max(3.8, (4.4 - speedPenalty)).toFixed(1);
     if (paramSpeed) paramSpeed.textContent = `${baseSpeed} km/h`;
-    if (paramIncline) paramIncline.textContent = `${baseIncline}%`;
+    if (paramIncline) paramIncline.textContent = 'Tacón Nivel 3 (o 2)';
     if (paramSets) paramSets.textContent = '3 series x 8-10 reps';
     if (paramBoxing) paramBoxing.textContent = '< 145 BPM';
   } else if (score >= 60) {
@@ -1243,10 +1242,10 @@ function calculateAdaptivePrescription() {
     verdictBox.className = 'adaptive-verdict verdict-yellow';
     verdictTitle.textContent = '⚠️ Prescripción Adaptada: Intensidad y Volumen Moderados';
     verdictTag.textContent = 'Zona 2 Conservadora: 105-120 BPM';
-    verdictText.textContent = 'Se detecta descanso incompleto o pulso matutino ligeramente elevado. Adaptación automática médica: reducimos la inclinación y eliminamos la 3ª serie de fuerza para evitar sobrecarga del sistema simpático.' + hrZoneFeedback;
+    verdictText.textContent = 'Se detecta descanso incompleto o pulso matutino ligeramente elevado. Adaptación automática médica: reducimos al Tacón Nivel 2 y eliminamos la 3ª serie de fuerza para evitar sobrecarga del sistema simpático.' + hrZoneFeedback;
     
     if (paramSpeed) paramSpeed.textContent = '4.0 km/h';
-    if (paramIncline) paramIncline.textContent = '1.5%';
+    if (paramIncline) paramIncline.textContent = 'Tacón Nivel 2 (suave)';
     if (paramSets) paramSets.textContent = '2 series x 8 reps (sin fallo)';
     if (paramBoxing) paramBoxing.textContent = '< 135 BPM (técnico)';
   } else {
@@ -1255,10 +1254,10 @@ function calculateAdaptivePrescription() {
     verdictBox.className = 'adaptive-verdict verdict-rose';
     verdictTitle.textContent = '🛡️ Protección Articular: Protocolo Regenerativo sin Carga';
     verdictTag.textContent = 'Regenerativo: < 110 BPM';
-    verdictText.textContent = 'Alerta clínica: Se reportó molestia articular o pulso en reposo anormalmente alto. A 95 kg, entrenar con dolor lesiona cartílagos de rodilla o zona lumbar. Adaptación de hoy: 0 mancuerna, solo 20 min de caminata plana suave y ejercicios de suelo de estabilización McGill (Bird-Dog y Deadbug).';
+    verdictText.textContent = 'Alerta clínica: Se reportó molestia articular o pulso en reposo anormalmente alto. A 95 kg, entrenar con dolor lesiona cartílagos de rodilla o zona lumbar. Adaptación de hoy: 0 mancuerna, solo 20 min en Tacón Nivel 1 a 3.2 km/h y ejercicios de suelo de estabilización McGill (Bird-Dog y Deadbug).';
     
-    if (paramSpeed) paramSpeed.textContent = '3.5 km/h';
-    if (paramIncline) paramIncline.textContent = '0.0% (plano)';
+    if (paramSpeed) paramSpeed.textContent = '3.2 km/h';
+    if (paramIncline) paramIncline.textContent = 'Tacón Nivel 1 (plano)';
     if (paramSets) paramSets.textContent = '0 mancuernas · 3x Bird-dog';
     if (paramBoxing) paramBoxing.textContent = 'Pausa / Solo sombra suave';
   }
