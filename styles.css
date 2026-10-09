@@ -30,6 +30,12 @@
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-primary);
@@ -37,6 +43,9 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 /* Layout */
@@ -783,7 +792,7 @@ textarea:focus {
   gap: 24px;
 }
 
-/* Responsive */
+/* Responsive Layout - Mobile App Optimization */
 @media (max-width: 1024px) {
   .dashboard-columns,
   .metrics-grid {
@@ -794,16 +803,224 @@ textarea:focus {
 @media (max-width: 768px) {
   .app-layout {
     flex-direction: column;
+    min-height: 100vh;
   }
+
+  /* Barra de Navegación Inferior Flotante (Estilo App Nativa) */
   .sidebar {
     width: 100%;
+    padding: 10px 14px 6px 14px;
+    background: #0f172a;
     border-right: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
+
+  .sidebar .brand {
+    margin-bottom: 0;
+    justify-content: space-between;
+  }
+
+  .sidebar .brand h2 {
+    font-size: 1.1rem;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sidebar .profile-summary-box {
+    display: none; /* Se oculta para no ocupar media pantalla en el móvil */
+  }
+
+  .nav-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(13, 18, 28, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px 6px;
+    gap: 2px;
+    z-index: 9999;
+    box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.65);
+  }
+
+  .nav-item {
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 2px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
+    justify-content: center;
+    flex: 1;
+    border-left: none !important;
+    border-bottom: 2px solid transparent;
+    color: #94a3b8;
+  }
+
+  .nav-item.active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border-bottom: 2px solid #10b981;
+  }
+
+  .nav-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
   .main-content {
-    padding: 20px 16px;
+    padding: 14px 12px 76px 12px; /* Espacio inferior para la barra fija */
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .top-bar {
+    margin-bottom: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .top-bar h1 {
+    font-size: 1.25rem;
+  }
+
+  .top-bar p {
+    font-size: 0.8rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  #btn-quick-workout {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  /* Tarjetas y Estadísticas Móviles Compactas */
+  #today-workout-banner {
+    padding: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  #today-workout-title {
+    font-size: 1.15rem !important;
+  }
+
+  #today-workout-desc {
+    font-size: 0.84rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .stat-card {
+    padding: 12px 10px;
+  }
+
+  .stat-title {
+    font-size: 0.72rem;
+  }
+
+  .stat-value {
+    font-size: 1.35rem;
+  }
+
+  .stat-caption {
+    font-size: 0.68rem;
+  }
+
+  /* Rutinas y Ejercicios Móviles */
+  .routines-nav {
+    gap: 6px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sub-tab-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .routine-exercise-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .exercise-left-col {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .exercise-thumb {
+    width: 100px;
+    height: 65px;
+    border-radius: 8px;
+  }
+
+  .exercise-details h4 {
+    font-size: 0.98rem;
+  }
+
+  .exercise-details p {
+    font-size: 0.82rem;
+  }
+
+  .exercise-cue {
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    display: block;
+    line-height: 1.35;
+  }
+
+  .exercise-actions-bar {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .exercise-actions-bar .btn-video-guide {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+
+  .exercise-meta {
+    text-align: left;
+    font-size: 0.78rem;
   }
 }
+
 
 /* Video Modal */
 .video-modal-backdrop {
