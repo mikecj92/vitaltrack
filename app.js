@@ -780,6 +780,17 @@ function setupTodayFocus() {
   });
 }
 
+// Asistente de recuperación de imágenes (Caché local con fallback a CDN GitHub)
+window.handleImageError = function(img, origSrc) {
+  if (!img) return;
+  const filename = (origSrc || img.getAttribute('src') || '').split('/').pop();
+  if (!filename) return;
+  const cdnFallback = `https://raw.githubusercontent.com/mikecj92/vitaltrack/main/assets/${filename}`;
+  if (img.src !== cdnFallback) {
+    img.src = cdnFallback;
+  }
+};
+
 // Visor de Rutinas
 function setupRoutinesViewer(initialKey) {
   const subBtns = document.querySelectorAll('.sub-tab-btn');
@@ -793,7 +804,7 @@ function setupRoutinesViewer(initialKey) {
       <div class="routine-exercise-card">
         <div class="exercise-left-col">
           <div class="exercise-num">${idx + 1}</div>
-          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onclick="window.open('${ex.image}', '_blank')" title="Clic para ampliar ilustración">` : ''}
+          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onerror="window.handleImageError(this, '${ex.image}')" onclick="window.open(this.src, '_blank')" title="Clic para ampliar ilustración">` : ''}
         </div>
         <div class="exercise-details">
           <h4>${ex.name}</h4>
