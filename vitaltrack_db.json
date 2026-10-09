@@ -1,0 +1,22 @@
+{
+  "profile": {
+    "name": "Usuario",
+    "age": 38,
+    "heightM": 1.75,
+    "initialWeightKg": 95.0,
+    "targetMinHr": 110,
+    "targetMaxHr": 128
+  },
+  "workouts": [],
+  "metrics": [
+    {
+      "id": "init-0",
+      "date": "2026-10-08",
+      "weight": 95.0,
+      "waist": null,
+      "energy": "Bueno",
+      "imc": 31.0
+    }
+  ],
+  "syncedAt": "2026-10-08T19:26:00.000Z"
+}
