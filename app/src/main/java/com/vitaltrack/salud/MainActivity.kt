@@ -1,7 +1,9 @@
 package com.vitaltrack.salud
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -19,8 +21,14 @@ import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -29,6 +37,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private var healthConnectClient: HealthConnectClient? = null
     private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
+    private lateinit var wwwDir: File
+
+    private val GITHUB_TOKEN = "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"
+    private val REPO_OWNER = "mikecj92"
+    private val REPO_NAME = "vitaltrack"
 
     private val PERMISSIONS = setOf(
         HealthPermission.getReadPermission(HeartRateRecord::class),
@@ -46,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
+        webView.settings.allowContentAccess = true
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
 
@@ -67,8 +81,121 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Cargar interfaz de VitalTrack localmente
-        webView.loadUrl("file:///android_asset/index.html")
+        // Configurar almacenamiento dinámico para Live Updates
+        wwwDir = File(filesDir, "www")
+        if (!wwwDir.exists()) {
+            wwwDir.mkdirs()
+        }
+
+        val indexFile = File(wwwDir, "index.html")
+        if (!indexFile.exists()) {
+            copyAssetsToInternalStorage()
+        }
+
+        // Cargar interfaz desde almacenamiento interno para permitir Live Updates
+        if (indexFile.exists()) {
+            webView.loadUrl("file://${indexFile.absolutePath}")
+        } else {
+            webView.loadUrl("file:///android_asset/index.html")
+        }
+
+        // Iniciar comprobación silenciosa de actualizaciones en la nube
+        checkForLiveUpdates()
+    }
+
+    private fun copyAssetsToInternalStorage() {
+        try {
+            val assetFiles = listOf("index.html", "app.js", "styles.css", "manifest.json", "version.json")
+            for (fileName in assetFiles) {
+                try {
+                    assets.open(fileName).use { input ->
+                        val target = File(wwwDir, fileName)
+                        FileOutputStream(target).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+            val subAssetsDir = File(wwwDir, "assets")
+            if (!subAssetsDir.exists()) subAssetsDir.mkdirs()
+            val imgFiles = listOf("treadmill.jpg", "box_squat.jpg", "floor_press.jpg", "single_arm_row.jpg", "bird_dog.jpg")
+            for (img in imgFiles) {
+                try {
+                    assets.open("assets/$img").use { input ->
+                        val target = File(subAssetsDir, img)
+                        FileOutputStream(target).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+        } catch (_: Exception) {}
+    }
+
+    private fun checkForLiveUpdates() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val prefs = getSharedPreferences("vitaltrack_prefs", Context.MODE_PRIVATE)
+                val currentVersion = prefs.getString("app_version", "1.0.0") ?: "1.0.0"
+
+                val versionUrl = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/version.json")
+                val conn = versionUrl.openConnection() as HttpURLConnection
+                conn.setRequestProperty("Authorization", "Bearer $GITHUB_TOKEN")
+                conn.setRequestProperty("User-Agent", "VitalTrackUpdater")
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+                if (conn.responseCode == 200) {
+                    val body = conn.inputStream.bufferedReader().use { it.readText() }
+                    val json = JSONObject(body)
+                    val contentBase64 = json.getString("content").replace("\n", "").replace("\r", "")
+                    val versionJsonStr = String(Base64.decode(contentBase64, Base64.DEFAULT), Charsets.UTF_8)
+                    val versionObj = JSONObject(versionJsonStr)
+                    val remoteVersion = versionObj.optString("version", "")
+
+                    if (remoteVersion.isNotEmpty() && remoteVersion != currentVersion) {
+                        downloadAssetFile("index.html", "app/src/main/assets/index.html")
+                        downloadAssetFile("app.js", "app/src/main/assets/app.js")
+                        downloadAssetFile("styles.css", "app/src/main/assets/styles.css")
+                        downloadAssetFile("version.json", "version.json")
+
+                        prefs.edit().putString("app_version", remoteVersion).apply()
+
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "✨ ¡VitalTrack se actualizó automáticamente a v$remoteVersion!",
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            webView.evaluateJavascript(
+                                "if (typeof showSyncToast === 'function') { showSyncToast('✨ ¡VitalTrack se actualizó automáticamente a v$remoteVersion!', 'success'); } setTimeout(function() { location.reload(); }, 1800);",
+                                null
+                            )
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun downloadAssetFile(localName: String, repoPath: String) {
+        try {
+            val url = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$repoPath")
+            val conn = url.openConnection() as HttpURLConnection
+            conn.setRequestProperty("Authorization", "Bearer $GITHUB_TOKEN")
+            conn.setRequestProperty("User-Agent", "VitalTrackUpdater")
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+            if (conn.responseCode == 200) {
+                val body = conn.inputStream.bufferedReader().use { it.readText() }
+                val json = JSONObject(body)
+                val contentBase64 = json.getString("content").replace("\n", "").replace("\r", "")
+                val bytes = Base64.decode(contentBase64, Base64.DEFAULT)
+
+                val target = File(wwwDir, localName)
+                FileOutputStream(target).use { it.write(bytes) }
+            }
+        } catch (_: Exception) {}
     }
 
     private fun checkAndRequestPermissions() {
@@ -146,6 +273,11 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun isAvailable(): Boolean {
             return healthConnectClient != null
+        }
+
+        @JavascriptInterface
+        fun checkForUpdates() {
+            checkForLiveUpdates()
         }
     }
 }
