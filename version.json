@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "buildDate": "2026-10-09T09:30:00Z",
-  "name": "VitalTrack Live Update Engine",
-  "notes": "Calibración Altera CE-8610, tarjeta de sesión de hoy y live auto-update"
+  "version": "1.2.1",
+  "buildDate": "2026-10-09T09:44:00Z",
+  "name": "VitalTrack Live Update Active",
+  "notes": "Insignia de versión v1.2.1 visible, tarjeta de sesión de hoy y live auto-update activo"
 }
