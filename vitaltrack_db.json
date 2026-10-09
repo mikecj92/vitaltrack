@@ -1,24 +1,33 @@
 {
-    "profile":  {
-                    "name":  "Usuario",
-                    "age":  38,
-                    "heightM":  1.75,
-                    "initialWeightKg":  95.0,
-                    "targetMinHr":  110,
-                    "targetMaxHr":  128
-                },
-    "workouts":  [
-
-                 ],
-    "metrics":  [
-                    {
-                        "id":  "init-0",
-                        "date":  "2026-10-08",
-                        "weight":  95.0,
-                        "waist":  null,
-                        "energy":  "Bueno",
-                        "imc":  31.0
-                    }
-                ],
-    "syncedAt":  "2026-10-09T08:29:29.5990246-06:00"
+  "profile": {
+    "age": 38,
+    "heightM": 1.75,
+    "initialWeightKg": 95,
+    "dumbbellWeightLb": 10
+  },
+  "workouts": [
+    {
+      "id": "wk_1791569972229",
+      "date": "2026-10-09",
+      "timestamp": "2026-10-09T18:19:32.229Z",
+      "category": "Fuerza C",
+      "duration": 30,
+      "rpe": 7,
+      "notes": "Sesión recomendada completada con éxito",
+      "noPain": true,
+      "wearable": {},
+      "source": "quick_done"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "init-0",
+      "date": "2026-10-08",
+      "weight": 95,
+      "waist": null,
+      "energy": "Bueno",
+      "imc": 31
+    }
+  ],
+  "syncedAt": "2026-10-09T18:19:32.508Z"
 }
