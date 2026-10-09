@@ -377,12 +377,24 @@ async function checkAppLiveUpdate() {
       const data = await res.json();
       const contentStr = base64ToUtf8(data.content);
       const vObj = JSON.parse(contentStr);
-      const lastVersion = localStorage.getItem('vitaltrack_last_version');
-      if (vObj.version && lastVersion && vObj.version !== lastVersion) {
-        showSyncToast(`✨ ¡VitalTrack se actualizó automáticamente (v${vObj.version})!`, 'success');
-      }
       if (vObj.version) {
-        localStorage.setItem('vitaltrack_last_version', vObj.version);
+        let badge = document.getElementById('app-version-badge');
+        if (!badge) {
+          const headerActions = document.querySelector('.header-actions');
+          if (headerActions) {
+            badge = document.createElement('span');
+            badge.id = 'app-version-badge';
+            badge.style.cssText = 'font-size: 0.72rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;';
+            headerActions.insertBefore(badge, headerActions.firstChild);
+          }
+        }
+        if (badge) badge.textContent = `v${vObj.version} ✨ Live`;
+
+        const lastVersion = localStorage.getItem('vitaltrack_last_version');
+        if (!lastVersion || lastVersion !== vObj.version) {
+          showSyncToast(`✨ ¡VitalTrack se actualizó automáticamente a v${vObj.version}!`, 'success');
+          localStorage.setItem('vitaltrack_last_version', vObj.version);
+        }
       }
     }
   } catch (e) {}
