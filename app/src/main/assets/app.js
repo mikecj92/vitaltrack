@@ -6,7 +6,7 @@ const USER_PROFILE = {
   dumbbellWeightLb: 10
 };
 
-// Rutinas detalladas con enfoque de cero impacto, guías visuales y videos locales MP4
+// Rutinas detalladas con enfoque de cero impacto, biomecánica clínica y guías visuales/video
 const ROUTINES_DATA = {
   "caminadora": {
     title: "Cardio Zona 2 en Caminadora Altera CE-8610 (Cero Impacto)",
@@ -15,28 +15,28 @@ const ROUTINES_DATA = {
       {
         name: "1. Calentamiento Articular y Rampa Suave",
         details: "Velocidad: 3.2 a 3.8 km/h · Tacón Hexagonal: Nivel 1 (Más bajo / plano)",
-        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados para aclimatar las articulaciones.",
+        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados para lubricar las articulaciones sin impacto.",
         meta: "3 a 5 min",
         image: "assets/treadmill.jpg",
-        localVideo: "assets/videos/incline_treadmill.mp4",
+        youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
       {
         name: "2. Fase Principal en Zona 2 (Rampa Lipolítica)",
         details: "Velocidad: 4.2 a 4.6 km/h (sugerido: 4.4 km/h) · Tacón: Nivel 2 o 3",
-        cue: "Test de la voz: debes poder pronunciar frases completas sin jadear. NO te sujetes a las barras fijas para que tu columna y core trabajen de forma natural.",
+        cue: "Test de la voz: debes poder pronunciar frases completas sin jadear (110-128 BPM). NO te sujetes a las barras fijas para que tu columna y core trabajen de forma natural.",
         meta: "25 a 35 min",
         image: "assets/treadmill.jpg",
-        localVideo: "assets/videos/incline_treadmill.mp4",
+        youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
       {
         name: "3. Vuelta a la Calma (Descompresión Cardíaca)",
         details: "Velocidad: 2.8 a 3.2 km/h · Tacón: Nivel 1",
-        cue: "Inhala profundo por la nariz y exhala por la boca. Permite que tus pulsaciones bajen a menos de 100 BPM.",
+        cue: "Inhala profundo por la nariz y exhala por la boca. Permite que tus pulsaciones bajen a menos de 100 BPM de forma controlada.",
         meta: "3 min",
         image: "assets/treadmill.jpg",
-        localVideo: "assets/videos/incline_treadmill.mp4",
+        youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       }
     ]
@@ -46,40 +46,40 @@ const ROUTINES_DATA = {
     subtitle: "Quema de grasa cardiovascular, agilidad y core rotacional sin impacto articular.",
     exercises: [
       {
-        name: "1. Calentamiento y Estiramiento Dinámico (In-Game o Previo)",
-        details: "Movilidad de hombros, cuello, muñecas y tobillos · Nivel ligero",
-        cue: "Nunca empieces tirando golpes fuertes en frío. Deja que el juego o tu cuerpo caliente 3 minutos.",
+        name: "1. Calentamiento Dinámico Articular",
+        details: "Movilidad de hombros, cuello, muñecas, tronco y tobillos · Nivel ligero",
+        cue: "NUNCA lances golpes con fuerza en frío. Rota hombros y calienta el líquido sinovial articular durante 3 a 5 minutos.",
         meta: "3 a 5 min",
-        image: "assets/bird_dog.jpg",
-        localVideo: "assets/videos/deadbug.mp4",
-        videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
+        image: "assets/boxing_punch.jpg",
+        youtubeId: "D8DouKeOkfI",
+        videoUrl: "https://www.youtube.com/watch?v=D8DouKeOkfI"
       },
       {
-        name: "2. Bloque Principal: Combinaciones de Jabs, Straights y Hooks",
-        details: "2 a 3 canciones o rutina diaria estándar (20-25 min) · Solo con Joy-Cons",
-        cue: "REGLA DE ORO: No hiperextiendas ni bloquees los codos. Frena el golpe al 90% usando el músculo, no la articulación.",
+        name: "2. Bloque de Golpeo: Jabs, Straights (Cross) y Hooks",
+        details: "2 a 3 canciones o sesión diaria guiada con Joy-Cons (20-25 min)",
+        cue: "REGLA DE ORO: Detén el golpe al 90-95% con contracción muscular. JAMÁS hiperextiendas ni bloquees los codos para no dañar tendones. Rota desde el pie pivote.",
         meta: "20 a 25 min",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/suitcase_carry.mp4",
-        videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
+        image: "assets/boxing_punch.jpg",
+        youtubeId: "Jt1u69N9Y1c",
+        videoUrl: "https://www.youtube.com/watch?v=Jt1u69N9Y1c"
       },
       {
-        name: "3. Esquives Suaves (Ducks & Weaves con Bisagra de Cadera)",
-        details: "Control del centro de gravedad con tenis deportivos en pie",
-        cue: "Flexiona ligeramente la cadera y rodillas suaves. No des saltos bruscos ni gires las rodillas hacia adentro.",
+        name: "3. Esquives y Defensa: Ducks & Weaves (Bisagra de Cadera)",
+        details: "Control del centro de gravedad atlético con tenis de amortiguación",
+        cue: "Al agacharte (Duck), flexiona suavemente rodillas y cadera. NUNCA dobles la columna lumbar hacia adelante. Mantén el pecho arriba y abdomen firme.",
         meta: "Continuo",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
-        videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
+        image: "assets/boxing_punch.jpg",
+        youtubeId: "11Y_2aW-c_k",
+        videoUrl: "https://www.youtube.com/watch?v=11Y_2aW-c_k"
       },
       {
-        name: "4. Vuelta a la Calma y Respiración",
-        details: "Estiramientos suaves de pectorales, tríceps y lumbares",
-        cue: "Baja las pulsaciones lentamente y bebe agua fresca.",
-        meta: "3 min",
-        image: "assets/treadmill.jpg",
-        localVideo: "assets/videos/incline_treadmill.mp4",
-        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+        name: "4. Vuelta a la Calma y Estiramientos Específicos",
+        details: "Estiramiento suave de pectorales, deltoides posterior, dorsales y flexores",
+        cue: "Respira hondo de forma nasal, baja las pulsaciones a zona basal y recupera la flexibilidad de hombros y espalda.",
+        meta: "3 a 5 min",
+        image: "assets/boxing_punch.jpg",
+        youtubeId: "d_kS9rJkQzQ",
+        videoUrl: "https://www.youtube.com/watch?v=d_kS9rJkQzQ"
       }
     ]
   },
@@ -90,79 +90,79 @@ const ROUTINES_DATA = {
       {
         name: "Sentadilla a la Silla (Box Squat) con Mancuerna Copa",
         details: "3 series x 10-12 repeticiones · Mancuerna 10 lb sostenida vertical al pecho",
-        cue: "Toca la silla con los glúteos de forma controlada (sin dejarte caer) y empuja el suelo con los talones.",
+        cue: "Toca la silla con los glúteos de forma controlada (sin dejarte caer) y empuja el suelo con los talones. Rodillas alineadas con los dedos de los pies.",
         meta: "Descanso: 90s",
         image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
+        youtubeId: "G0DMfAJl7V8",
         videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
       },
       {
         name: "Floor Press Unilateral (Pecho en el Suelo)",
         details: "3 series x 10 repeticiones por cada brazo · Mancuerna 10 lb",
-        cue: "El suelo frena el codo de forma natural, protegiendo el manguito rotador del hombro de hiperextensión.",
+        cue: "El suelo frena el codo de forma natural a 90°, protegiendo el manguito rotador y evitando tensión articular en el hombro.",
         meta: "Descanso: 60s",
         image: "assets/floor_press.jpg",
-        localVideo: "assets/videos/floor_press.mp4",
+        youtubeId: "csvfESQaMeU",
         videoUrl: "https://www.youtube.com/watch?v=csvfESQaMeU"
       },
       {
         name: "Paseo del Granjero Asimétrico (Suitcase Carry)",
         details: "3 series x 40 pasos por mano · Mancuerna 10 lb",
-        cue: "Camina erguido con la mancuerna a un solo lado. Evita que el torso se incline; tu abdomen oblicuo trabaja al 100%.",
+        cue: "Camina erguido con la mancuerna a un solo lado. Evita que el torso se incline lateralmente; tu abdomen oblicuo y cuadrado lumbar trabajan como escudo protector.",
         meta: "Descanso: 60s",
-        image: "assets/treadmill.jpg",
-        localVideo: "assets/videos/suitcase_carry.mp4",
+        image: "assets/floor_press.jpg",
+        youtubeId: "irA4HomwOjw",
         videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
       },
       {
-        name: "Elevación de Talones de Pie (Gemelos)",
-        details: "3 series x 15 repeticiones · Con apoyo suave en pared si se requiere",
-        cue: "Pausa de 1 segundo en la contracción máxima arriba. Fortalece el tendón de Aquiles y la pisada.",
+        name: "Elevación de Talones de Pie con Apoyo en Pared (Gemelos)",
+        details: "3 series x 15 repeticiones · Yemas de los dedos en la pared para equilibrio",
+        cue: "Sube sobre los metatarsos y pausa 1 segundo en la máxima contracción arriba. Desciende en 3 segundos lentos. Fortalece gemelos y tendón de Aquiles.",
         meta: "Descanso: 45s",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
+        image: "assets/calf_raises.jpg",
+        youtubeId: "gwLzBJYoWlI",
         videoUrl: "https://www.youtube.com/watch?v=gwLzBJYoWlI"
       }
     ]
   },
   "fuerza-b": {
-    title: "Rutina B: Tracción de Espalda, Glúteos y Hombro",
+    title: "Rutina B: Tracción de Espalda, Glúteos y Hombro Escapular",
     subtitle: "Miércoles · Postura erguida, descompresión dorsal y cadena posterior.",
     exercises: [
       {
         name: "Remo Unilateral con Apoyo en Mesa o Respaldo",
         details: "3 series x 10-12 reps por brazo · Mancuerna 10 lb",
-        cue: "Espalda totalmente recta a 45°. Lleva el codo hacia el bolsillo de tu pantalón apretando la escápula.",
+        cue: "Mano apoyada para descargar la columna lumbar. Espalda recta a 45°. Lleva el codo hacia el bolsillo de la cadera apretando la escápula.",
         meta: "Descanso: 60s",
         image: "assets/single_arm_row.jpg",
-        localVideo: "assets/videos/single_arm_row.mp4",
+        youtubeId: "tLnlWj7LQ34",
         videoUrl: "https://www.youtube.com/watch?v=tLnlWj7LQ34"
       },
       {
         name: "Puente de Glúteos con Mancuerna en Pelvis",
-        details: "3 series x 12 reps · Mancuerna 10 lb apoyada sobre la pelvis",
-        cue: "Aprieta los glúteos 2 segundos en el punto más alto. No arquees la espalda baja, usa la cadera.",
+        details: "3 series x 12 reps · Mancuerna 10 lb sostenida sobre la pelvis",
+        cue: "Empuja con los talones y aprieta los glúteos 2 segundos en el punto más alto. NO arquees la espalda baja; la extensión debe venir 100% de la cadera.",
         meta: "Descanso: 60s",
-        image: "assets/floor_press.jpg",
-        localVideo: "assets/videos/floor_press.mp4",
+        image: "assets/glute_bridge.jpg",
+        youtubeId: "8bbE64NuDTU",
         videoUrl: "https://www.youtube.com/watch?v=8bbE64NuDTU"
       },
       {
         name: "Press de Hombro Unilateral Sentado en Silla",
         details: "3 series x 8-10 reps por brazo · Mancuerna 10 lb",
-        cue: "Realiza el empuje con el codo a 45° con respecto al torso (plano escapular, libre de pinzamientos).",
+        cue: "Espalda apoyada firmemente. Agarre neutro y codo a 30-45° hacia adelante (plano escapular). Previene cualquier pinzamiento del supraespinoso.",
         meta: "Descanso: 75s",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
+        image: "assets/shoulder_press.jpg",
+        youtubeId: "B-aVuyhvLHU",
         videoUrl: "https://www.youtube.com/watch?v=B-aVuyhvLHU"
       },
       {
         name: "Bird-Dog (Pájaro-Perro en el Suelo)",
         details: "3 series x 8 reps controladas por lado · Solo peso corporal",
-        cue: "Extiende brazo y pierna opuesta. La columna no se balancea en ningún momento.",
+        cue: "Cuadrupedía (4 puntos). Extiende brazo y pierna opuesta formando una línea horizontal. La columna no rota ni se arquea. Ejercicio McGill de oro.",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
-        localVideo: "assets/videos/bird_dog.mp4",
+        youtubeId: "XOD87c1-DLI",
         videoUrl: "https://www.youtube.com/watch?v=XOD87c1-DLI"
       }
     ]
@@ -174,37 +174,37 @@ const ROUTINES_DATA = {
       {
         name: "Split Squat Asistido (Zancada estática con apoyo)",
         details: "3 series x 8 reps por pierna · Mancuerna 10 lb en una mano, otra en pared/silla",
-        cue: "Baja la rodilla trasera verticalmente sin golpear el suelo. El apoyo en la pared evita pérdida de equilibrio.",
+        cue: "Postura estática (sin dar pasos). Baja la rodilla trasera verticalmente hacia el suelo sin impactar. El apoyo en pared da 100% estabilidad y cuida la rodilla delantera.",
         meta: "Descanso: 75s",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
+        image: "assets/split_squat.jpg",
+        youtubeId: "SGHbhdwsA1I",
         videoUrl: "https://www.youtube.com/watch?v=SGHbhdwsA1I"
       },
       {
         name: "Curl de Bíceps Excéntrico + Extensión Tríceps Suave",
         details: "3 series x 10 reps por brazo · Mancuerna 10 lb",
-        cue: "Baja la mancuerna en 3 segundos (fase excéntrica lenta). Crea tendones fuertes y sin tendinitis.",
+        cue: "Sube en 1 segundo y baja la mancuerna en 3 a 4 segundos lentos (fase excéntrica). Crea tendones fuertes en codos y previene dolores articulares.",
         meta: "Descanso: 60s",
-        image: "assets/single_arm_row.jpg",
-        localVideo: "assets/videos/single_arm_row.mp4",
+        image: "assets/bicep_curl.jpg",
+        youtubeId: "ykJmrZ5v0Oo",
         videoUrl: "https://www.youtube.com/watch?v=ykJmrZ5v0Oo"
       },
       {
         name: "Halo con Mancuerna alrededor de la Cabeza",
         details: "3 series x 8 círculos (4 en cada sentido) · Mancuerna 10 lb sostenida con ambas manos",
-        cue: "Gira la mancuerna en círculo suave alrededor del cráneo manteniendo el abdomen firme. Salud de hombros.",
+        cue: "Gira la mancuerna en círculo suave alrededor del cráneo manteniendo el abdomen firme y costillas cerradas. Máxima salud y movilidad de hombros.",
         meta: "Descanso: 60s",
-        image: "assets/box_squat.jpg",
-        localVideo: "assets/videos/box_squat.mp4",
+        image: "assets/dumbbell_halo.jpg",
+        youtubeId: "z81fA66Wb7A",
         videoUrl: "https://www.youtube.com/watch?v=z81fA66Wb7A"
       },
       {
         name: "Deadbug (Bicho Muerto en el Suelo)",
         details: "3 series x 8 reps alternadas · Sin peso",
-        cue: "Pega la zona lumbar al suelo como si quisieras aplastar un billete debajo de tu espalda.",
+        cue: "Pega la zona lumbar al suelo con retroversión pélvica activa en todo momento. Extiende extremidades opuestas sin que la espalda baja se despegue del piso.",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
-        localVideo: "assets/videos/deadbug.mp4",
+        youtubeId: "PJ4QT2pMH6g",
         videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
       }
     ]
@@ -780,6 +780,17 @@ function setupTodayFocus() {
   });
 }
 
+// Asistente de recuperación de imágenes (Caché local con fallback a CDN GitHub)
+window.handleImageError = function(img, origSrc) {
+  if (!img) return;
+  const filename = (origSrc || img.getAttribute('src') || '').split('/').pop();
+  if (!filename) return;
+  const cdnFallback = `https://raw.githubusercontent.com/mikecj92/vitaltrack/main/assets/${filename}`;
+  if (img.src !== cdnFallback) {
+    img.src = cdnFallback;
+  }
+};
+
 // Visor de Rutinas
 function setupRoutinesViewer(initialKey) {
   const subBtns = document.querySelectorAll('.sub-tab-btn');
@@ -793,15 +804,17 @@ function setupRoutinesViewer(initialKey) {
       <div class="routine-exercise-card">
         <div class="exercise-left-col">
           <div class="exercise-num">${idx + 1}</div>
-          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onclick="window.open('${ex.image}', '_blank')" title="Clic para ampliar ilustración">` : ''}
+          ${ex.image ? `<img src="${ex.image}" alt="${ex.name}" class="exercise-thumb" onerror="window.handleImageError(this, '${ex.image}')" onclick="window.open(this.src, '_blank')" title="Clic para ampliar ilustración">` : ''}
         </div>
         <div class="exercise-details">
           <h4>${ex.name}</h4>
           <p>${ex.details}</p>
           <span class="exercise-cue">💡 Técnica segura: ${ex.cue}</span>
           <div class="exercise-actions-bar">
-            ${ex.localVideo ? `<button type="button" class="btn-video-guide" onclick="playExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}')">🎬 Reproducir Video Local</button>` : ''}
-            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt">🌐 Ver en YouTube</a>` : ''}
+            <button type="button" class="btn-video-guide" onclick="openExerciseVideo('${key}', ${idx})">
+              🎬 Ver Video y Técnica
+            </button>
+            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt" title="Abrir en YouTube">🌐 YouTube</a>` : ''}
           </div>
         </div>
         <div class="exercise-meta">${ex.meta}</div>
@@ -833,45 +846,168 @@ function setupRoutinesViewer(initialKey) {
   setupVideoModal();
 }
 
-// Modal de Video Local
-function setupVideoModal() {
-  const modal = document.getElementById('video-modal');
-  const closeBtn = document.getElementById('video-modal-close');
-  const player = document.getElementById('local-video-player');
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      if (player) {
-        player.pause();
-        player.src = '';
-      }
-      if (modal) modal.classList.remove('open');
-    });
-  }
-
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        if (player) {
-          player.pause();
-          player.src = '';
-        }
-        modal.classList.remove('open');
-      }
-    });
+// Helpers para Enlaces Personalizados de Google Drive
+function getCustomDriveVideos() {
+  try {
+    return JSON.parse(localStorage.getItem('vitaltrack_custom_drive_videos') || '{}');
+  } catch (e) {
+    return {};
   }
 }
 
+function saveCustomDriveVideo(exerciseKey, urlOrId) {
+  try {
+    const data = getCustomDriveVideos();
+    if (urlOrId) {
+      data[exerciseKey] = urlOrId;
+    } else {
+      delete data[exerciseKey];
+    }
+    localStorage.setItem('vitaltrack_custom_drive_videos', JSON.stringify(data));
+  } catch (e) {}
+}
+
+function extractYouTubeId(url) {
+  if (!url) return '';
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? match[1] : '';
+}
+
+function extractGoogleDriveId(url) {
+  if (!url) return '';
+  const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+  return match ? match[1] : url.trim();
+}
+
+// Modal Universal de Video y Técnica Biomecánica
+function setupVideoModal() {
+  const modal = document.getElementById('video-modal');
+  const closeBtn = document.getElementById('video-modal-close');
+  const footerCloseBtn = document.getElementById('btn-modal-close-footer');
+  const container = document.getElementById('video-player-container');
+
+  function closeModal() {
+    if (container) container.innerHTML = '';
+    if (modal) modal.classList.remove('open');
+  }
+
+  if (closeBtn) closeBtn.onclick = closeModal;
+  if (footerCloseBtn) footerCloseBtn.onclick = closeModal;
+
+  if (modal) {
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+      closeModal();
+    }
+  });
+}
+
+window.openExerciseVideo = function(routineKey, exerciseIndex) {
+  const routine = ROUTINES_DATA[routineKey];
+  if (!routine) return;
+  const ex = routine.exercises[exerciseIndex];
+  if (!ex) return;
+
+  const modal = document.getElementById('video-modal');
+  const titleElem = document.getElementById('video-modal-title');
+  const subElem = document.getElementById('video-modal-subtitle');
+  const cueTextElem = document.getElementById('video-modal-cue-text');
+  const container = document.getElementById('video-player-container');
+  const btnYtExt = document.getElementById('video-btn-yt-external');
+  const btnDriveOpt = document.getElementById('video-btn-drive-opt');
+
+  if (!modal || !container) return;
+
+  if (titleElem) titleElem.textContent = ex.name;
+  if (subElem) subElem.textContent = `${routine.title} · ${ex.meta}`;
+  if (cueTextElem) cueTextElem.textContent = `${ex.cue} (${ex.details})`;
+
+  const ytId = ex.youtubeId || extractYouTubeId(ex.videoUrl);
+  if (btnYtExt) {
+    btnYtExt.href = ex.videoUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#');
+  }
+
+  const customDriveMap = getCustomDriveVideos();
+  const exerciseKey = `${routineKey}_${exerciseIndex}`;
+  const customDriveUrl = customDriveMap[exerciseKey] || ex.driveUrl || '';
+
+  function renderPlayer(forceDrive = false) {
+    container.innerHTML = '';
+    if (forceDrive && customDriveUrl) {
+      const driveId = extractGoogleDriveId(customDriveUrl);
+      container.innerHTML = `
+        <iframe 
+          src="https://drive.google.com/file/d/${driveId}/preview" 
+          title="${ex.name} (Google Drive)" 
+          allow="autoplay; fullscreen" 
+          allowfullscreen 
+          style="width: 100%; height: 100%; border: none;">
+        </iframe>
+      `;
+    } else if (ytId) {
+      container.innerHTML = `
+        <iframe 
+          src="https://www.youtube.com/embed/${ytId}?autoplay=1&playsinline=1&rel=0&modestbranding=1" 
+          title="${ex.name}" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen 
+          style="width: 100%; height: 100%; border: none;">
+        </iframe>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #94a3b8; padding: 24px; text-align: center;">
+          <p>Usa los botones inferiores para abrir la demostración en YouTube o Google Drive.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Reproducir YouTube verificado o Google Drive si está configurado
+  renderPlayer(Boolean(customDriveUrl && !ytId));
+
+  if (btnDriveOpt) {
+    btnDriveOpt.onclick = function() {
+      const current = customDriveMap[exerciseKey] || '';
+      const input = prompt(
+        `📁 Integración con Google Drive para:\n"${ex.name}"\n\nPega el enlace de compartir o ID de archivo de Google Drive:\n(O deja vacío para usar YouTube oficial)`,
+        current
+      );
+      if (input !== null) {
+        saveCustomDriveVideo(exerciseKey, input.trim());
+        if (input.trim()) {
+          showSyncToast('✅ Video de Google Drive guardado para este ejercicio', 'success');
+          renderPlayer(true);
+        } else {
+          showSyncToast('ℹ️ Restablecido a reproductor oficial verificado', 'info');
+          renderPlayer(false);
+        }
+      }
+    };
+  }
+
+  modal.classList.add('open');
+};
+
+// Compatibilidad hacia atrás
 window.playExerciseVideo = function(videoPath, title) {
   const modal = document.getElementById('video-modal');
-  const player = document.getElementById('local-video-player');
+  const container = document.getElementById('video-player-container');
   const titleElem = document.getElementById('video-modal-title');
-
-  if (modal && player) {
-    if (titleElem) titleElem.textContent = title;
-    player.src = videoPath;
+  if (modal && container) {
+    if (titleElem) titleElem.textContent = title || 'Demostración Técnica';
+    container.innerHTML = `
+      <video controls autoplay playsinline style="width: 100%; height: 100%;">
+        <source src="${videoPath}" type="video/mp4">
+        Tu navegador no soporta video local.
+      </video>
+    `;
     modal.classList.add('open');
-    player.play().catch(() => {});
   }
 };
 
