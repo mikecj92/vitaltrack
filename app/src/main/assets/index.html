@@ -88,7 +88,7 @@
           <p class="text-muted" id="page-subtitle">Progreso acumulado, métricas biomecánicas y plan activo</p>
         </div>
         <div class="header-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <span id="app-version-badge" style="font-size: 0.72rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;">v1.2.0 ✨ Live</span>
+          <span id="app-version-badge" style="font-size: 0.72rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;">v1.3.0 ✨ Live</span>
           <span id="sync-cloud-status" class="readiness-pill readiness-green" style="font-size: 0.75rem; padding: 5px 12px; font-weight: 600;">
             ☁️ Nube Activa
           </span>
@@ -591,17 +591,39 @@
     </main>
   </div>
 
-  <!-- Modal Reproductor de Video Local -->
+  <!-- Modal Reproductor de Video y Técnica Biomecánica -->
   <div id="video-modal" class="video-modal-backdrop">
     <div class="video-modal-content">
       <div class="video-modal-header">
-        <h3 id="video-modal-title">Video Demostración de Técnica</h3>
-        <button id="video-modal-close" class="btn-close-modal">&times;</button>
+        <div>
+          <h3 id="video-modal-title">Demostración Técnica</h3>
+          <span id="video-modal-subtitle" style="font-size: 0.82rem; color: #94a3b8; display: block; margin-top: 2px;">Enfoque Cero Impacto & Biomecánica Clínica</span>
+        </div>
+        <button id="video-modal-close" class="btn-close-modal" aria-label="Cerrar">&times;</button>
       </div>
       <div class="video-modal-body">
-        <video id="local-video-player" controls preload="metadata">
-          Tu navegador no soporta el elemento de video.
-        </video>
+        <div id="video-player-container" class="video-responsive-wrapper">
+          <!-- iframe o video se inyecta dinámicamente -->
+        </div>
+      </div>
+      <div class="video-modal-footer">
+        <div id="video-modal-cue-box" class="video-cue-box">
+          <div style="font-size: 0.8rem; font-weight: 800; color: #10b981; margin-bottom: 4px; letter-spacing: 0.5px;">💡 CLAVE BIOMECÁNICA SEGURA:</div>
+          <p id="video-modal-cue-text" style="font-size: 0.88rem; color: #e2e8f0; margin: 0; line-height: 1.45;"></p>
+        </div>
+        <div class="video-actions-row">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a id="video-btn-yt-external" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.35);">
+              <span>▶️ Abrir en YouTube</span>
+            </a>
+            <button type="button" id="video-btn-drive-opt" class="btn btn-secondary btn-sm" style="color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.35);">
+              <span>📁 Usar Google Drive</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-modal-close-footer">
+            <span>Cerrar</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
