@@ -217,6 +217,257 @@ const STORAGE_KEYS = {
   METRICS: 'vitaltrack_metrics_v1'
 };
 
+// Configuración de Sincronización Automática en la Nube (GitHub Cloud Sync)
+const CLOUD_CONFIG = {
+  owner: 'mikecj92',
+  repo: 'vitaltrack',
+  path: 'vitaltrack_db.json',
+  token: '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'
+};
+
+function formatSyncTime() {
+  const d = new Date();
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+function base64ToUtf8(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\s/g, ''))));
+}
+
+function showSyncToast(message, type = 'success') {
+  let toast = document.getElementById('sync-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'sync-toast';
+    toast.style.position = 'fixed';
+    toast.style.bottom = '24px';
+    toast.style.right = '24px';
+    toast.style.padding = '12px 20px';
+    toast.style.borderRadius = '10px';
+    toast.style.background = '#0f291e';
+    toast.style.color = '#6ee7b7';
+    toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.6)';
+    toast.style.fontSize = '0.88rem';
+    toast.style.fontWeight = '600';
+    toast.style.zIndex = '99999';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '10px';
+    toast.style.transition = 'all 0.3s ease';
+    toast.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+    document.body.appendChild(toast);
+  }
+  if (type === 'success') {
+    toast.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+    toast.style.background = '#0d281e';
+    toast.style.color = '#6ee7b7';
+  } else if (type === 'syncing') {
+    toast.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+    toast.style.background = '#0c1d2e';
+    toast.style.color = '#93c5fd';
+  } else {
+    toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    toast.style.background = '#2b0f14';
+    toast.style.color = '#fca5a5';
+  }
+  toast.innerHTML = message;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateY(0)';
+  
+  if (window._syncToastTimer) clearTimeout(window._syncToastTimer);
+  window._syncToastTimer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(12px)';
+  }, 3500);
+}
+
+function updateSyncStatus(text, type = 'green') {
+  const badge = document.getElementById('sync-cloud-status');
+  if (!badge) return;
+  badge.textContent = text;
+  badge.className = `readiness-pill readiness-${type}`;
+}
+
+async function autoSyncPull(isManual = false) {
+  if (!CLOUD_CONFIG.token) return;
+  try {
+    updateSyncStatus('🔄 Sincronizando nube...', 'yellow');
+    if (isManual) showSyncToast('🔄 Comprobando sincronización en la nube...', 'syncing');
+
+    const res = await fetch(`https://api.github.com/repos/${CLOUD_CONFIG.owner}/${CLOUD_CONFIG.repo}/contents/${CLOUD_CONFIG.path}`, {
+      headers: {
+        'Authorization': `Bearer ${CLOUD_CONFIG.token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const contentStr = base64ToUtf8(data.content);
+      const cloudData = JSON.parse(contentStr);
+      
+      let localWorkouts = getStoredWorkouts();
+      let localMetrics = getStoredMetrics();
+      let changesFound = false;
+
+      if (cloudData.workouts && Array.isArray(cloudData.workouts)) {
+        const localIds = new Set(localWorkouts.map(w => w.id));
+        cloudData.workouts.forEach(cw => {
+          if (!localIds.has(cw.id)) {
+            localWorkouts.push(cw);
+            changesFound = true;
+          }
+        });
+        localWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        saveStoredWorkouts(localWorkouts);
+      }
+
+      if (cloudData.metrics && Array.isArray(cloudData.metrics)) {
+        const localMIds = new Set(localMetrics.map(m => m.id));
+        cloudData.metrics.forEach(cm => {
+          if (!localMIds.has(cm.id)) {
+            localMetrics.push(cm);
+            changesFound = true;
+          }
+        });
+        localMetrics.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        saveStoredMetrics(localMetrics);
+      }
+
+      renderDashboard();
+      renderHistoryTable();
+      renderMetricsTable();
+      if (typeof calculateAdaptivePrescription === 'function') {
+        calculateAdaptivePrescription();
+      }
+
+      const timeStr = formatSyncTime();
+      updateSyncStatus(`☁️ Nube Activa (${timeStr})`, 'green');
+      if (isManual || changesFound) {
+        showSyncToast(`☁️ Base de datos sincronizada en la nube (${timeStr})`, 'success');
+      }
+    } else {
+      updateSyncStatus('☁️ Guardado local', 'yellow');
+    }
+  } catch (err) {
+    updateSyncStatus('☁️ Modo Offline', 'yellow');
+  }
+}
+
+async function autoSyncPush(isDelete = false) {
+  if (!CLOUD_CONFIG.token) return;
+  try {
+    updateSyncStatus('🔄 Subiendo a la nube...', 'yellow');
+    showSyncToast('☁️ Subiendo registro automáticamente a la nube...', 'syncing');
+
+    let sha = null;
+    const getRes = await fetch(`https://api.github.com/repos/${CLOUD_CONFIG.owner}/${CLOUD_CONFIG.repo}/contents/${CLOUD_CONFIG.path}`, {
+      headers: {
+        'Authorization': `Bearer ${CLOUD_CONFIG.token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (getRes.ok) {
+      const getData = await getRes.json();
+      sha = getData.sha;
+
+      // Si no es un borrado explícito, unir registros remotos nuevos que puedan provenir del celular/tablet
+      if (!isDelete) {
+        try {
+          const remoteJson = JSON.parse(base64ToUtf8(getData.content));
+          let localWorkouts = getStoredWorkouts();
+          let localMetrics = getStoredMetrics();
+          let merged = false;
+
+          if (Array.isArray(remoteJson.workouts)) {
+            const locIds = new Set(localWorkouts.map(w => w.id));
+            remoteJson.workouts.forEach(rw => {
+              if (!locIds.has(rw.id)) {
+                localWorkouts.push(rw);
+                merged = true;
+              }
+            });
+            if (merged) {
+              localWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+              saveStoredWorkouts(localWorkouts);
+            }
+          }
+
+          if (Array.isArray(remoteJson.metrics)) {
+            let mMerged = false;
+            const locMIds = new Set(localMetrics.map(m => m.id));
+            remoteJson.metrics.forEach(rm => {
+              if (!locMIds.has(rm.id)) {
+                localMetrics.push(rm);
+                mMerged = true;
+              }
+            });
+            if (mMerged) {
+              localMetrics.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+              saveStoredMetrics(localMetrics);
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    const payloadData = {
+      profile: USER_PROFILE,
+      workouts: getStoredWorkouts(),
+      metrics: getStoredMetrics(),
+      syncedAt: new Date().toISOString()
+    };
+
+    const b64 = utf8ToBase64(JSON.stringify(payloadData, null, 2));
+    const nowTime = formatSyncTime();
+
+    const body = {
+      message: `Auto-sync VitalTrack (${nowTime})`,
+      content: b64
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(`https://api.github.com/repos/${CLOUD_CONFIG.owner}/${CLOUD_CONFIG.repo}/contents/${CLOUD_CONFIG.path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${CLOUD_CONFIG.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (putRes.ok) {
+      updateSyncStatus(`☁️ Nube Activa (${nowTime})`, 'green');
+      showSyncToast(`✅ ¡Sincronizado automáticamente en la nube! (${nowTime})`, 'success');
+    } else {
+      updateSyncStatus('⚠️ Guardado local', 'yellow');
+    }
+  } catch (e) {
+    updateSyncStatus('⚠️ Guardado local (offline)', 'yellow');
+    showSyncToast('💾 Guardado localmente (se subirá en cuanto tengas conexión)', 'syncing');
+  }
+}
+
+// Re-sincronización automática cuando el usuario vuelve a la app o recupera internet
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    autoSyncPull();
+  }
+});
+window.addEventListener('focus', () => {
+  autoSyncPull();
+});
+window.addEventListener('online', () => {
+  autoSyncPull();
+  autoSyncPush();
+});
+
 // Estado del Temporizador
 let timerInterval = null;
 let timerSeconds = 0;
@@ -233,6 +484,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
   renderHistoryTable();
   renderMetricsTable();
+  autoSyncPull();
+
+  const syncStatusElem = document.getElementById('sync-cloud-status');
+  if (syncStatusElem) {
+    syncStatusElem.style.cursor = 'pointer';
+    syncStatusElem.title = 'Haz clic para sincronizar ahora con la nube';
+    syncStatusElem.addEventListener('click', () => {
+      autoSyncPull(true);
+    });
+  }
 
   // Registro de Service Worker para App Móvil Offline / PWA
   if ('serviceWorker' in navigator) {
@@ -580,6 +841,9 @@ function setupFormEvents() {
     workouts.unshift(newWorkout);
     saveStoredWorkouts(workouts);
 
+    // Sincronización automática inmediata a la nube
+    autoSyncPush();
+
     form.reset();
     document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('input-no-pain').checked = true;
@@ -587,7 +851,6 @@ function setupFormEvents() {
     renderDashboard();
     renderHistoryTable();
 
-    alert('✅ Sesión registrada exitosamente.');
     document.getElementById('nav-btn-dash').click();
   });
 
@@ -599,10 +862,18 @@ function setupFormEvents() {
     });
   }
 
-  // Exportar JSON
-  const btnExport = document.getElementById('btn-export-json');
-  if (btnExport) {
-    btnExport.addEventListener('click', () => {
+  // Botón manual de Sincronizar Nube Ahora
+  const btnSyncAction = document.getElementById('btn-sync-cloud-action');
+  if (btnSyncAction) {
+    btnSyncAction.addEventListener('click', () => {
+      autoSyncPull(true);
+    });
+  }
+
+  // Descargar Copia JSON de Respaldo
+  const btnSaveDrive = document.getElementById('btn-save-drive');
+  if (btnSaveDrive) {
+    btnSaveDrive.addEventListener('click', () => {
       const data = {
         profile: USER_PROFILE,
         workouts: getStoredWorkouts(),
@@ -613,9 +884,10 @@ function setupFormEvents() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `registro_ejercicio_${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `vitaltrack_db.json`;
       a.click();
       URL.revokeObjectURL(url);
+      showSyncToast('💾 Archivo vitaltrack_db.json descargado correctamente.', 'success');
     });
   }
 }
@@ -675,13 +947,14 @@ function setupMetricsEvents() {
     metrics.unshift(newMetric);
     saveStoredMetrics(metrics);
 
+    // Sincronización automática inmediata a la nube
+    autoSyncPush();
+
     form.reset();
     document.getElementById('metric-date').value = new Date().toISOString().split('T')[0];
 
     renderDashboard();
     renderMetricsTable();
-
-    alert('✅ Métrica corporal guardada exitosamente.');
   });
 }
 
@@ -834,6 +1107,7 @@ window.deleteWorkout = function(id) {
   let workouts = getStoredWorkouts();
   workouts = workouts.filter(w => w.id !== id);
   saveStoredWorkouts(workouts);
+  autoSyncPush(true);
   renderDashboard();
   renderHistoryTable();
 };
@@ -843,6 +1117,7 @@ window.deleteMetric = function(id) {
   let metrics = getStoredMetrics();
   metrics = metrics.filter(m => m.id !== id);
   saveStoredMetrics(metrics);
+  autoSyncPush(true);
   renderDashboard();
   renderMetricsTable();
 };
