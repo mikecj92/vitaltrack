@@ -7,6 +7,7 @@ const USER_PROFILE = {
 };
 
 // Rutinas detalladas con enfoque de cero impacto, biomecánica clínica y guías visuales/video
+// Rutinas detalladas con enfoque de cero impacto, biomecánica clínica y guías visuales/video
 const ROUTINES_DATA = {
   "caminadora": {
     title: "Cardio Zona 2 en Caminadora Altera CE-8610 (Cero Impacto)",
@@ -18,6 +19,7 @@ const ROUTINES_DATA = {
         cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados para lubricar las articulaciones sin impacto.",
         meta: "3 a 5 min",
         image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
@@ -27,6 +29,7 @@ const ROUTINES_DATA = {
         cue: "Test de la voz: debes poder pronunciar frases completas sin jadear (110-128 BPM). NO te sujetes a las barras fijas para que tu columna y core trabajen de forma natural.",
         meta: "25 a 35 min",
         image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       },
@@ -36,6 +39,7 @@ const ROUTINES_DATA = {
         cue: "Inhala profundo por la nariz y exhala por la boca. Permite que tus pulsaciones bajen a menos de 100 BPM de forma controlada.",
         meta: "3 min",
         image: "assets/treadmill.jpg",
+        localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
         videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
       }
@@ -93,6 +97,7 @@ const ROUTINES_DATA = {
         cue: "Toca la silla con los glúteos de forma controlada (sin dejarte caer) y empuja el suelo con los talones. Rodillas alineadas con los dedos de los pies.",
         meta: "Descanso: 90s",
         image: "assets/box_squat.jpg",
+        localVideo: "assets/videos/box_squat.mp4",
         youtubeId: "G0DMfAJl7V8",
         videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
       },
@@ -102,6 +107,7 @@ const ROUTINES_DATA = {
         cue: "El suelo frena el codo de forma natural a 90°, protegiendo el manguito rotador y evitando tensión articular en el hombro.",
         meta: "Descanso: 60s",
         image: "assets/floor_press.jpg",
+        localVideo: "assets/videos/floor_press.mp4",
         youtubeId: "csvfESQaMeU",
         videoUrl: "https://www.youtube.com/watch?v=csvfESQaMeU"
       },
@@ -111,6 +117,7 @@ const ROUTINES_DATA = {
         cue: "Camina erguido con la mancuerna a un solo lado. Evita que el torso se incline lateralmente; tu abdomen oblicuo y cuadrado lumbar trabajan como escudo protector.",
         meta: "Descanso: 60s",
         image: "assets/floor_press.jpg",
+        localVideo: "assets/videos/suitcase_carry.mp4",
         youtubeId: "irA4HomwOjw",
         videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
       },
@@ -135,6 +142,7 @@ const ROUTINES_DATA = {
         cue: "Mano apoyada para descargar la columna lumbar. Espalda recta a 45°. Lleva el codo hacia el bolsillo de la cadera apretando la escápula.",
         meta: "Descanso: 60s",
         image: "assets/single_arm_row.jpg",
+        localVideo: "assets/videos/single_arm_row.mp4",
         youtubeId: "tLnlWj7LQ34",
         videoUrl: "https://www.youtube.com/watch?v=tLnlWj7LQ34"
       },
@@ -162,6 +170,7 @@ const ROUTINES_DATA = {
         cue: "Cuadrupedía (4 puntos). Extiende brazo y pierna opuesta formando una línea horizontal. La columna no rota ni se arquea. Ejercicio McGill de oro.",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
+        localVideo: "assets/videos/bird_dog.mp4",
         youtubeId: "XOD87c1-DLI",
         videoUrl: "https://www.youtube.com/watch?v=XOD87c1-DLI"
       }
@@ -204,6 +213,7 @@ const ROUTINES_DATA = {
         cue: "Pega la zona lumbar al suelo con retroversión pélvica activa en todo momento. Extiende extremidades opuestas sin que la espalda baja se despegue del piso.",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
+        localVideo: "assets/videos/deadbug.mp4",
         youtubeId: "PJ4QT2pMH6g",
         videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
       }
@@ -811,10 +821,15 @@ function setupRoutinesViewer(initialKey) {
           <p>${ex.details}</p>
           <span class="exercise-cue">💡 Técnica segura: ${ex.cue}</span>
           <div class="exercise-actions-bar">
-            <button type="button" class="btn-video-guide" onclick="openExerciseVideo('${key}', ${idx})">
-              🎬 Ver Video y Técnica
+            ${ex.localVideo ? `
+              <button type="button" class="btn-video-guide btn-video-local" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
+                🎬 Reproducir Video Local (MP4)
+              </button>
+            ` : ''}
+            <button type="button" class="btn-video-guide btn-video-drive" onclick="openDriveExerciseVideo('${key}', ${idx})">
+              📁 Google Drive
             </button>
-            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt" title="Abrir en YouTube">🌐 YouTube</a>` : ''}
+            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt" title="Ver en YouTube">🌐 YouTube</a>` : ''}
           </div>
         </div>
         <div class="exercise-meta">${ex.meta}</div>
@@ -879,7 +894,7 @@ function extractGoogleDriveId(url) {
   return match ? match[1] : url.trim();
 }
 
-// Modal Universal de Video y Técnica Biomecánica
+// Modal Universal de Video (Local MP4 y Google Drive)
 function setupVideoModal() {
   const modal = document.getElementById('video-modal');
   const closeBtn = document.getElementById('video-modal-close');
@@ -887,7 +902,14 @@ function setupVideoModal() {
   const container = document.getElementById('video-player-container');
 
   function closeModal() {
-    if (container) container.innerHTML = '';
+    if (container) {
+      const v = container.querySelector('video');
+      if (v) {
+        v.pause();
+        v.src = '';
+      }
+      container.innerHTML = '';
+    }
     if (modal) modal.classList.remove('open');
   }
 
@@ -907,7 +929,55 @@ function setupVideoModal() {
   });
 }
 
-window.openExerciseVideo = function(routineKey, exerciseIndex) {
+// Reproducción Directa de Video Local MP4 en PC
+window.playLocalExerciseVideo = function(videoPath, title, routineTitle, cue) {
+  const modal = document.getElementById('video-modal');
+  const titleElem = document.getElementById('video-modal-title');
+  const subElem = document.getElementById('video-modal-subtitle');
+  const cueTextElem = document.getElementById('video-modal-cue-text');
+  const container = document.getElementById('video-player-container');
+  const btnYtExt = document.getElementById('video-btn-yt-external');
+  const btnDriveOpt = document.getElementById('video-btn-drive-opt');
+
+  if (!modal || !container) return;
+
+  if (titleElem) titleElem.textContent = title || 'Demostración Técnica';
+  if (subElem) subElem.textContent = `${routineTitle || 'Ejercicio'} · Archivo Local MP4 (Reproducción Directa)`;
+  if (cueTextElem) cueTextElem.textContent = cue || 'Ejecuta el ejercicio manteniendo control y sin dolor articular.';
+  if (btnYtExt) btnYtExt.style.display = 'none';
+
+  container.innerHTML = `
+    <video controls autoplay playsinline style="width: 100%; height: 100%; max-height: 70vh; background: #000; border-radius: 8px;">
+      <source src="${videoPath}" type="video/mp4">
+      Tu navegador no soporta el video MP4 local. Verifica la ruta: ${videoPath}
+    </video>
+  `;
+
+  if (btnDriveOpt) {
+    btnDriveOpt.style.display = 'inline-flex';
+    btnDriveOpt.textContent = '📁 Cambiar a Google Drive';
+    btnDriveOpt.onclick = function() {
+      const input = prompt('📁 Pega el enlace de Google Drive para este video:');
+      if (input && input.trim()) {
+        const driveId = extractGoogleDriveId(input.trim());
+        container.innerHTML = `
+          <iframe 
+            src="https://drive.google.com/file/d/${driveId}/preview" 
+            title="${title} (Google Drive)" 
+            allow="autoplay; fullscreen" 
+            allowfullscreen 
+            style="width: 100%; height: 100%; border: none;">
+          </iframe>
+        `;
+      }
+    };
+  }
+
+  modal.classList.add('open');
+};
+
+// Reproducción e Integración con Google Drive
+window.openDriveExerciseVideo = function(routineKey, exerciseIndex) {
   const routine = ROUTINES_DATA[routineKey];
   if (!routine) return;
   const ex = routine.exercises[exerciseIndex];
@@ -924,22 +994,20 @@ window.openExerciseVideo = function(routineKey, exerciseIndex) {
   if (!modal || !container) return;
 
   if (titleElem) titleElem.textContent = ex.name;
-  if (subElem) subElem.textContent = `${routine.title} · ${ex.meta}`;
+  if (subElem) subElem.textContent = `${routine.title} · Integración Google Drive`;
   if (cueTextElem) cueTextElem.textContent = `${ex.cue} (${ex.details})`;
-
-  const ytId = ex.youtubeId || extractYouTubeId(ex.videoUrl);
   if (btnYtExt) {
-    btnYtExt.href = ex.videoUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#');
+    btnYtExt.style.display = ex.videoUrl ? 'inline-flex' : 'none';
+    btnYtExt.href = ex.videoUrl || '#';
   }
 
   const customDriveMap = getCustomDriveVideos();
   const exerciseKey = `${routineKey}_${exerciseIndex}`;
   const customDriveUrl = customDriveMap[exerciseKey] || ex.driveUrl || '';
 
-  function renderPlayer(forceDrive = false) {
-    container.innerHTML = '';
-    if (forceDrive && customDriveUrl) {
-      const driveId = extractGoogleDriveId(customDriveUrl);
+  function renderDrive(url) {
+    if (url) {
+      const driveId = extractGoogleDriveId(url);
       container.innerHTML = `
         <iframe 
           src="https://drive.google.com/file/d/${driveId}/preview" 
@@ -949,43 +1017,56 @@ window.openExerciseVideo = function(routineKey, exerciseIndex) {
           style="width: 100%; height: 100%; border: none;">
         </iframe>
       `;
-    } else if (ytId) {
+    } else if (ex.localVideo) {
       container.innerHTML = `
-        <iframe 
-          src="https://www.youtube.com/embed/${ytId}?autoplay=1&playsinline=1&rel=0&modestbranding=1" 
-          title="${ex.name}" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen 
-          style="width: 100%; height: 100%; border: none;">
-        </iframe>
-      `;
-    } else {
-      container.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #94a3b8; padding: 24px; text-align: center;">
-          <p>Usa los botones inferiores para abrir la demostración en YouTube o Google Drive.</p>
+        <div style="padding: 24px; text-align: center; color: #cbd5e1;">
+          <p style="margin-bottom: 14px; font-size: 1rem;">🎬 Este ejercicio cuenta con video local MP4 en tu PC:</p>
+          <button type="button" class="btn btn-primary" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
+            ▶️ Ver Video Local (MP4)
+          </button>
+          <div style="margin-top: 16px;">
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px;">O puedes vincular tu video personal desde Google Drive:</p>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-prompt-drive-now">📁 Vincular Enlace de Google Drive</button>
+          </div>
         </div>
       `;
+      setTimeout(() => {
+        const btnPrompt = document.getElementById('btn-prompt-drive-now');
+        if (btnPrompt) btnPrompt.onclick = () => btnDriveOpt && btnDriveOpt.click();
+      }, 50);
+    } else {
+      container.innerHTML = `
+        <div style="padding: 24px; text-align: center; color: #cbd5e1;">
+          <p style="margin-bottom: 12px; font-size: 1rem;">📁 ¿Tienes tu video en Google Drive para este ejercicio?</p>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-prompt-drive-now">📁 Vincular Enlace de Google Drive</button>
+        </div>
+      `;
+      setTimeout(() => {
+        const btnPrompt = document.getElementById('btn-prompt-drive-now');
+        if (btnPrompt) btnPrompt.onclick = () => btnDriveOpt && btnDriveOpt.click();
+      }, 50);
     }
   }
 
-  // Reproducir YouTube verificado o Google Drive si está configurado
-  renderPlayer(Boolean(customDriveUrl && !ytId));
+  renderDrive(customDriveUrl);
 
   if (btnDriveOpt) {
+    btnDriveOpt.style.display = 'inline-flex';
+    btnDriveOpt.textContent = '📁 Configurar Enlace de Drive';
     btnDriveOpt.onclick = function() {
       const current = customDriveMap[exerciseKey] || '';
       const input = prompt(
-        `📁 Integración con Google Drive para:\n"${ex.name}"\n\nPega el enlace de compartir o ID de archivo de Google Drive:\n(O deja vacío para usar YouTube oficial)`,
+        `📁 Enlace de Google Drive para "${ex.name}":\n\nPega el enlace de compartir de Google Drive:`,
         current
       );
       if (input !== null) {
         saveCustomDriveVideo(exerciseKey, input.trim());
         if (input.trim()) {
-          showSyncToast('✅ Video de Google Drive guardado para este ejercicio', 'success');
-          renderPlayer(true);
+          showSyncToast('✅ Video de Google Drive vinculado', 'success');
+          renderDrive(input.trim());
         } else {
-          showSyncToast('ℹ️ Restablecido a reproductor oficial verificado', 'info');
-          renderPlayer(false);
+          showSyncToast('ℹ️ Enlace de Google Drive eliminado', 'info');
+          renderDrive('');
         }
       }
     };
@@ -994,21 +1075,21 @@ window.openExerciseVideo = function(routineKey, exerciseIndex) {
   modal.classList.add('open');
 };
 
-// Compatibilidad hacia atrás
-window.playExerciseVideo = function(videoPath, title) {
-  const modal = document.getElementById('video-modal');
-  const container = document.getElementById('video-player-container');
-  const titleElem = document.getElementById('video-modal-title');
-  if (modal && container) {
-    if (titleElem) titleElem.textContent = title || 'Demostración Técnica';
-    container.innerHTML = `
-      <video controls autoplay playsinline style="width: 100%; height: 100%;">
-        <source src="${videoPath}" type="video/mp4">
-        Tu navegador no soporta video local.
-      </video>
-    `;
-    modal.classList.add('open');
+// Compatibilidad general
+window.openExerciseVideo = function(routineKey, exerciseIndex) {
+  const routine = ROUTINES_DATA[routineKey];
+  if (!routine) return;
+  const ex = routine.exercises[exerciseIndex];
+  if (!ex) return;
+  if (ex.localVideo) {
+    playLocalExerciseVideo(ex.localVideo, ex.name, routine.title, ex.cue);
+  } else {
+    openDriveExerciseVideo(routineKey, exerciseIndex);
   }
+};
+
+window.playExerciseVideo = function(videoPath, title) {
+  playLocalExerciseVideo(videoPath, title, '', '');
 };
 
 // Asistente Temporizador con Síntesis de Sonido Web Audio
