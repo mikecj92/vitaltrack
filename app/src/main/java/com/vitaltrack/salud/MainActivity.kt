@@ -16,19 +16,23 @@ import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.RestingHeartRateRecord
+import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import android.util.Base64
+import java.time.Duration
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,7 +44,12 @@ class MainActivity : AppCompatActivity() {
         HealthPermission.getReadPermission(HeartRateRecord::class),
         HealthPermission.getReadPermission(StepsRecord::class),
         HealthPermission.getReadPermission(SleepSessionRecord::class),
-        HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class)
+        HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class),
+        HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+        HealthPermission.getReadPermission(DistanceRecord::class),
+        HealthPermission.getReadPermission(ExerciseSessionRecord::class),
+        HealthPermission.getReadPermission(RestingHeartRateRecord::class),
+        HealthPermission.getReadPermission(SpeedRecord::class)
     )
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -65,8 +74,8 @@ class MainActivity : AppCompatActivity() {
 
         val requestPermissionContract = PermissionController.createRequestPermissionResultContract()
         requestPermissions = registerForActivityResult(requestPermissionContract) { granted ->
-            if (granted.containsAll(PERMISSIONS)) {
-                Toast.makeText(this, "Conexión a Health Connect autorizada", Toast.LENGTH_SHORT).show()
+            if (granted.isNotEmpty()) {
+                Toast.makeText(this, "Permisos de salud concedidos", Toast.LENGTH_SHORT).show()
                 fetchAndInjectHealthData()
             } else {
                 Toast.makeText(this, "Permisos de salud parciales o denegados", Toast.LENGTH_LONG).show()
@@ -75,15 +84,23 @@ class MainActivity : AppCompatActivity() {
 
         // Cargar interfaz de VitalTrack localmente
         webView.loadUrl("file:///android_asset/index.html")
+
+        // Sincronización automática de salud al iniciar la aplicación
+        checkAndRequestPermissions()
     }
 
     private fun checkAndRequestPermissions() {
         val client = healthConnectClient ?: return
         lifecycleScope.launch {
-            val granted = client.permissionController.getGrantedPermissions()
-            if (granted.containsAll(PERMISSIONS)) {
-                fetchAndInjectHealthData()
-            } else {
+            try {
+                val granted = client.permissionController.getGrantedPermissions()
+                val missing = PERMISSIONS.filter { !granted.contains(it) }.toSet()
+                if (missing.isEmpty()) {
+                    fetchAndInjectHealthData()
+                } else {
+                    requestPermissions.launch(PERMISSIONS)
+                }
+            } catch (e: Exception) {
                 requestPermissions.launch(PERMISSIONS)
             }
         }
@@ -97,35 +114,218 @@ class MainActivity : AppCompatActivity() {
                 val startOfDay = now.truncatedTo(ChronoUnit.DAYS)
                 val timeRange = TimeRangeFilter.between(startOfDay, now)
 
-                // 1. Leer Pasos del Día
-                val stepsResponse = client.readRecords(
-                    ReadRecordsRequest(
-                        recordType = StepsRecord::class,
-                        timeRangeFilter = timeRange
+                // 1. Leer Pasos del Día con Deduplicación rigurosa por Origen de Datos (Watch vs Celular)
+                var totalSteps: Long = 0
+                try {
+                    val stepsResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = StepsRecord::class,
+                            timeRangeFilter = timeRange
+                        )
                     )
-                )
-                val totalSteps = stepsResponse.records.sumOf { it.count }
+                    // Filtrar preferentemente por Samsung Health (reloj Galaxy Watch)
+                    val sHealthRecords = stepsResponse.records.filter { 
+                        it.metadata.dataOrigin.packageName.lowercase().contains("shealth") 
+                    }
+                    totalSteps = if (sHealthRecords.isNotEmpty()) {
+                        sHealthRecords.sumOf { it.count }
+                    } else {
+                        // Si no hay etiqueta explícita de shealth, agrupar por origen y tomar la fuente máxima única para evitar duplicar
+                        val byOrigin = stepsResponse.records.groupBy { it.metadata.dataOrigin.packageName }
+                        byOrigin.values.maxOfOrNull { list -> list.sumOf { it.count } } ?: 0L
+                    }
+                } catch (e: Exception) {}
 
-                // 2. Leer Frecuencia Cardíaca
-                val hrResponse = client.readRecords(
-                    ReadRecordsRequest(
-                        recordType = HeartRateRecord::class,
-                        timeRangeFilter = timeRange
+                // 2. Leer Frecuencia Cardíaca Completa (Promedio, Máximo, Mínimo y Distribución de Zonas)
+                var avgHr = 0
+                var maxHr = 0
+                var minHr = 0
+                var zone2Count = 0
+                var zone3Count = 0
+                var peakCount = 0
+                var totalHrSamples = 0
+                try {
+                    val hrResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = HeartRateRecord::class,
+                            timeRangeFilter = timeRange
+                        )
                     )
-                )
-                val allBpm = hrResponse.records.flatMap { it.samples.map { s -> s.beatsPerMinute } }
-                val avgHr = if (allBpm.isNotEmpty()) allBpm.average().toInt() else 0
-                val minHr = if (allBpm.isNotEmpty()) allBpm.minOrNull()?.toInt() ?: 0 else 0
+                    val allBpm = hrResponse.records.flatMap { it.samples.map { s -> s.beatsPerMinute } }
+                    totalHrSamples = allBpm.size
+                    if (allBpm.isNotEmpty()) {
+                        avgHr = allBpm.average().toInt()
+                        maxHr = allBpm.maxOrNull()?.toInt() ?: 0
+                        minHr = allBpm.minOrNull()?.toInt() ?: 0
+                        // Zonas para usuario de 38 años (FCmax ~181 bpm):
+                        // Zona 2 (Aeróbica / Quema de Grasa / Impacto Seguro): 109 - 127 bpm
+                        // Zona 3 (Aeróbica Moderada): 128 - 145 bpm
+                        // Pico / Zona 4-5: > 145 bpm
+                        zone2Count = allBpm.count { it in 109..127 }
+                        zone3Count = allBpm.count { it in 128..145 }
+                        peakCount = allBpm.count { it > 145 }
+                    }
+                } catch (e: Exception) {}
 
-                // 3. Crear JSON para enviar a la web
+                // 3. Leer FC en Reposo (RHR)
+                var restingHr = if (minHr > 0) minHr else 72
+                try {
+                    val rhrResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = RestingHeartRateRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    if (rhrResponse.records.isNotEmpty()) {
+                        restingHr = rhrResponse.records.last().beatsPerMinute.toInt()
+                    }
+                } catch (e: Exception) {}
+
+                // 4. Leer Sesiones de Sueño (Últimas 36 horas para captar anoche)
+                var sleepHours = 0.0
+                var sleepMinutes = 0L
+                var sleepStart = ""
+                var sleepEnd = ""
+                var deepSleepMins = 0L
+                var lightSleepMins = 0L
+                var remSleepMins = 0L
+                var awakeMins = 0L
+                try {
+                    val sleepRange = TimeRangeFilter.between(now.minus(36, ChronoUnit.HOURS), now)
+                    val sleepResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = SleepSessionRecord::class,
+                            timeRangeFilter = sleepRange
+                        )
+                    )
+                    if (sleepResponse.records.isNotEmpty()) {
+                        val lastSleep = sleepResponse.records.maxByOrNull { it.endTime }
+                        if (lastSleep != null) {
+                            sleepMinutes = Duration.between(lastSleep.startTime, lastSleep.endTime).toMinutes()
+                            sleepHours = (sleepMinutes / 60.0 * 10).toInt() / 10.0
+                            sleepStart = lastSleep.startTime.toString()
+                            sleepEnd = lastSleep.endTime.toString()
+
+                            try {
+                                for (stage in lastSleep.stages) {
+                                    val dur = Duration.between(stage.startTime, stage.endTime).toMinutes()
+                                    when (stage.stage) {
+                                        SleepSessionRecord.STAGE_TYPE_DEEP -> deepSleepMins += dur
+                                        SleepSessionRecord.STAGE_TYPE_LIGHT -> lightSleepMins += dur
+                                        SleepSessionRecord.STAGE_TYPE_REM -> remSleepMins += dur
+                                        SleepSessionRecord.STAGE_TYPE_AWAKE -> awakeMins += dur
+                                    }
+                                }
+                            } catch (e: Exception) {}
+                        }
+                    }
+                } catch (e: Exception) {}
+
+                // 5. Leer Distancia en Km
+                var distanceKm = 0.0
+                try {
+                    val distResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = DistanceRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    val totalMeters = distResponse.records.sumOf { it.distance.inMeters }
+                    distanceKm = (totalMeters / 1000.0 * 100).toInt() / 100.0
+                } catch (e: Exception) {}
+
+                // 6. Leer Calorías Quemadas Totales y Activas
+                var totalCalories = 0
+                var activeCalories = 0
+                try {
+                    val calResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = TotalCaloriesBurnedRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    totalCalories = calResponse.records.sumOf { it.energy.inKilocalories }.toInt()
+                } catch (e: Exception) {}
+
+                try {
+                    val actCalResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = ActiveCaloriesBurnedRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    activeCalories = actCalResponse.records.sumOf { it.energy.inKilocalories }.toInt()
+                } catch (e: Exception) {}
+
+                // 7. Leer Sesiones de Ejercicio (Caminata dedicada)
+                var exerciseDuration = 0
+                var exerciseTitle = "Caminata"
+                var exerciseStartTime = ""
+                var exerciseEndTime = ""
+                try {
+                    val exResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = ExerciseSessionRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    if (exResponse.records.isNotEmpty()) {
+                        val session = exResponse.records.last()
+                        exerciseDuration = Duration.between(session.startTime, session.endTime).toMinutes().toInt()
+                        if (session.title != null && session.title!!.isNotEmpty()) {
+                            exerciseTitle = session.title!!
+                        }
+                        exerciseStartTime = session.startTime.toString()
+                        exerciseEndTime = session.endTime.toString()
+                    }
+                } catch (e: Exception) {}
+
+                // 8. Leer Velocidad promedio
+                var avgSpeedKmh = 0.0
+                try {
+                    val speedResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = SpeedRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    val allSpeeds = speedResponse.records.flatMap { it.samples.map { s -> s.speed.inKilometersPerHour } }
+                    if (allSpeeds.isNotEmpty()) {
+                        avgSpeedKmh = (allSpeeds.average() * 10).toInt() / 10.0
+                    }
+                } catch (e: Exception) {}
+
+                // 9. Crear Estructura JSON Completa con toda la telemetría recopilada
                 val data = JSONObject().apply {
                     put("steps", totalSteps)
                     put("avgHeartRate", avgHr)
-                    put("restingHeartRate", minHr)
+                    put("maxHeartRate", maxHr)
+                    put("minHeartRate", minHr)
+                    put("restingHeartRate", restingHr)
+                    put("zone2Mins", if (totalHrSamples > 0) (zone2Count.toDouble() / totalHrSamples * (if (exerciseDuration > 0) exerciseDuration else 30)).toInt() else 0)
+                    put("zone3Mins", if (totalHrSamples > 0) (zone3Count.toDouble() / totalHrSamples * (if (exerciseDuration > 0) exerciseDuration else 30)).toInt() else 0)
+                    put("peakMins", if (totalHrSamples > 0) (peakCount.toDouble() / totalHrSamples * (if (exerciseDuration > 0) exerciseDuration else 30)).toInt() else 0)
+                    put("sleepHours", sleepHours)
+                    put("sleepMinutes", sleepMinutes)
+                    put("sleepStartTime", sleepStart)
+                    put("sleepEndTime", sleepEnd)
+                    put("deepSleepMinutes", deepSleepMins)
+                    put("lightSleepMinutes", lightSleepMins)
+                    put("remSleepMinutes", remSleepMins)
+                    put("awakeMinutes", awakeMins)
+                    put("distanceKm", distanceKm)
+                    put("totalCalories", totalCalories)
+                    put("activeCalories", activeCalories)
+                    put("calories", if (activeCalories > 0) activeCalories else totalCalories)
+                    put("exerciseDuration", if (exerciseDuration > 0) exerciseDuration else 30)
+                    put("exerciseTitle", exerciseTitle)
+                    put("exerciseStartTime", exerciseStartTime)
+                    put("exerciseEndTime", exerciseEndTime)
+                    put("avgSpeedKmh", avgSpeedKmh)
                     put("timestamp", now.toString())
                 }
 
-                // Inyectar en JavaScript en la web
+                // Inyectar en JavaScript en el WebView local
                 runOnUiThread {
                     webView.evaluateJavascript(
                         "if (window.onHealthConnectDataReceived) { window.onHealthConnectDataReceived($data); }",
@@ -135,7 +335,7 @@ class MainActivity : AppCompatActivity() {
 
             } catch (e: Exception) {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Error al leer Health Connect: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Error Health Connect: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -158,15 +358,15 @@ class MainActivity : AppCompatActivity() {
         fun pushToCloud(payloadJson: String) {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    // 1. Enviar directamente al servidor local en PC si está en WiFi
+                    // 1. Enviar directamente al servidor local en PC si está en la misma red WiFi
                     try {
                         val localUrl = URL("http://192.168.0.113:8080/api/sync")
                         val conn = localUrl.openConnection() as HttpURLConnection
                         conn.requestMethod = "POST"
                         conn.setRequestProperty("Content-Type", "application/json")
                         conn.doOutput = true
-                        conn.connectTimeout = 2500
-                        conn.readTimeout = 2500
+                        conn.connectTimeout = 3000
+                        conn.readTimeout = 3000
                         conn.outputStream.use { os ->
                             os.write(payloadJson.toByteArray(Charsets.UTF_8))
                         }
