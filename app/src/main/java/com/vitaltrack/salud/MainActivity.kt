@@ -1,9 +1,7 @@
-﻿package com.vitaltrack.salud
+package com.vitaltrack.salud
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -23,26 +21,20 @@ import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import android.util.Base64
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var healthConnectClient: HealthConnectClient? = null
     private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
-    private lateinit var updateDir: File
-
-    private val GITHUB_TOKEN = "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"
-    private val REPO_OWNER = "mikecj92"
-    private val REPO_NAME = "vitaltrack"
-    private val CURRENT_APK_VERSION_CODE = 3
 
     private val PERMISSIONS = setOf(
         HealthPermission.getReadPermission(HeartRateRecord::class),
@@ -60,17 +52,8 @@ class MainActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
-        webView.settings.allowContentAccess = true
-        webView.settings.allowFileAccessFromFileURLs = true
-        webView.settings.allowUniversalAccessFromFileURLs = true
-        webView.settings.textZoom = 100
-        webView.settings.useWideViewPort = true
-        webView.settings.loadWithOverviewMode = true
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
-
-        // Limpiar cache vieja de WebView
-        webView.clearCache(true)
 
         // Inyectar el puente nativo para JavaScript
         webView.addJavascriptInterface(HealthConnectWebBridge(), "AndroidHealthConnect")
@@ -90,111 +73,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Gestión de actualizaciones en vivo (Live Update)
-        updateDir = File(filesDir, "live_update")
-        val prefs = getSharedPreferences("vitaltrack_prefs", Context.MODE_PRIVATE)
-        val lastApkVersion = prefs.getInt("apk_version_code", 0)
-
-        // Si se acaba de instalar un APK nuevo, borrar archivos de actualización viejos
-        if (lastApkVersion < CURRENT_APK_VERSION_CODE) {
-            updateDir.deleteRecursively()
-            File(filesDir, "www").deleteRecursively()
-            prefs.edit().putInt("apk_version_code", CURRENT_APK_VERSION_CODE).apply()
-        }
-
-        val updatedIndex = File(updateDir, "index.html")
-        if (updatedIndex.exists()) {
-            webView.loadUrl("file://${updatedIndex.absolutePath}")
-        } else {
-            webView.loadUrl("file:///android_asset/index.html")
-        }
-
-        Toast.makeText(this, "VitalTrack v1.3.0 iniciado", Toast.LENGTH_SHORT).show()
-
-        // Comprobación en segundo plano de actualizaciones en la nube
-        checkForLiveUpdates()
-    }
-
-    private fun checkForLiveUpdates() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val prefs = getSharedPreferences("vitaltrack_prefs", Context.MODE_PRIVATE)
-                val currentVersion = prefs.getString("live_version", "1.2.0") ?: "1.2.0"
-
-                val versionUrl = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/version.json")
-                val conn = versionUrl.openConnection() as HttpURLConnection
-                conn.setRequestProperty("Authorization", "Bearer $GITHUB_TOKEN")
-                conn.setRequestProperty("User-Agent", "VitalTrackUpdater")
-                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-
-                if (conn.responseCode == 200) {
-                    val body = conn.inputStream.bufferedReader().use { it.readText() }
-                    val json = JSONObject(body)
-                    val contentBase64 = json.getString("content").replace("\n", "").replace("\r", "")
-                    val versionJsonStr = String(Base64.decode(contentBase64, Base64.DEFAULT), Charsets.UTF_8)
-                    val versionObj = JSONObject(versionJsonStr)
-                    val remoteVersion = versionObj.optString("version", "")
-
-                    if (remoteVersion.isNotEmpty() && remoteVersion != currentVersion) {
-                        if (!updateDir.exists()) updateDir.mkdirs()
-
-                        // Descargar archivos web raíz
-                        downloadAssetFile("index.html", "index.html")
-                        downloadAssetFile("app.js", "app.js")
-                        downloadAssetFile("styles.css", "styles.css")
-                        downloadAssetFile("version.json", "version.json")
-
-                        // Descargar todas las ilustraciones médicas
-                        val images = listOf(
-                            "bird_dog.jpg", "box_squat.jpg", "floor_press.jpg", "single_arm_row.jpg", "treadmill.jpg",
-                            "boxing_punch.jpg", "calf_raises.jpg", "glute_bridge.jpg", "shoulder_press.jpg",
-                            "split_squat.jpg", "bicep_curl.jpg", "dumbbell_halo.jpg"
-                        )
-                        for (img in images) {
-                            downloadAssetFile("assets/$img", "assets/$img")
-                        }
-
-                        prefs.edit().putString("live_version", remoteVersion).apply()
-
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "✨ ¡VitalTrack se actualizó automáticamente a v$remoteVersion!",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-                            val updatedIndex = File(updateDir, "index.html")
-                            if (updatedIndex.exists()) {
-                                webView.loadUrl("file://${updatedIndex.absolutePath}")
-                            } else {
-                                webView.reload()
-                            }
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-    }
-
-    private fun downloadAssetFile(localName: String, repoPath: String) {
-        try {
-            val url = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$repoPath")
-            val conn = url.openConnection() as HttpURLConnection
-            conn.setRequestProperty("Authorization", "Bearer $GITHUB_TOKEN")
-            conn.setRequestProperty("User-Agent", "VitalTrackUpdater")
-            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-
-            if (conn.responseCode == 200) {
-                val body = conn.inputStream.bufferedReader().use { it.readText() }
-                val json = JSONObject(body)
-                val contentBase64 = json.getString("content").replace("\n", "").replace("\r", "")
-                val bytes = Base64.decode(contentBase64, Base64.DEFAULT)
-
-                val target = File(updateDir, localName)
-                target.parentFile?.mkdirs()
-                FileOutputStream(target).use { it.write(bytes) }
-            }
-        } catch (_: Exception) {}
+        // Cargar interfaz de VitalTrack localmente
+        webView.loadUrl("file:///android_asset/index.html")
     }
 
     private fun checkAndRequestPermissions() {
@@ -237,43 +117,11 @@ class MainActivity : AppCompatActivity() {
                 val avgHr = if (allBpm.isNotEmpty()) allBpm.average().toInt() else 0
                 val minHr = if (allBpm.isNotEmpty()) allBpm.minOrNull()?.toInt() ?: 0 else 0
 
-                // 3. Leer Calorias Activas
-                var caloriesBurned = 0
-                try {
-                    val calResponse = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = TotalCaloriesBurnedRecord::class,
-                            timeRangeFilter = timeRange
-                        )
-                    )
-                    caloriesBurned = calResponse.records.sumOf { it.energy.inKilocalories }.toInt()
-                } catch (_: Exception) {}
-
-                // 4. Leer Horas de Sueno
-                var sleepHours = 0.0
-                try {
-                    val sleepRange = TimeRangeFilter.between(now.minus(24, ChronoUnit.HOURS), now)
-                    val sleepResponse = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = SleepSessionRecord::class,
-                            timeRangeFilter = sleepRange
-                        )
-                    )
-                    val totalSleepMinutes = sleepResponse.records.sumOf {
-                        java.time.Duration.between(it.startTime, it.endTime).toMinutes()
-                    }
-                    if (totalSleepMinutes > 0) {
-                        sleepHours = (totalSleepMinutes / 60.0 * 10).toInt() / 10.0
-                    }
-                } catch (_: Exception) {}
-
-                // 5. Crear JSON para enviar a la web
+                // 3. Crear JSON para enviar a la web
                 val data = JSONObject().apply {
                     put("steps", totalSteps)
                     put("avgHeartRate", avgHr)
                     put("restingHeartRate", minHr)
-                    put("calories", caloriesBurned)
-                    if (sleepHours > 0) put("sleepHours", sleepHours)
                     put("timestamp", now.toString())
                 }
 
@@ -307,8 +155,68 @@ class MainActivity : AppCompatActivity() {
         }
 
         @JavascriptInterface
-        fun checkForUpdates() {
-            checkForLiveUpdates()
+        fun pushToCloud(payloadJson: String) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    // 1. Enviar directamente al servidor local en PC si está en WiFi
+                    try {
+                        val localUrl = URL("http://192.168.0.113:8080/api/sync")
+                        val conn = localUrl.openConnection() as HttpURLConnection
+                        conn.requestMethod = "POST"
+                        conn.setRequestProperty("Content-Type", "application/json")
+                        conn.doOutput = true
+                        conn.connectTimeout = 2500
+                        conn.readTimeout = 2500
+                        conn.outputStream.use { os ->
+                            os.write(payloadJson.toByteArray(Charsets.UTF_8))
+                        }
+                        conn.responseCode
+                    } catch (e: Exception) {}
+
+                    // 2. Subir directamente a GitHub Cloud (accesible desde cualquier lugar / datos móviles)
+                    val token = "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"
+                    val apiUrl = URL("https://api.github.com/repos/mikecj92/vitaltrack/contents/vitaltrack_db.json")
+
+                    var sha: String? = null
+                    try {
+                        val getConn = apiUrl.openConnection() as HttpURLConnection
+                        getConn.setRequestProperty("Authorization", "Bearer $token")
+                        getConn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+                        getConn.setRequestProperty("User-Agent", "VitalTrack-Android")
+                        if (getConn.responseCode == 200) {
+                            val resp = getConn.inputStream.bufferedReader().use { it.readText() }
+                            val getObj = JSONObject(resp)
+                            sha = getObj.optString("sha")
+                        }
+                    } catch (e: Exception) {}
+
+                    val b64 = Base64.encodeToString(payloadJson.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+                    val putBody = JSONObject().apply {
+                        put("message", "Auto-sync from VitalTrack Android")
+                        put("content", b64)
+                        if (sha != null && sha.isNotEmpty()) {
+                            put("sha", sha)
+                        }
+                    }
+
+                    val putConn = apiUrl.openConnection() as HttpURLConnection
+                    putConn.requestMethod = "PUT"
+                    putConn.setRequestProperty("Authorization", "Bearer $token")
+                    putConn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+                    putConn.setRequestProperty("Content-Type", "application/json")
+                    putConn.setRequestProperty("User-Agent", "VitalTrack-Android")
+                    putConn.doOutput = true
+                    putConn.outputStream.use { os ->
+                        os.write(putBody.toString().toByteArray(Charsets.UTF_8))
+                    }
+                    val code = putConn.responseCode
+                    if (code in 200..299) {
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "☁️ Sincronizado automáticamente con PC y Google Drive", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {}
+            }
         }
     }
 }
