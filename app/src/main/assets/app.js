@@ -303,6 +303,32 @@ function updateSyncStatus(text, type = 'green') {
 }
 
 async function autoSyncPull(isManual = false) {
+  // Intentar sincronizar con el servidor local en PC / Google Drive
+  try {
+    const localRes = await fetch('http://192.168.0.113:8080/vitaltrack_db.json?t=' + Date.now());
+    if (localRes.ok) {
+      const localDb = await localRes.json();
+      if (localDb) {
+        let lWorkouts = getStoredWorkouts();
+        let cFound = false;
+        if (Array.isArray(localDb.workouts)) {
+          const ids = new Set(lWorkouts.map(w => w.id));
+          localDb.workouts.forEach(lw => {
+            if (!ids.has(lw.id)) { lWorkouts.push(lw); cFound = true; }
+          });
+          if (cFound) {
+            lWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            saveStoredWorkouts(lWorkouts);
+          }
+        }
+        if (localDb.healthConnect) {
+          saveStoredHealthConnect(localDb.healthConnect);
+          updateHealthConnectUI(localDb.healthConnect, true);
+        }
+      }
+    }
+  } catch (err) {}
+
   if (!CLOUD_CONFIG.token) return;
   try {
     updateSyncStatus('🔄 Sincronizando nube...', 'yellow');
@@ -505,6 +531,15 @@ async function autoSyncPush(isDelete = false) {
       healthConnect: getStoredHealthConnect(),
       syncedAt: new Date().toISOString()
     };
+
+    // Enviar al servidor local en PC / Google Drive
+    try {
+      fetch('http://192.168.0.113:8080/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadData)
+      }).catch(() => {});
+    } catch (err) {}
 
     const b64 = utf8ToBase64(JSON.stringify(payloadData, null, 2));
     const nowTime = formatSyncTime();
