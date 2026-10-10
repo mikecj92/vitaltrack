@@ -541,6 +541,13 @@ async function autoSyncPush(isDelete = false) {
       }).catch(() => {});
     } catch (err) {}
 
+    // Si estamos en la app de Android, enviar a través del puente nativo Kotlin (sin restricciones de CORS)
+    try {
+      if (window.AndroidHealthConnect && typeof window.AndroidHealthConnect.pushToCloud === 'function') {
+        window.AndroidHealthConnect.pushToCloud(JSON.stringify(payloadData));
+      }
+    } catch (err) {}
+
     const b64 = utf8ToBase64(JSON.stringify(payloadData, null, 2));
     const nowTime = formatSyncTime();
 
@@ -610,8 +617,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (syncStatusElem) {
     syncStatusElem.style.cursor = 'pointer';
     syncStatusElem.title = 'Haz clic para sincronizar ahora con la nube';
-    syncStatusElem.addEventListener('click', () => {
-      autoSyncPull(true);
+    syncStatusElem.addEventListener('click', async () => {
+      await autoSyncPush();
+      await autoSyncPull(true);
       checkAppLiveUpdate();
     });
   }
@@ -694,11 +702,54 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!data) return;
     data.syncTime = formatSyncTime();
     data.device = 'Samsung Health / Health Connect';
+    saveStoredHealthConnect(data);
     updateHealthConnectUI(data, false);
 
-    showSyncToast(`⌚ Health Connect: ${(data.steps || 0).toLocaleString()} pasos y FC recibidos`, 'success');
+    // Auto-detección y auto-registro de actividad de caminata del reloj
+    const todayStr = new Date().toISOString().split('T')[0];
+    let workouts = getStoredWorkouts();
+    let todayWorkout = workouts.find(w => w.date === todayStr);
 
-    // Sincronizar de inmediato a la nube para que se refleje automáticamente en la PC
+    if (data.steps && data.steps > 500) {
+      if (!todayWorkout) {
+        // Crear automáticamente la sesión de caminata sin que el usuario tenga que teclear
+        const autoWalk = {
+          id: 'wk_samsung_' + Date.now(),
+          date: todayStr,
+          timestamp: new Date().toISOString(),
+          category: 'Caminata (Samsung Health)',
+          duration: data.durationMinutes || Math.max(20, Math.round((data.steps || 3000) / 100)),
+          rpe: 6,
+          notes: 'Registrado automáticamente desde Samsung Galaxy Watch / Health Connect',
+          noPain: true,
+          wearable: {
+            hrAvg: data.avgHeartRate || null,
+            hrMax: data.maxHeartRate || (data.avgHeartRate ? Math.round(data.avgHeartRate * 1.18) : null),
+            rhr: data.restingHeartRate || null,
+            steps: data.steps || null,
+            calories: data.calories || null
+          },
+          source: 'samsung_watch_auto'
+        };
+        workouts.unshift(autoWalk);
+        saveStoredWorkouts(workouts);
+        renderDashboard();
+        renderHistoryTable();
+      } else if (todayWorkout.wearable) {
+        // Actualizar la sesión existente con la telemetría más reciente del reloj
+        if (data.avgHeartRate) todayWorkout.wearable.hrAvg = data.avgHeartRate;
+        if (data.maxHeartRate) todayWorkout.wearable.hrMax = data.maxHeartRate;
+        if (data.steps) todayWorkout.wearable.steps = data.steps;
+        if (data.calories) todayWorkout.wearable.calories = data.calories;
+        saveStoredWorkouts(workouts);
+        renderDashboard();
+        renderHistoryTable();
+      }
+    }
+
+    showSyncToast(`⌚ Health Connect: ${(data.steps || 0).toLocaleString()} pasos y FC sincronizados`, 'success');
+
+    // Sincronizar de inmediato a la nube y a Google Drive para que viaje solo a la PC y tablet
     autoSyncPush();
   };
 
@@ -1136,6 +1187,7 @@ window.handleQuickDoneSubmit = async function(e) {
   const noPain = document.getElementById('quick-done-nopain').checked;
   const todayStr = new Date().toISOString().split('T')[0];
 
+  const hcData = getStoredHealthConnect() || {};
   const newWorkout = {
     id: 'wk_' + Date.now(),
     date: todayStr,
@@ -1145,7 +1197,13 @@ window.handleQuickDoneSubmit = async function(e) {
     rpe: rpe,
     notes: notes || 'Sesión recomendada completada con éxito',
     noPain: noPain,
-    wearable: {},
+    wearable: {
+      hrAvg: hcData.avgHeartRate || null,
+      hrMax: hcData.maxHeartRate || null,
+      rhr: hcData.restingHeartRate || null,
+      steps: hcData.steps || null,
+      calories: hcData.calories || null
+    },
     source: 'quick_done'
   };
 
