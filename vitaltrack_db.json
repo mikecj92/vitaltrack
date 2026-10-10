@@ -11,15 +11,15 @@
       "date": "2026-10-10",
       "timestamp": "2026-10-10T19:45:29.241Z",
       "category": "Caminata (Samsung Health)",
-      "duration": 183,
+      "duration": 30,
       "rpe": 6,
-      "notes": "Registrado automáticamente desde Samsung Galaxy Watch / Health Connect",
+      "notes": "Caminata 30 min · 6,948 pasos registrados en Samsung Galaxy Watch",
       "noPain": true,
       "wearable": {
         "hrAvg": 127,
         "hrMax": 150,
         "rhr": 105,
-        "steps": 18301,
+        "steps": 6948,
         "calories": 650
       },
       "source": "samsung_watch_auto"
@@ -48,7 +48,7 @@
     }
   ],
   "healthConnect": {
-    "steps": 18301,
+    "steps": 6948,
     "avgHeartRate": 127,
     "maxHeartRate": 150,
     "restingHeartRate": 105,
