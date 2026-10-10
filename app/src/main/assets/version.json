@@ -1,6 +1,6 @@
 {
-  "version": "1.3.2",
-  "buildDate": "2026-10-09T11:55:00Z",
-  "name": "VitalTrack: Botón Done + Sincronización Inmediata",
-  "notes": "Botón Done para marcar la sesión recomendada de hoy, cheques interactivos por ejercicio y sincronización validada en la nube."
+  "version": "1.3.3",
+  "buildDate": "2026-10-10T12:10:00Z",
+  "name": "VitalTrack: Sincronización en la Nube de Health Connect",
+  "notes": "Sincronización bidireccional en la nube de métricas del Samsung Watch (pasos, FC en reposo, FC promedio y sueño) entre celular y PC."
 }
