@@ -235,11 +235,43 @@ class MainActivity : AppCompatActivity() {
                 val avgHr = if (allBpm.isNotEmpty()) allBpm.average().toInt() else 0
                 val minHr = if (allBpm.isNotEmpty()) allBpm.minOrNull()?.toInt() ?: 0 else 0
 
-                // 3. Crear JSON para enviar a la web
+                // 3. Leer Calorias Activas
+                var caloriesBurned = 0
+                try {
+                    val calResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = TotalCaloriesBurnedRecord::class,
+                            timeRangeFilter = timeRange
+                        )
+                    )
+                    caloriesBurned = calResponse.records.sumOf { it.energy.inKilocalories }.toInt()
+                } catch (_: Exception) {}
+
+                // 4. Leer Horas de Sueno
+                var sleepHours = 0.0
+                try {
+                    val sleepRange = TimeRangeFilter.between(now.minus(24, ChronoUnit.HOURS), now)
+                    val sleepResponse = client.readRecords(
+                        ReadRecordsRequest(
+                            recordType = SleepSessionRecord::class,
+                            timeRangeFilter = sleepRange
+                        )
+                    )
+                    val totalSleepMinutes = sleepResponse.records.sumOf {
+                        java.time.Duration.between(it.startTime, it.endTime).toMinutes()
+                    }
+                    if (totalSleepMinutes > 0) {
+                        sleepHours = (totalSleepMinutes / 60.0 * 10).toInt() / 10.0
+                    }
+                } catch (_: Exception) {}
+
+                // 5. Crear JSON para enviar a la web
                 val data = JSONObject().apply {
                     put("steps", totalSteps)
                     put("avgHeartRate", avgHr)
                     put("restingHeartRate", minHr)
+                    put("calories", caloriesBurned)
+                    if (sleepHours > 0) put("sleepHours", sleepHours)
                     put("timestamp", now.toString())
                 }
 
