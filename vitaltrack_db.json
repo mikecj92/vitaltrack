@@ -2,10 +2,28 @@
   "profile": {
     "age": 38,
     "heightM": 1.75,
-    "initialWeightKg": 95,
+    "initialWeightKg": 95.0,
     "dumbbellWeightLb": 10
   },
   "workouts": [
+    {
+      "id": "wk_samsung_1791661529241",
+      "date": "2026-10-10",
+      "timestamp": "2026-10-10T19:45:29.241Z",
+      "category": "Caminata (Samsung Health)",
+      "duration": 183,
+      "rpe": 6,
+      "notes": "Registrado automáticamente desde Samsung Galaxy Watch / Health Connect",
+      "noPain": true,
+      "wearable": {
+        "hrAvg": 127,
+        "hrMax": 150,
+        "rhr": 105,
+        "steps": 18301,
+        "calories": 650
+      },
+      "source": "samsung_watch_auto"
+    },
     {
       "id": "wk_1791569972229",
       "date": "2026-10-09",
@@ -29,5 +47,15 @@
       "imc": 31
     }
   ],
-  "syncedAt": "2026-10-09T18:19:32.508Z"
+  "healthConnect": {
+    "steps": 18301,
+    "avgHeartRate": 127,
+    "maxHeartRate": 150,
+    "restingHeartRate": 105,
+    "calories": 650,
+    "timestamp": "2026-10-10T19:46:44.496862Z",
+    "syncTime": "01:46 p.m.",
+    "device": "Samsung Health / Health Connect"
+  },
+  "syncedAt": "2026-10-10T20:00:00.000Z"
 }
