@@ -348,9 +348,32 @@ async function autoSyncPull(isManual = false) {
         saveStoredMetrics(localMetrics);
       }
 
+      if (cloudData.healthConnect) {
+        saveStoredHealthConnect(cloudData.healthConnect);
+        if (typeof updateHealthConnectUI === 'function') {
+          updateHealthConnectUI(cloudData.healthConnect, true);
+        }
+        if (cloudData.healthConnect.restingHeartRate && document.getElementById('coach-rhr')) {
+          document.getElementById('coach-rhr').value = cloudData.healthConnect.restingHeartRate;
+        }
+        if (cloudData.healthConnect.sleepHours && document.getElementById('coach-sleep')) {
+          document.getElementById('coach-sleep').value = cloudData.healthConnect.sleepHours;
+        }
+        if (cloudData.healthConnect.steps && document.getElementById('input-steps')) {
+          document.getElementById('input-steps').value = cloudData.healthConnect.steps;
+        }
+        if (cloudData.healthConnect.avgHeartRate && document.getElementById('input-hr-avg')) {
+          document.getElementById('input-hr-avg').value = cloudData.healthConnect.avgHeartRate;
+        }
+        changesFound = true;
+      }
+
       renderDashboard();
       renderHistoryTable();
       renderMetricsTable();
+      if (typeof setupTodayFocus === 'function') {
+        setupTodayFocus();
+      }
       if (typeof calculateAdaptivePrescription === 'function') {
         calculateAdaptivePrescription();
       }
@@ -464,6 +487,13 @@ async function autoSyncPush(isDelete = false) {
               saveStoredMetrics(localMetrics);
             }
           }
+
+          if (remoteJson.healthConnect) {
+            const localHC = getStoredHealthConnect();
+            if (!localHC || (remoteJson.healthConnect.timestamp && (!localHC.timestamp || remoteJson.healthConnect.timestamp > localHC.timestamp))) {
+              saveStoredHealthConnect(remoteJson.healthConnect);
+            }
+          }
         } catch (e) {}
       }
     }
@@ -472,6 +502,7 @@ async function autoSyncPush(isDelete = false) {
       profile: USER_PROFILE,
       workouts: getStoredWorkouts(),
       metrics: getStoredMetrics(),
+      healthConnect: getStoredHealthConnect(),
       syncedAt: new Date().toISOString()
     };
 
@@ -555,12 +586,28 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 
-  // Visualizador y Persistencia de Métricas de Health Connect
-  function updateHealthConnectUI(data) {
-    if (!data) return;
+  // Helper para persistencia de Health Connect
+  function getStoredHealthConnect() {
     try {
-      localStorage.setItem('vitaltrack_hc_cache', JSON.stringify(data));
+      const raw = localStorage.getItem('vitaltrack_hc_cache');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveStoredHealthConnect(data) {
+    try {
+      if (data) {
+        localStorage.setItem('vitaltrack_hc_cache', JSON.stringify(data));
+      }
     } catch (e) {}
+  }
+
+  // Visualizador y Persistencia de Métricas de Health Connect (Celular y PC)
+  function updateHealthConnectUI(data, isFromCloud = false) {
+    if (!data) return;
+    saveStoredHealthConnect(data);
 
     const stepsElem = document.getElementById('hc-live-steps');
     const rhrElem = document.getElementById('hc-live-rhr');
@@ -572,25 +619,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rhrElem) rhrElem.textContent = data.restingHeartRate ? `${data.restingHeartRate} BPM` : 'Normal';
     if (avgHrElem) avgHrElem.textContent = data.avgHeartRate ? `${data.avgHeartRate} BPM` : '-- BPM';
     if (timeElem) timeElem.textContent = data.syncTime || formatSyncTime();
-    if (descElem) descElem.textContent = '✅ Sincronizado en vivo con Samsung Health / Health Connect';
-  }
 
-  // Cargar métricas de Health Connect previas si existen
-  try {
-    const cachedHC = localStorage.getItem('vitaltrack_hc_cache');
-    if (cachedHC) {
-      updateHealthConnectUI(JSON.parse(cachedHC));
+    if (descElem) {
+      if (isFromCloud || (!window.AndroidHealthConnect || !window.AndroidHealthConnect.isAvailable())) {
+        descElem.textContent = '☁️ Sincronizado desde Samsung Watch / Celular vía Nube';
+      } else {
+        descElem.textContent = '✅ Conectado en vivo con Samsung Health (Celular)';
+      }
     }
-  } catch (e) {}
 
-  // Receptor del Puente Nativo Android Health Connect
-  window.onHealthConnectDataReceived = function(data) {
-    if (!data) return;
-    data.syncTime = formatSyncTime();
-    updateHealthConnectUI(data);
-
+    // Actualizar campos de adaptación y formularios
     if (data.restingHeartRate && document.getElementById('coach-rhr')) {
       document.getElementById('coach-rhr').value = data.restingHeartRate;
+    }
+    if (data.sleepHours && document.getElementById('coach-sleep')) {
+      document.getElementById('coach-sleep').value = data.sleepHours;
     }
     if (data.steps && document.getElementById('input-steps')) {
       document.getElementById('input-steps').value = data.steps;
@@ -601,20 +644,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof calculateAdaptivePrescription === 'function') {
       calculateAdaptivePrescription();
     }
+  }
+
+  // Cargar métricas de Health Connect previas si existen
+  try {
+    const cachedHC = getStoredHealthConnect();
+    if (cachedHC) {
+      updateHealthConnectUI(cachedHC, true);
+    }
+  } catch (e) {}
+
+  // Receptor del Puente Nativo Android Health Connect
+  window.onHealthConnectDataReceived = function(data) {
+    if (!data) return;
+    data.syncTime = formatSyncTime();
+    data.device = 'Samsung Health / Health Connect';
+    updateHealthConnectUI(data, false);
+
     showSyncToast(`⌚ Health Connect: ${(data.steps || 0).toLocaleString()} pasos y FC recibidos`, 'success');
+
+    // Sincronizar de inmediato a la nube para que se refleje automáticamente en la PC
+    autoSyncPush();
   };
 
-  const btnSyncHC = document.getElementById('btn-sync-health-connect');
-  if (btnSyncHC) {
-    btnSyncHC.addEventListener('click', () => {
+  // Botón de sincronización de Health Connect (Soporta móvil y PC)
+  const syncHCButtons = document.querySelectorAll('#btn-sync-health-connect, .btn-sync-hc');
+  syncHCButtons.forEach(btn => {
+    btn.addEventListener('click', async () => {
       if (window.AndroidHealthConnect && window.AndroidHealthConnect.isAvailable()) {
-        showSyncToast('🔄 Leyendo datos de Health Connect...', 'syncing');
+        showSyncToast('🔄 Leyendo datos de Health Connect del reloj...', 'syncing');
         window.AndroidHealthConnect.syncData();
       } else {
-        alert('ℹ️ Health Connect Nativo está activo en la versión APK de Android. Aquí puedes pulsar "Recalcular Adaptación" o ajustar tu FC de reposo.');
+        showSyncToast('☁️ Descargando métricas de Health Connect desde la nube...', 'syncing');
+        await autoSyncPull(true);
+        const cached = getStoredHealthConnect();
+        if (cached && (cached.steps || cached.restingHeartRate)) {
+          updateHealthConnectUI(cached, true);
+          showSyncToast(`✅ Datos del Samsung Watch actualizados: ${(cached.steps || 0).toLocaleString()} pasos y FC`, 'success');
+        } else {
+          showSyncToast('ℹ️ Aún no hay lecturas de Health Connect en la nube. En tu celular, pulsa "Sincronizar Reloj" para enviarlas.', 'info');
+        }
       }
     });
-  }
+  });
 
   // Fecha predeterminada de hoy en inputs
   const todayStr = new Date().toISOString().split('T')[0];
