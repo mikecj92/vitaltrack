@@ -315,14 +315,14 @@ async function autoSyncPull(isManual = false) {
         let lWorkouts = getStoredWorkouts();
         let cFound = false;
         if (Array.isArray(localDb.workouts)) {
-          const ids = new Set(lWorkouts.map(w => w.id));
+          const map = new Map(lWorkouts.map(w => [w.id, w]));
           localDb.workouts.forEach(lw => {
-            if (!ids.has(lw.id)) { lWorkouts.push(lw); cFound = true; }
+            map.set(lw.id, lw);
+            cFound = true;
           });
-          if (cFound) {
-            lWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-            saveStoredWorkouts(lWorkouts);
-          }
+          lWorkouts = Array.from(map.values());
+          lWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+          saveStoredWorkouts(lWorkouts);
         }
         if (localDb.healthConnect) {
           saveStoredHealthConnect(localDb.healthConnect);
@@ -358,13 +358,12 @@ async function autoSyncPull(isManual = false) {
       let changesFound = false;
 
       if (cloudData.workouts && Array.isArray(cloudData.workouts)) {
-        const localIds = new Set(localWorkouts.map(w => w.id));
+        const map = new Map(localWorkouts.map(w => [w.id, w]));
         cloudData.workouts.forEach(cw => {
-          if (!localIds.has(cw.id)) {
-            localWorkouts.push(cw);
-            changesFound = true;
-          }
+          map.set(cw.id, cw);
+          changesFound = true;
         });
+        localWorkouts = Array.from(map.values());
         localWorkouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
         saveStoredWorkouts(localWorkouts);
       }
@@ -1619,6 +1618,23 @@ function saveStoredWorkouts(workouts) {
   localStorage.setItem(STORAGE_KEYS.WORKOUTS, JSON.stringify(workouts));
 }
 
+function getStoredHealthConnect() {
+  try {
+    const raw = localStorage.getItem('vitaltrack_hc_cache');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveStoredHealthConnect(data) {
+  try {
+    if (data) {
+      localStorage.setItem('vitaltrack_hc_cache', JSON.stringify(data));
+    }
+  } catch (e) {}
+}
+
 function setupFormEvents() {
   const form = document.getElementById('workout-form');
   if (!form) return;
@@ -1829,10 +1845,9 @@ function renderDashboard() {
   const hcData = getStoredHealthConnect() || {};
   let todaySteps = hcData.steps || 0;
   if (!todaySteps) {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const todayWk = workouts.find(w => w.date === todayStr);
-    if (todayWk && todayWk.wearable && todayWk.wearable.steps) {
-      todaySteps = todayWk.wearable.steps;
+    const walkWk = workouts.find(w => w.wearable && w.wearable.steps);
+    if (walkWk && walkWk.wearable && walkWk.wearable.steps) {
+      todaySteps = walkWk.wearable.steps;
     }
   }
   const stepsElem = document.getElementById('dash-today-steps');
@@ -1851,6 +1866,12 @@ function renderDashboard() {
       stepsCap.textContent = `Pendiente sincronizar reloj`;
       stepsCap.className = 'stat-caption text-neutral';
     }
+  }
+
+  // Reflejar también en la tarjeta de métricas de Health Connect
+  const hcLiveSteps = document.getElementById('hc-live-steps');
+  if (hcLiveSteps && todaySteps > 0) {
+    hcLiveSteps.textContent = todaySteps.toLocaleString() + ' pasos';
   }
 
   // Lista reciente
