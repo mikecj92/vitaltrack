@@ -305,7 +305,10 @@ function updateSyncStatus(text, type = 'green') {
 async function autoSyncPull(isManual = false) {
   // Intentar sincronizar con el servidor local en PC / Google Drive
   try {
-    const localRes = await fetch('http://192.168.0.113:8080/vitaltrack_db.json?t=' + Date.now());
+    const localUrl = (window.location && window.location.port === '8080')
+      ? './vitaltrack_db.json?t=' + Date.now()
+      : 'http://192.168.0.113:8080/vitaltrack_db.json?t=' + Date.now();
+    const localRes = await fetch(localUrl);
     if (localRes.ok) {
       const localDb = await localRes.json();
       if (localDb) {
@@ -325,6 +328,10 @@ async function autoSyncPull(isManual = false) {
           saveStoredHealthConnect(localDb.healthConnect);
           updateHealthConnectUI(localDb.healthConnect, true);
         }
+        renderDashboard();
+        renderHistoryTable();
+        renderMetricsTable();
+        if (typeof setupTodayFocus === 'function') setupTodayFocus();
       }
     }
   } catch (err) {}
@@ -1811,12 +1818,40 @@ function renderDashboard() {
   const totalSessionsElem = document.getElementById('dash-total-sessions');
   if (totalSessionsElem) totalSessionsElem.textContent = workouts.length;
 
-  // Minutos en caminadora
-  const treadmillMins = workouts
-    .filter(w => w.category === 'Caminadora')
+  // Minutos en caminadora / cardio
+  const cardioMins = workouts
+    .filter(w => w.category && (w.category.includes('Camin') || w.category.includes('Cardio')))
     .reduce((acc, w) => acc + (w.duration || 0), 0);
   const treadmillElem = document.getElementById('dash-treadmill-mins');
-  if (treadmillElem) treadmillElem.innerHTML = `${treadmillMins} <span class="unit">min</span>`;
+  if (treadmillElem) treadmillElem.innerHTML = `${cardioMins} <span class="unit">min</span>`;
+
+  // Pasos de Hoy (Samsung Watch / Health Connect)
+  const hcData = getStoredHealthConnect() || {};
+  let todaySteps = hcData.steps || 0;
+  if (!todaySteps) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayWk = workouts.find(w => w.date === todayStr);
+    if (todayWk && todayWk.wearable && todayWk.wearable.steps) {
+      todaySteps = todayWk.wearable.steps;
+    }
+  }
+  const stepsElem = document.getElementById('dash-today-steps');
+  if (stepsElem) {
+    stepsElem.innerHTML = `${todaySteps.toLocaleString()} <span class="unit">pasos</span>`;
+  }
+  const stepsCap = document.getElementById('dash-steps-caption');
+  if (stepsCap) {
+    if (todaySteps >= 10000) {
+      stepsCap.textContent = `🎯 ¡Meta de 10k superada! (+${(todaySteps - 10000).toLocaleString()})`;
+      stepsCap.className = 'stat-caption text-green';
+    } else if (todaySteps > 0) {
+      stepsCap.textContent = `👟 Sincronizado vía Health Connect`;
+      stepsCap.className = 'stat-caption text-green';
+    } else {
+      stepsCap.textContent = `Pendiente sincronizar reloj`;
+      stepsCap.className = 'stat-caption text-neutral';
+    }
+  }
 
   // Lista reciente
   const recentContainer = document.getElementById('dash-recent-list');
