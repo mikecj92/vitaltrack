@@ -635,6 +635,67 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 
+  // Motor Fisiológico de Carga y Fatiga de Actividad Diaria (NEAT / Pasos Cotidianos)
+window.calculateDailyNeatLoad = function(steps = 0, routineKey = 'fuerza-a') {
+  const s = Math.max(0, parseInt(steps, 10) || 0);
+  if (s < 4500) {
+    return {
+      level: 'low',
+      steps: s,
+      badgeText: '🟢 Carga Ligera · Piernas Frescas',
+      badgeColor: '#10b981',
+      badgeBg: 'rgba(16, 185, 129, 0.12)',
+      impactScore: 0,
+      summary: `Has acumulado ${s.toLocaleString()} pasos hoy. Cero sobrecarga articular previa en rodillas ni columna a 95 kg.`,
+      advice: `Luz verde total: Tienes el 100% de tu capacidad neuromuscular disponible. Ejecuta tu sesión programada con las cargas habituales (mancuernas de 10 lb) y rango articular completo.`,
+      setsMod: '3 series x 8-10 reps (Volumen 100%)',
+      cardioMod: 'Zona 2 normal (25-35 min en Tacón Nivel 2 o 3)'
+    };
+  } else if (s < 7500) {
+    return {
+      level: 'moderate',
+      steps: s,
+      badgeText: '🟡 Carga Moderada · Movimiento Óptimo',
+      badgeColor: '#f59e0b',
+      badgeBg: 'rgba(245, 158, 11, 0.12)',
+      impactScore: -5,
+      summary: `Has acumulado ${s.toLocaleString()} pasos hoy. Excelente actividad cotidiana que activó tu gasto calórico basal.`,
+      advice: `Rango ideal: Tus articulaciones están bien lubricadas. Realiza tus 3 minutos de calentamiento articular y procede normalmente con la sesión del día.`,
+      setsMod: '3 series x 8-10 reps (Normal)',
+      cardioMod: 'Zona 2 normal (25-30 min)'
+    };
+  } else if (s < 10500) {
+    const isStrength = routineKey && routineKey.includes('fuerza');
+    return {
+      level: 'high',
+      steps: s,
+      badgeText: '🟠 Carga Elevada · Fatiga Mecánica Acumulada',
+      badgeColor: '#fb923c',
+      badgeBg: 'rgba(251, 146, 60, 0.14)',
+      impactScore: -15,
+      summary: `Has acumulado ${s.toLocaleString()} pasos hoy en tu jornada. A 95 kg, tus rodillas y zona lumbar ya absorbieron impacto mecánico considerable.`,
+      advice: isStrength
+        ? `Ajuste inteligente de fuerza: Para proteger cartílagos y tendón rotuliano a 95 kg, haz las Sentadillas al Cajón (Box Squats) solo con tu peso corporal o reduce a 2 series. El Floor Press de pecho y Suitcase Carry manténlos al 100% con 10 lb.`
+        : `Ajuste inteligente de cardio: Tu jornada cotidiana ya cubrió gran parte de tu estímulo oxidativo diario. En la caminadora, limita el tiempo a 15-20 min suaves en plano (Tacón Nivel 1 a 3.8 km/h) para no sobrecargar las rodillas.`,
+      setsMod: '2 series (Descarga articular en piernas)',
+      cardioMod: '15-20 min suave en plano (Nivel 1)'
+    };
+  } else {
+    return {
+      level: 'very_high',
+      steps: s,
+      badgeText: '🟣 Carga Muy Alta · Cuota de Cardio Diaria Cubierta',
+      badgeColor: '#c084fc',
+      badgeBg: 'rgba(192, 132, 252, 0.15)',
+      impactScore: -25,
+      summary: `¡Día de extraordinario movimiento! Con ${s.toLocaleString()} pasos tu gasto calórico y estímulo cardiovascular diario ya están 100% satisfechos por tu actividad cotidiana.`,
+      advice: `Ajuste inteligente de descarga: Hoy no agregues estrés articular con caminadora extra ni sentadillas pesadas. Tu cuerpo ya cumplió su cuota metabólica. Te recomendamos tomar tu sesión como "Movilidad y Recuperación": 10-15 min de estiramientos de cadera, Bird-Dog y Deadbug en colchoneta para descompresión lumbar.`,
+      setsMod: 'Solo ejercicios de colchoneta / 0 peso',
+      cardioMod: 'Cuota de cardio cubierta por tus pasos diarios'
+    };
+  }
+};
+
   // Helper para persistencia de Health Connect
   function getStoredHealthConnect() {
     try {
@@ -722,7 +783,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      diagnosis += `👟 Total acumulado: <strong>${steps.toLocaleString()} pasos</strong>. Plan para mañana: Green light para rutina de fuerza asistida en pared (10 lb).`;
+      const neat = calculateDailyNeatLoad(steps);
+      diagnosis += `<br><br>⚡ <strong>Impacto de Pasos Cotidianos (${steps.toLocaleString()} pasos):</strong> ${neat.summary} <span style="color: ${neat.badgeColor}; font-weight: 700;">[${neat.badgeText}]</span><br>💡 <em>${neat.advice}</em>`;
       insightsElem.innerHTML = diagnosis;
     }
 
@@ -980,6 +1042,45 @@ function setupTodayFocus() {
       btnMarkDone.style.color = '#fff';
       btnMarkDone.onclick = () => openQuickDoneModal(todayData);
     }
+  }
+
+  // Caja de Adaptación Inteligente por Pasos Diarios (NEAT)
+  let neatBox = document.getElementById('today-neat-adaptation-box');
+  if (!neatBox && banner) {
+    neatBox = document.createElement('div');
+    neatBox.id = 'today-neat-adaptation-box';
+    if (descElem && descElem.parentNode) {
+      descElem.parentNode.insertBefore(neatBox, descElem.nextSibling);
+    }
+  }
+
+  const hcDataFocus = getStoredHealthConnect() || {};
+  let todayStepsFocus = 0;
+  if ((hcDataFocus.timestamp && hcDataFocus.timestamp.startsWith(todayStr)) || hcDataFocus.date === todayStr) {
+    todayStepsFocus = hcDataFocus.steps || 0;
+  }
+  const neatFocus = calculateDailyNeatLoad(todayStepsFocus, todayData.routineKey);
+
+  if (neatBox) {
+    neatBox.style.marginTop = '12px';
+    neatBox.style.padding = '12px 14px';
+    neatBox.style.borderRadius = '8px';
+    neatBox.style.fontSize = '0.88rem';
+    neatBox.style.background = neatFocus.badgeBg;
+    neatBox.style.border = `1px solid ${neatFocus.badgeColor}`;
+    neatBox.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+        <span style="font-weight: 800; color: ${neatFocus.badgeColor}; font-size: 0.92rem; display: flex; align-items: center; gap: 6px;">
+          ⚡ Actividad del Día a Día (${neatFocus.steps.toLocaleString()} pasos):
+        </span>
+        <span style="font-size: 0.78rem; font-weight: 700; color: #fff; background: ${neatFocus.badgeColor}; padding: 2px 8px; border-radius: 10px;">
+          ${neatFocus.badgeText}
+        </span>
+      </div>
+      <p style="margin: 0; color: #e2e8f0; line-height: 1.45;">
+        ${neatFocus.summary} <strong>Ajuste para hoy:</strong> ${neatFocus.advice}
+      </p>
+    `;
   }
 
   // Botón para abrir la rutina del día
@@ -1893,12 +1994,11 @@ function renderDashboard() {
   }
   const stepsCap = document.getElementById('dash-steps-caption');
   if (stepsCap) {
-    if (isFromToday && todaySteps >= 10000) {
-      stepsCap.textContent = `🎯 ¡Meta de 10k superada! (+${(todaySteps - 10000).toLocaleString()})`;
-      stepsCap.className = 'stat-caption text-green';
-    } else if (isFromToday && todaySteps > 0) {
-      stepsCap.textContent = `👟 Sincronizado hoy vía Health Connect`;
-      stepsCap.className = 'stat-caption text-green';
+    const neatDash = calculateDailyNeatLoad(todaySteps);
+    if (isFromToday && todaySteps > 0) {
+      stepsCap.textContent = neatDash.badgeText;
+      stepsCap.style.color = neatDash.badgeColor;
+      stepsCap.className = 'stat-caption';
     } else {
       stepsCap.textContent = `Abre la app en el cel para sincronizar pasos de hoy`;
       stepsCap.className = 'stat-caption text-neutral';
@@ -2060,6 +2160,15 @@ function calculateAdaptivePrescription() {
   const sleepVal = document.getElementById('coach-sleep') ? parseFloat(document.getElementById('coach-sleep').value) || 7.5 : 7.5;
   const sorenessVal = document.getElementById('coach-soreness') ? document.getElementById('coach-soreness').value : 'none';
 
+  // Obtener pasos del día para calibrar fatiga mecánica a 95 kg
+  const todayStr = new Date().toISOString().split('T')[0];
+  const hcData = getStoredHealthConnect() || {};
+  let todaySteps = 0;
+  if ((hcData.timestamp && hcData.timestamp.startsWith(todayStr)) || hcData.date === todayStr) {
+    todaySteps = hcData.steps || 0;
+  }
+  const neat = calculateDailyNeatLoad(todaySteps);
+
   // Analizar última sesión de caminadora
   const workouts = getStoredWorkouts();
   const lastTreadmill = workouts.find(w => w.category === 'Caminadora');
@@ -2089,6 +2198,7 @@ function calculateAdaptivePrescription() {
 
   if (sorenessVal === 'mild') score -= 10;
   if (sorenessVal === 'joint-ache') score -= 45;
+  if (typeof neat !== 'undefined' && neat.impactScore) score += neat.impactScore;
 
   score = Math.max(25, Math.min(100, score));
 
@@ -2111,7 +2221,7 @@ function calculateAdaptivePrescription() {
     verdictBox.className = 'adaptive-verdict';
     verdictTitle.textContent = '✅ Prescripción: Sesión Completa en Zona 2';
     verdictTag.textContent = 'Zona 2 Óptima: 110-128 BPM';
-    verdictText.textContent = 'Tu frecuencia cardíaca matutina y horas de sueño confirman un sistema nervioso autónomo descansado. Tus tendones y corazón toleran el estímulo programado al 100%.' + hrZoneFeedback;
+    verdictText.innerHTML = 'Tu frecuencia cardíaca matutina y horas de sueño confirman un sistema nervioso autónomo descansado. Tus tendones y corazón toleran el estímulo programado al 100%.' + hrZoneFeedback + '<br><br>⚡ <strong>Impacto de tus Pasos Diarios (' + todaySteps.toLocaleString() + ' pasos):</strong> ' + neat.advice;
     
     const baseSpeed = Math.max(3.8, (4.4 - speedPenalty)).toFixed(1);
     if (paramSpeed) paramSpeed.textContent = `${baseSpeed} km/h`;
