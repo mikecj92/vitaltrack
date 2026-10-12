@@ -1077,49 +1077,142 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Navegación entre pestañas
-function setupNavigation() {
+// Enrutador SPA y Sistema de Navegación con Historial y Botón Atrás
+const TAB_DEFINITIONS = {
+  'tab-dashboard': { title: 'Panel de Control General', sub: 'Progreso acumulado, métricas biomecánicas y plan activo', hash: 'dashboard' },
+  'tab-rutinas': { title: 'Plan y Rutinas Paso a Paso', sub: 'Guías de ejecución técnica sin riesgo de lesiones', hash: 'rutinas' },
+  'tab-registro': { title: 'Registro de Sesión', sub: 'Captura de datos duros (tiempo, inclinación, velocidad, RPE)', hash: 'registro' },
+  'tab-historial': { title: 'Historial y Datos Duros', sub: 'Registro histórico completo y exportación', hash: 'historial' },
+  'tab-metricas': { title: 'Control de Peso y Medidas', sub: 'Evolución de peso corporal, IMC y cintura a nivel de ombligo', hash: 'metricas' }
+};
+
+window.switchTab = function(targetId, updateHash = true, subOption = null) {
   const navButtons = document.querySelectorAll('.nav-item');
   const panes = document.querySelectorAll('.tab-pane');
   const pageTitle = document.getElementById('page-title');
   const pageSubtitle = document.getElementById('page-subtitle');
 
-  const titles = {
-    'tab-dashboard': { title: 'Panel de Control General', sub: 'Progreso acumulado, métricas biomecánicas y plan activo' },
-    'tab-rutinas': { title: 'Plan y Rutinas Paso a Paso', sub: 'Guías de ejecución técnica sin riesgo de lesiones' },
-    'tab-registro': { title: 'Registro de Sesión', sub: 'Captura de datos duros (tiempo, inclinación, velocidad, RPE)' },
-    'tab-historial': { title: 'Historial y Datos Duros', sub: 'Registro histórico completo y exportación' },
-    'tab-metricas': { title: 'Control de Peso y Medidas', sub: 'Evolución de peso corporal, IMC y cintura a nivel de ombligo' }
-  };
+  const targetPane = document.getElementById(targetId);
+  if (!targetPane) return;
+
+  // Actualizar estado activo en botones de navegación
+  navButtons.forEach(b => {
+    if (b.getAttribute('data-tab') === targetId) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  // Mostrar pane correspondiente con animación
+  panes.forEach(p => {
+    if (p.id === targetId) {
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+
+  // Actualizar títulos
+  if (TAB_DEFINITIONS[targetId]) {
+    if (pageTitle) pageTitle.textContent = TAB_DEFINITIONS[targetId].title;
+    if (pageSubtitle) pageSubtitle.textContent = TAB_DEFINITIONS[targetId].sub;
+
+    // Actualizar miga de pan actual
+    const currentBreadcrumb = targetPane.querySelector('.breadcrumb-current');
+    if (currentBreadcrumb) {
+      currentBreadcrumb.textContent = TAB_DEFINITIONS[targetId].title;
+    }
+
+    // Actualizar URL Hash si se solicita
+    if (updateHash && TAB_DEFINITIONS[targetId].hash) {
+      let targetHash = '#' + TAB_DEFINITIONS[targetId].hash;
+      if (subOption) targetHash += '/' + subOption;
+      if (window.location.hash !== targetHash) {
+        history.pushState({ tab: targetId, subOption: subOption }, '', targetHash);
+      }
+    }
+  }
+
+  // Scroll suave al inicio del contenido
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Si se solicita una sub-rutina específica dentro de Plan y Rutinas
+  if (targetId === 'tab-rutinas' && subOption) {
+    setTimeout(() => {
+      const subBtn = document.querySelector(`.sub-tab-btn[data-routine="${subOption}"]`);
+      if (subBtn) subBtn.click();
+    }, 50);
+  }
+};
+
+// Controlador para el Botón Atrás de Android / Navegador
+window.handleAppBackPress = function() {
+  const activePane = document.querySelector('.tab-pane.active');
+  if (activePane && activePane.id !== 'tab-dashboard') {
+    window.switchTab('tab-dashboard', true);
+    return true; // Capturado por la app para no cerrarla
+  }
+  return false; // Permitir salida normal
+};
+
+function setupNavigation() {
+  const navButtons = document.querySelectorAll('.nav-item');
 
   navButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-tab');
-      navButtons.forEach(b => b.classList.remove('active'));
-      panes.forEach(p => p.classList.remove('active'));
-
-      btn.classList.add('active');
-      const targetPane = document.getElementById(targetId);
-      if (targetPane) targetPane.classList.add('active');
-
-      if (titles[targetId]) {
-        pageTitle.textContent = titles[targetId].title;
-        pageSubtitle.textContent = titles[targetId].sub;
-      }
+      window.switchTab(targetId, true);
     });
+  });
+
+  // Escuchar botón atrás del navegador o cambios de hash
+  window.addEventListener('popstate', () => {
+    const hash = window.location.hash.replace('#', '') || 'dashboard';
+    const parts = hash.split('/');
+    const route = parts[0];
+    const sub = parts[1] || null;
+
+    const routeMap = {
+      'dashboard': 'tab-dashboard',
+      'rutinas': 'tab-rutinas',
+      'registro': 'tab-registro',
+      'historial': 'tab-historial',
+      'metricas': 'tab-metricas'
+    };
+
+    const targetId = routeMap[route] || 'tab-dashboard';
+    window.switchTab(targetId, false, sub);
   });
 
   const btnQuick = document.getElementById('btn-quick-workout');
   if (btnQuick) {
     btnQuick.addEventListener('click', () => {
-      document.getElementById('nav-btn-routines').click();
+      window.switchTab('tab-rutinas', true, 'caminadora');
     });
   }
 
   const btnViewHistory = document.getElementById('btn-view-all-history');
   if (btnViewHistory) {
     btnViewHistory.addEventListener('click', () => {
-      document.getElementById('nav-btn-history').click();
+      window.switchTab('tab-historial', true);
     });
+  }
+
+  // Leer hash inicial al cargar página si existe
+  if (window.location.hash && window.location.hash !== '#dashboard') {
+    const initHash = window.location.hash.replace('#', '');
+    const parts = initHash.split('/');
+    const routeMap = {
+      'dashboard': 'tab-dashboard',
+      'rutinas': 'tab-rutinas',
+      'registro': 'tab-registro',
+      'historial': 'tab-historial',
+      'metricas': 'tab-metricas'
+    };
+    if (routeMap[parts[0]]) {
+      window.switchTab(routeMap[parts[0]], false, parts[1] || null);
+    }
   }
 }
 
@@ -1301,14 +1394,7 @@ function _setupTodayFocusInternal() {
   // Botón para abrir la rutina del día
   if (btnStart) {
     btnStart.onclick = () => {
-      const navBtnRutinas = document.querySelector('[data-tab="tab-rutinas"]');
-      if (navBtnRutinas) navBtnRutinas.click();
-
-      const subBtn = document.querySelector(`[data-routine="${todayData.routineKey}"]`);
-      if (subBtn) subBtn.click();
-
-      const routineContent = document.getElementById('routine-content');
-      if (routineContent) routineContent.scrollIntoView({ behavior: 'smooth' });
+      window.switchTab('tab-rutinas', true, todayData.routineKey);
     };
   }
 
