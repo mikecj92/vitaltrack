@@ -6,8 +6,7 @@ const USER_PROFILE = {
   dumbbellWeightLb: 10
 };
 
-// Rutinas detalladas con enfoque de cero impacto, biomecánica clínica y guías visuales/video
-// Rutinas detalladas con enfoque de cero impacto, biomecánica clínica y guías visuales/video
+// Rutinas detalladas con enfoque de cero impacto, biomecánica clínica ultra-explícita y guías paso a paso
 const ROUTINES_DATA = {
   "caminadora": {
     title: "Cardio Zona 2 en Caminadora Altera CE-8610 (Cero Impacto)",
@@ -15,33 +14,60 @@ const ROUTINES_DATA = {
     exercises: [
       {
         name: "1. Calentamiento Articular y Rampa Suave",
-        details: "Velocidad: 3.2 a 3.8 km/h · Tacón Hexagonal: Nivel 1 (Más bajo / plano)",
-        cue: "Pisa de talón a metatarso con suavidad. Brazos sueltos y relajados para lubricar las articulaciones sin impacto.",
+        details: "Duración: 3 a 5 min · Velocidad: 3.2 a 3.8 km/h · Tacón Hexagonal: Nivel 1 (Plano)",
         meta: "3 a 5 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
-        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40",
+        setup: "Párate sobre los rieles laterales antes de encender la banda. Enciende la caminadora a 3.0 km/h, sube cuando la banda esté en marcha constante. Sujeta los mangos únicamente los primeros 20 segundos para comprobar estabilidad.",
+        steps: [
+          "Paso 1: Suelta los mangos por completo. Deja que tus brazos oscilen libremente a 90° de flexión en los codos, sincronizados con la zancada opuesta.",
+          "Paso 2: Haz una pisada rodada suave: el talón contacta primero sin golpear con fuerza, transfiere el peso por el borde externo del pie y despega suavemente desde el metatarso.",
+          "Paso 3: Mantén la mirada al frente a la altura del horizonte (no mires la pantalla ni tus pies para evitar tensión en las vértebras cervicales C5-C7).",
+          "Paso 4: Incrementa gradualmente la velocidad de 3.2 a 3.8 km/h hacia el minuto 4 para lubricar los cartílagos de rodilla y elevar suavemente la temperatura muscular."
+        ],
+        breathing: "Respiración 100% nasal: inhala en 3 pasos y exhala en 3 pasos. Si necesitas abrir la boca para respirar, estás caminando demasiado rápido para la fase de calentamiento.",
+        mistakes: "Apoyarse firmemente en los pasamanos (anula el trabajo del core y falsea el gasto calórico); dar zancadas excesivamente largas golpeando el talón contra la tabla.",
+        safety: "Debes sentir las piernas entrando en calor de manera placentera. Cero tirón en la planta del pie ni presión aguda en la rótula."
       },
       {
         name: "2. Fase Principal en Zona 2 (Rampa Lipolítica)",
-        details: "Velocidad: 4.2 a 4.6 km/h (sugerido: 4.4 km/h) · Tacón: Nivel 2 o 3",
-        cue: "Test de la voz: debes poder pronunciar frases completas sin jadear (110-128 BPM). NO te sujetes a las barras fijas para que tu columna y core trabajen de forma natural.",
+        details: "Duración: 25 a 35 min · Velocidad: 4.2 a 4.6 km/h (sugerido: 4.4 km/h) · Tacón: Nivel 2 o 3 (Inclinación moderada)",
         meta: "25 a 35 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
-        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40",
+        setup: "Ajusta el tacón hexagonal de tu Altera CE-8610 en Nivel 2 (o Nivel 3 si tus piernas están completamente descansadas). Ajusta la velocidad a 4.4 km/h. Verifica en tu Samsung Galaxy Watch que el pulso comience a estabilizarse.",
+        steps: [
+          "Paso 1: Al caminar en rampa inclinada, inclina ligeramente el cuerpo entero hacia adelante desde los tobillos (no dobles la cintura ni encorves los hombros).",
+          "Paso 2: Aprovecha la inclinación: la rampa traslada el esfuerzo del impacto articular hacia la musculatura posterior (glúteos y pantorrillas), reduciendo un 40% el impacto sobre la rótula.",
+          "Paso 3: Brazos relajados oscilando al costado del cuerpo. Mantén el abdomen ligeramente contraído para sostener la pelvis neutra.",
+          "Paso 4: Realiza el Test de la Voz cada 5 minutos: di en voz alta una frase completa (ej. 'Mi pulso está en zona aeróbica cómoda'). Si puedes terminar la frase sin jadear ni quedarte sin aliento, estás en la Zona 2 exacta (109-128 BPM a tus 38 años)."
+        ],
+        breathing: "Inhala rítmicamente en 2 pasos y exhala en 2 pasos por la boca entreabierta o nariz. Mantén un flujo continuo de oxígeno sin hiperventilar.",
+        mistakes: "Aferrarse a las barras fijas con las manos (destruye la biomecánica natural de la marcha y sobrecarga los hombros); subir la velocidad a trote (a 95 kg el trote multiplica el impacto articular por 3.5 veces).",
+        safety: "Tu frecuencia cardíaca en el Galaxy Watch debe oscilar entre 110 y 128 BPM. Si pasa de 132 BPM, reduce la velocidad a 4.0 km/h de inmediato."
       },
       {
-        name: "3. Vuelta a la Calma (Descompresión Cardíaca)",
-        details: "Velocidad: 2.8 a 3.2 km/h · Tacón: Nivel 1",
-        cue: "Inhala profundo por la nariz y exhala por la boca. Permite que tus pulsaciones bajen a menos de 100 BPM de forma controlada.",
+        name: "3. Vuelta a la Calma (Descompresión Cardíaca y Articular)",
+        details: "Duración: 3 min · Velocidad: 2.8 a 3.2 km/h · Tacón: Nivel 1 (Plano)",
         meta: "3 min",
         image: "assets/treadmill.jpg",
         localVideo: "assets/videos/incline_treadmill.mp4",
         youtubeId: "meR1rZfIg40",
-        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40"
+        videoUrl: "https://www.youtube.com/watch?v=meR1rZfIg40",
+        setup: "Baja la velocidad de la caminadora a 3.0 km/h y regresa el tacón al Nivel 1 plano de forma segura.",
+        steps: [
+          "Paso 1: Reduce el ritmo de paso de forma consciente, dejando caer los hombros hacia atrás y relajando el cuello.",
+          "Paso 2: Permite que la sangre acumulada en las piernas retorne al corazón mediante el bombeo suave de las pantorrillas.",
+          "Paso 3: Camina con zancada corta y pausada durante los 3 minutos completos.",
+          "Paso 4: No te bajes de golpe de la caminadora para evitar mareos por hipotensión ortostática post-esfuerzo."
+        ],
+        breathing: "Inhalaciones nasales profundas de 4 segundos inflando el diafragma, seguidas de exhalaciones lentas por la boca de 6 segundos para activar el sistema nervioso parasimpático.",
+        mistakes: "Apagar la caminadora y sentarse de inmediato (provoca acumulación venosa en piernas y picos de fatiga cardíaca).",
+        safety: "Tus pulsaciones deben descender gradualmente por debajo de 100 BPM antes de terminar la sesión."
       }
     ]
   },
@@ -51,84 +77,158 @@ const ROUTINES_DATA = {
     exercises: [
       {
         name: "1. Calentamiento Dinámico Articular",
-        details: "Movilidad de hombros, cuello, muñecas, tronco y tobillos · Nivel ligero",
-        cue: "NUNCA lances golpes con fuerza en frío. Rota hombros y calienta el líquido sinovial articular durante 3 a 5 minutos.",
+        details: "Duración: 3 a 5 min · Movilidad de hombros, cuello, muñecas, tronco y tobillos",
         meta: "3 a 5 min",
         image: "assets/boxing_punch.jpg",
         youtubeId: "D8DouKeOkfI",
-        videoUrl: "https://www.youtube.com/watch?v=D8DouKeOkfI"
+        videoUrl: "https://www.youtube.com/watch?v=D8DouKeOkfI",
+        setup: "Colócate de pie en un espacio libre de 2x2 metros, con tenis deportivos puestos (nunca descalzo ni en calcetines a 95 kg para amortiguar el peso en el suelo). Correas de los Joy-Cons bien ajustadas a las muñecas.",
+        steps: [
+          "Paso 1: Círculos suaves de hombros hacia adelante (10 repeticiones) y hacia atrás (10 repeticiones).",
+          "Paso 2: Rotaciones suaves de tronco de lado a lado manteniendo la pelvis estable (15 repeticiones).",
+          "Paso 3: Rotación articular de muñecas y flexiones suaves de tobillo para activar el flujo sinovial.",
+          "Paso 4: Rebotes sutiles alternando el peso de un pie al otro (sin despegar los dedos del suelo) para despertar el reflejo neuromuscular."
+        ],
+        breathing: "Respiración relajada y nasal. Prepara el ritmo cardíaco sin aceleraciones bruscas.",
+        mistakes: "Empezar a lanzar puñetazos de golpe sin calentar hombros y codos; hacer rotaciones de cuello violentas.",
+        safety: "Articulaciones ligeras y tibias. Cero rigidez en los trapecios."
       },
       {
         name: "2. Bloque de Golpeo: Jabs, Straights (Cross) y Hooks",
-        details: "2 a 3 canciones o sesión diaria guiada con Joy-Cons (20-25 min)",
-        cue: "REGLA DE ORO: Detén el golpe al 90-95% con contracción muscular. JAMÁS hiperextiendas ni bloquees los codos para no dañar tendones. Rota desde el pie pivote.",
+        details: "Duración: 20 a 25 min · 2 a 3 canciones o rutina diaria guiada en Switch",
         meta: "20 a 25 min",
         image: "assets/boxing_punch.jpg",
         youtubeId: "Jt1u69N9Y1c",
-        videoUrl: "https://www.youtube.com/watch?v=Jt1u69N9Y1c"
+        videoUrl: "https://www.youtube.com/watch?v=Jt1u69N9Y1c",
+        setup: "Postura de guardia de boxeo: pie izquierdo adelante a 45°, pie derecho atrás separado al ancho de hombros. Rodillas ligeramente flexionadas. Puños a la altura de los pómulos, codos pegados a las costillas para proteger órganos.",
+        steps: [
+          "Paso 1 (Jab / Mano delantera): Extiende el puño izquierdo en línea recta hacia adelante rotando el puño al final. FRENA el golpe al 90-95% con la contracción de tu tríceps y hombro. JAMÁS hiperextiendas el codo al 100% en el aire.",
+          "Paso 2 (Cross / Mano trasera): Gira el pie trasero sobre el metatarso, rota la cadera derecha y el torso al mismo tiempo que lanzas el puño derecho recto. La potencia nace del pie y la cadera, no del brazo.",
+          "Paso 3 (Hooks / Ganchos): Mantén el codo en un ángulo estricto de 90°. Gira todo el cuerpo en bloque sobre el pie pivote, llevando el puño de forma horizontal a la altura de la mandíbula.",
+          "Paso 4: Recuperación inmediata: cada vez que lances un golpe, regresa la mano al pómulo a la misma velocidad que salió, manteniendo la guardia cerrada."
+        ],
+        breathing: "Exhala con un soplido corto por la boca ('tsss') al momento exacto de conectar o terminar cada golpe. Inhala al regresar a la guardia.",
+        mistakes: "HIPEREXTENSIÓN DE CODO (el error número 1 que lesiona tendones: bloquear el codo bruscamente en el aire); pies pegados al piso como estatuas sin rotar la cadera (fuerza la columna lumbar).",
+        safety: "Control total de la frenada muscular. Si sientes dolor en el codo o muñeca, afloja la fuerza y enfócate en el ritmo y la música."
       },
       {
         name: "3. Esquives y Defensa: Ducks & Weaves (Bisagra de Cadera)",
-        details: "Control del centro de gravedad atlético con tenis de amortiguación",
-        cue: "Al agacharte (Duck), flexiona suavemente rodillas y cadera. NUNCA dobles la columna lumbar hacia adelante. Mantén el pecho arriba y abdomen firme.",
+        details: "Duración: Integrado en las canciones · Movimiento defensivo de cuerpo entero",
         meta: "Continuo",
         image: "assets/boxing_punch.jpg",
         youtubeId: "11Y_2aW-c_k",
-        videoUrl: "https://www.youtube.com/watch?v=11Y_2aW-c_k"
+        videoUrl: "https://www.youtube.com/watch?v=11Y_2aW-c_k",
+        setup: "Pies bien apoyados, rodillas semi-flexionadas, centro de gravedad bajo y atlético.",
+        steps: [
+          "Paso 1 (Duck / Agacharse): Flexiona simultáneamente las rodillas y la cadera unos 15 a 20 cm, bajando el torso erguido en línea vertical como si pasara una cuerda imaginaria sobre tu cabeza.",
+          "Paso 2: Mantén la columna recta y la mirada al frente en la pantalla. NO dobles la espalda baja hacia adelante.",
+          "Paso 3 (Weave / Esquive circular en U): Dibuja una 'U' suave con tu cabeza y torso pasando el peso de un pie al otro, doblando las rodillas de forma rítmica.",
+          "Paso 4: Vuelve a subir a la postura de guardia empujando desde los talones con los glúteos activos."
+        ],
+        breathing: "Inhala al descender en el esquive, exhala al subir de regreso a la guardia.",
+        mistakes: "Doblar solo la columna lumbar hacia el frente (ejerce una palanca destructiva en L4-L5 a 95 kg); descender demasiado bajo (más allá de 90° de flexión de rodilla).",
+        safety: "El esfuerzo debe sentirse en los muslos y glúteos, nunca en la zona lumbar."
       },
       {
         name: "4. Vuelta a la Calma y Estiramientos Específicos",
-        details: "Estiramiento suave de pectorales, deltoides posterior, dorsales y flexores",
-        cue: "Respira hondo de forma nasal, baja las pulsaciones a zona basal y recupera la flexibilidad de hombros y espalda.",
+        details: "Duración: 3 a 5 min · Estiramiento de pectorales, deltoides posterior y dorsales",
         meta: "3 a 5 min",
         image: "assets/boxing_punch.jpg",
         youtubeId: "d_kS9rJkQzQ",
-        videoUrl: "https://www.youtube.com/watch?v=d_kS9rJkQzQ"
+        videoUrl: "https://www.youtube.com/watch?v=d_kS9rJkQzQ",
+        setup: "Deja los Joy-Cons a un lado. Permanece de pie respirando calmadamente.",
+        steps: [
+          "Paso 1: Cruza el brazo derecho por delante del pecho y usa el brazo izquierdo para presionar suavemente el codo hacia ti durante 20 segundos. Cambia de brazo (estiramiento del deltoides posterior).",
+          "Paso 2: Apoya una mano en la pared con el brazo extendido a la altura del hombro y gira suavemente el torso hacia afuera para estirar el pectoral mayor durante 20 segundos por lado.",
+          "Paso 3: Entrelaza los dedos al frente y empuja las palmas hacia adelante, redondeando suavemente la parte superior de la espalda (escapulares).",
+          "Paso 4: Inhala profundo y estira ambos brazos hacia el techo, descompresionando la columna vertebral."
+        ],
+        breathing: "Respiración diafragmática pausada. Cada exhalación relaja más la musculatura.",
+        mistakes: "Estirar con rebotes bruscos (puede provocar un reflejo miotático y desgarros leves).",
+        safety: "Tensión muscular agradable de liberación. Cero pinchazo articular."
       }
     ]
   },
   "fuerza-a": {
     title: "Rutina A: Piernas, Empuje y Estabilidad Unilateral",
-    subtitle: "Lunes · Foco en cuadríceps protegidos, pecho y estabilidad de la columna con mancuerna de 10 lb.",
+    subtitle: "Lunes · Foco en cuádriceps protegidos, pecho y estabilidad de la columna con mancuerna de 10 lb.",
     exercises: [
       {
-        name: "Sentadilla a la Silla (Box Squat) con Mancuerna Copa",
-        details: "3 series x 10-12 repeticiones · Mancuerna 10 lb sostenida vertical al pecho",
-        cue: "Toca la silla con los glúteos de forma controlada (sin dejarte caer) y empuja el suelo con los talones. Rodillas alineadas con los dedos de los pies.",
+        name: "1. Sentadilla a la Silla (Box Squat) con Mancuerna Copa",
+        details: "3 series x 8-10 repeticiones · Carga: Mancuerna de 10 lb pegada al esternón (o peso corporal en Serie 1)",
         meta: "Descanso: 90s",
         image: "assets/box_squat.jpg",
         localVideo: "assets/videos/box_squat.mp4",
         youtubeId: "G0DMfAJl7V8",
-        videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8"
+        videoUrl: "https://www.youtube.com/watch?v=G0DMfAJl7V8",
+        setup: "Coloca una silla sólida o banco estable (altura estándar ~45 cm) detrás de ti. Separa los pies al ancho de los hombros, con las puntas de los pies apuntando ligeramente hacia afuera (15° a 20°). Toma la mancuerna de 10 lb de forma vertical con ambas manos, sosteniendo la cabeza superior de la mancuerna pegada firmemente contra el esternón (estilo copa/goblet). Codos apuntando hacia el suelo, pecho erguido, hombros hacia atrás y mirada fija al frente.",
+        steps: [
+          "Paso 1 (Inicio y bracing abdominal): Inhala profundamente por la nariz hacia el abdomen, compactando el core como si fueras a recibir un golpe en la panza.",
+          "Paso 2 (Descenso controlado / Fase excéntrica): Inicia el movimiento empujando la cadera hacia atrás (bisagra de cadera), NO empujando las rodillas hacia adelante. Desciende en 3 segundos lentos. Abre las rodillas hacia afuera para que sigan exactamente la misma línea imaginaria de tus dedos medios del pie.",
+          "Paso 3 (Contacto con la silla / Pausa isométrica): Toca suavemente el borde del asiento con los glúteos durante 1 segundo de pausa. NO te dejes caer ni transfieras tu peso ni te relajes; mantén la tensión muscular en piernas y abdomen intacta.",
+          "Paso 4 (Ascenso / Fase concéntrica): Exhala con fuerza por la boca mientras empujas el suelo con los talones y el medio pie. Sube en 1 segundo de forma vertical. Al llegar arriba, aprieta firmemente los glúteos y los cuádriceps sin empujar la pelvis hacia adelante ni hiperextender la espalda baja."
+        ],
+        breathing: "Tempo 3-1-1-1. Inhala profundo al descender en 3 segundos. Pausa 1 segundo rozando la silla. Exhala con fuerza al subir en 1 segundo. Pausa 1 segundo arriba antes de la siguiente repetición.",
+        mistakes: "Colapsar las rodillas hacia adentro al subir (valgo dinámico: lesiona cartílago rotuliano a 95 kg); dejarse caer de golpe sobre la silla (comprime vértebras lumbares); despegar los talones del suelo cargando todo el peso en las puntas de los pies.",
+        safety: "Debes sentir quemazón muscular en los cuádriceps y glúteos. Si sientes dolor punzante en la rótula, haz la serie solo con tu peso corporal o aumenta la altura de la silla con un cojín firme."
       },
       {
-        name: "Floor Press Unilateral (Pecho en el Suelo)",
-        details: "3 series x 10 repeticiones por cada brazo · Mancuerna 10 lb",
-        cue: "El suelo frena el codo de forma natural a 90°, protegiendo el manguito rotador y evitando tensión articular en el hombro.",
+        name: "2. Floor Press Unilateral en el Suelo (Pecho y Tríceps)",
+        details: "3 series x 8-10 repeticiones por cada brazo · Carga: Mancuerna de 10 lb",
         meta: "Descanso: 60s",
         image: "assets/floor_press.jpg",
         localVideo: "assets/videos/floor_press.mp4",
         youtubeId: "csvfESQaMeU",
-        videoUrl: "https://www.youtube.com/watch?v=csvfESQaMeU"
+        videoUrl: "https://www.youtube.com/watch?v=csvfESQaMeU",
+        setup: "Acuéstate boca arriba sobre una colchoneta en el suelo. Flexiona las rodillas a 90° con las plantas de los pies bien apoyadas en el suelo (esto neutraliza la pelvis y pega la zona lumbar al piso de forma 100% segura). Sostén la mancuerna de 10 lb en tu mano derecha con el brazo extendido verticalmente sobre tu pecho. El brazo izquierdo descansa relajado en el piso a 45° con la palma en el suelo para darte estabilidad.",
+        steps: [
+          "Paso 1: Retrae las escápulas (junta los omóplatos contra el suelo como si pellizcaras una moneda entre ellos).",
+          "Paso 2 (Descenso controlado): Inhala por la nariz y baja la mancuerna en 3 segundos lentos. Posiciona el codo a un ángulo de 60° a 75° respecto a tu torso (forma de flecha, NUNCA en cruz a 90° para evitar pinzamiento subacromial del hombro).",
+          "Paso 3 (Pausa en el suelo): Deja que la parte posterior del tríceps toque suavemente el suelo. Pausa 1 segundo completo. El suelo actúa como freno mecánico natural que impide que el hombro caiga en una hiperextensión peligrosa.",
+          "Paso 4 (Empuje): Exhala y empuja la mancuerna hacia arriba en 1 segundo hasta la posición inicial sobre el pecho, concentrándote en apretar el músculo pectoral derecho.",
+          "Paso 5: Completa las 8-10 repeticiones con el brazo derecho, baja la mancuerna al pecho, cámbiala de mano de forma segura y ejecuta la serie con el brazo izquierdo."
+        ],
+        breathing: "Tempo 3-1-1-0. Inhala al bajar en 3 segundos. Pausa 1 segundo en el suelo. Exhala al empujar en 1 segundo.",
+        mistakes: "Abrir el codo en línea recta con el hombro (90° destruye el manguito rotador); levantar la espalda baja del suelo arqueando la columna; golpear el codo contra el suelo sin control.",
+        safety: "La articulación del hombro debe sentirse completamente protegida y estable gracias al piso. Si sientes molestia, gira la muñeca a agarre neutro (palma mirando hacia adentro)."
       },
       {
-        name: "Paseo del Granjero Asimétrico (Suitcase Carry)",
-        details: "3 series x 40 pasos por mano · Mancuerna 10 lb",
-        cue: "Camina erguido con la mancuerna a un solo lado. Evita que el torso se incline lateralmente; tu abdomen oblicuo y cuadrado lumbar trabajan como escudo protector.",
+        name: "3. Paseo de la Maleta Asimétrica (Suitcase Carry)",
+        details: "3 series x 35-45 segundos caminando por mano (o 35 pasos controlados) · Carga: Mancuerna de 10 lb",
         meta: "Descanso: 60s",
         image: "assets/floor_press.jpg",
         localVideo: "assets/videos/suitcase_carry.mp4",
         youtubeId: "irA4HomwOjw",
-        videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw"
+        videoUrl: "https://www.youtube.com/watch?v=irA4HomwOjw",
+        setup: "Párate erguido con los pies separados al ancho de caderas. Toma la mancuerna de 10 lb en tu mano derecha con agarre firme, como si llevaras una maleta pesada a un costado. El brazo izquierdo cuelga a un costado con el puño cerrado o ligeramente separado para hacer contrapeso neuromuscular.",
+        steps: [
+          "Paso 1 (Calibración postural): Alinea tus dos hombros a la misma altura horizontal exacta. NO permitas que el peso jale tu hombro derecho hacia abajo. Activa tu abdomen oblicuo izquierdo con fuerza para resistir la inclinación.",
+          "Paso 2 (Marcha controlada): Comienza a caminar hacia adelante con pasos normales, firmes y deliberados (apoyo talón-planta-metatarso). Mirada al frente a un punto fijo.",
+          "Paso 3 (Estabilidad antirrotacional): Tu torso debe permanecer perfectamente vertical y rígido como una columna de mármol. La mancuerna no debe tambalearse ni golpear contra tu pierna.",
+          "Paso 4 (Giro y cambio): Camina durante 35 a 45 segundos (unos 35-40 pasos). Detente con control, cambia la mancuerna a la mano izquierda con ambas manos y repite el recorrido activando el lado contrario."
+        ],
+        breathing: "Respiración diafragmática continua. Respira rítmicamente por la nariz sin inflar el pecho y manteniendo el abdomen firme (tensión 'bracing'). NO contengas la respiración.",
+        mistakes: "Inclinar el tronco hacia el lado de la mancuerna (anula el trabajo del core y sobrecarga los discos lumbares); caminar demasiado rápido o dando zancadas descoordinadas; encoger los hombros hacia las orejas.",
+        safety: "Sentirás una fuerte activación en el abdomen lateral (oblicuos) y en los músculos estabilizadores de la columna lumbar (cuadrado lumbar). Cero dolor punzante en la espalda baja."
       },
       {
-        name: "Elevación de Talones de Pie con Apoyo en Pared (Gemelos)",
-        details: "3 series x 15 repeticiones · Yemas de los dedos en la pared para equilibrio",
-        cue: "Sube sobre los metatarsos y pausa 1 segundo en la máxima contracción arriba. Desciende en 3 segundos lentos. Fortalece gemelos y tendón de Aquiles.",
+        name: "4. Elevación de Talones en Pared (Calf Raises para Gemelos)",
+        details: "3 series x 12-15 repeticiones · Carga: Peso corporal con apoyo de yemas en pared",
         meta: "Descanso: 45s",
         image: "assets/calf_raises.jpg",
         youtubeId: "gwLzBJYoWlI",
-        videoUrl: "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        videoUrl: "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+        setup: "Colócate de pie frente a una pared a unos 25-30 cm de distancia. Apoya suavemente las yemas de los dedos sobre la pared a la altura del pecho únicamente para mantener el equilibrio (los brazos no empujan). Pies paralelos al ancho de caderas.",
+        steps: [
+          "Paso 1: Coloca el peso del cuerpo equilibrado entre el metatarso del dedo gordo y el segundo dedo del pie (evita que el pie ruede hacia el borde externo).",
+          "Paso 2 (Elevación concéntrica): Inhala y elévate de forma vertical sobre los metatarsos en 2 segundos, subiendo los talones lo más alto posible como si quisieras tocar el techo.",
+          "Paso 3 (Pausa en la cima): Mantén la contracción máxima de los gemelos en la cúspide durante 2 segundos completos sin balancearte.",
+          "Paso 4 (Descenso excéntrico lento): Exhala y desciende los talones en 3 a 4 segundos muy controlados, resistiendo la gravedad hasta que los talones apenas rocen el suelo.",
+          "Paso 5: Sin rebotar ni descansar en el suelo, sube de inmediato para la siguiente repetición."
+        ],
+        breathing: "Tempo 2-2-3-0. Inhala al prepararte, exhala al subir en 2 segundos, mantén 2 segundos arriba, inhala al descender en 3-4 segundos.",
+        mistakes: "Rebotar rápidamente en el suelo (utiliza la elasticidad del tendón de Aquiles en lugar de trabajar el músculo y puede generar fascitis plantar a 95 kg); doblar las rodillas durante la subida.",
+        safety: "Sentirás congestión muscular profunda en las pantorrillas y solidez en los tobillos para dar pasos firmes sin impacto en la rodilla."
       }
     ]
   },
@@ -137,42 +237,82 @@ const ROUTINES_DATA = {
     subtitle: "Miércoles · Postura erguida, descompresión dorsal y cadena posterior.",
     exercises: [
       {
-        name: "Remo Unilateral con Apoyo en Mesa o Respaldo",
-        details: "3 series x 10-12 reps por brazo · Mancuerna 10 lb",
-        cue: "Mano apoyada para descargar la columna lumbar. Espalda recta a 45°. Lleva el codo hacia el bolsillo de la cadera apretando la escápula.",
+        name: "1. Remo Unilateral con Apoyo en Mesa o Silla",
+        details: "3 series x 10-12 repeticiones por cada brazo · Carga: Mancuerna de 10 lb",
         meta: "Descanso: 60s",
         image: "assets/single_arm_row.jpg",
         localVideo: "assets/videos/single_arm_row.mp4",
         youtubeId: "tLnlWj7LQ34",
-        videoUrl: "https://www.youtube.com/watch?v=tLnlWj7LQ34"
+        videoUrl: "https://www.youtube.com/watch?v=tLnlWj7LQ34",
+        setup: "Colócate junto a una mesa resistente, banco o respaldo de silla pesada. Apoya firmemente la mano izquierda sobre la mesa con el brazo extendido. Retrasa la pierna derecha unos 40 cm y mantén la pierna izquierda semi-flexionada. Inclina el torso hacia adelante a un ángulo de 45° manteniendo la espalda completamente recta y la columna neutra. Toma la mancuerna de 10 lb con la mano derecha, dejando que cuelgue verticalmente con el hombro relajado.",
+        steps: [
+          "Paso 1: Inhala y activa el abdomen. Fija la mirada al suelo a un metro de tus pies para mantener la columna cervical alineada.",
+          "Paso 2 (Tracción hacia la cadera): Exhala y tira de la mancuerna llevando el codo derecho hacia atrás y hacia arriba, apuntando hacia el bolsillo trasero de tu pantalón (no jales hacia el hombro).",
+          "Paso 3 (Pausa escapular): En el punto más alto, junta y aprieta el omóplato derecho hacia la columna vertebral durante 1 a 2 segundos completos. Siente la activación profunda del dorsal y la espalda media.",
+          "Paso 4 (Descenso excéntrico): Inhala y baja la mancuerna en 3 segundos lentos y controlados hasta extender el brazo por completo, permitiendo que la escápula se abra suavemente.",
+          "Paso 5: Completa 10-12 repeticiones, cambia de lado (apoyo con mano derecha, remo con mano izquierda) y repite."
+        ],
+        breathing: "Tempo 2-1-3-0. Exhala al traccionar el codo hacia la cadera en 2 segundos, pausa 1 segundo apretando la espalda, inhala al descender en 3 segundos.",
+        mistakes: "Rotar el torso o girar los hombros para subir la mancuerna con impulso (ejerce torsión lesiva en las vértebras lumbares); encorvar la espalda baja formando una joroba.",
+        safety: "El apoyo con el brazo contrario descarga el 100% de la tensión lumbar. Sentirás fatiga muscular en la espalda media y dorsal, nunca en la cintura."
       },
       {
-        name: "Puente de Glúteos con Mancuerna en Pelvis",
-        details: "3 series x 12 reps · Mancuerna 10 lb sostenida sobre la pelvis",
-        cue: "Empuja con los talones y aprieta los glúteos 2 segundos en el punto más alto. NO arquees la espalda baja; la extensión debe venir 100% de la cadera.",
+        name: "2. Puente de Glúteos con Mancuerna en Pelvis (Suelo)",
+        details: "3 series x 10-12 repeticiones · Carga: Mancuerna de 10 lb sostenida sobre los huesos de la pelvis",
         meta: "Descanso: 60s",
         image: "assets/glute_bridge.jpg",
         youtubeId: "8bbE64NuDTU",
-        videoUrl: "https://www.youtube.com/watch?v=8bbE64NuDTU"
+        videoUrl: "https://www.youtube.com/watch?v=8bbE64NuDTU",
+        setup: "Acuéstate boca arriba sobre la colchoneta. Flexiona las rodillas a 90° con los pies apoyados en el suelo al ancho de caderas y los talones a unos 25 cm de los glúteos. Coloca la mancuerna de 10 lb horizontalmente sobre la pelvis, sujetándola con ambas manos por los extremos para que no ruede.",
+        steps: [
+          "Paso 1: Haz una retroversión pélvica ligera: aplana la zona lumbar contra el suelo eliminando cualquier hueco antes de iniciar.",
+          "Paso 2 (Elevación de cadera): Inhala, empuja con fuerza el suelo exclusivamente a través de los talones y el medio pie, y elévate contrayendo los glúteos hasta que tus rodillas, caderas y hombros formen una línea recta diagonal.",
+          "Paso 3 (Contracción máxima isométrica): En el punto más alto, aprieta los glúteos con máxima fuerza durante 2 segundos completos. NO arquees la espalda baja hacia arriba; la extensión debe provenir 100% de la cadera.",
+          "Paso 4 (Descenso articulado): Exhala y desciende las caderas de forma controlada en 3 segundos, tocando suavemente la colchoneta con los glúteos sin relajarte.",
+          "Paso 5: Inicia la siguiente repetición de inmediato sin perder la tensión."
+        ],
+        breathing: "Tempo 2-2-3-0. Inhala abajo, empuja y elévate en 2 segundos, aguanta 2 segundos arriba apretando glúteos, exhala y desciende en 3 segundos.",
+        mistakes: "Hiperextender la espalda baja empujando la barriga hacia el techo (fuerza los discos lumbares); apoyar el peso en los dedos de los pies en lugar de los talones (activa cuádriceps en lugar de glúteos).",
+        safety: "Cero molestia en rodillas ni en lumbares. Sentirás un trabajo intenso y directo en glúteos y femorales."
       },
       {
-        name: "Press de Hombro Unilateral Sentado en Silla",
-        details: "3 series x 8-10 reps por brazo · Mancuerna 10 lb",
-        cue: "Espalda apoyada firmemente. Agarre neutro y codo a 30-45° hacia adelante (plano escapular). Previene cualquier pinzamiento del supraespinoso.",
+        name: "3. Press de Hombro Unilateral Sentado en Silla",
+        details: "3 series x 8-10 repeticiones por cada brazo · Carga: Mancuerna de 10 lb",
         meta: "Descanso: 75s",
         image: "assets/shoulder_press.jpg",
         youtubeId: "B-aVuyhvLHU",
-        videoUrl: "https://www.youtube.com/watch?v=B-aVuyhvLHU"
+        videoUrl: "https://www.youtube.com/watch?v=B-aVuyhvLHU",
+        setup: "Siéntate en una silla firme con la espalda completamente apoyada contra el respaldo recto. Pies planos en el suelo al ancho de hombros para máxima estabilidad. Toma la mancuerna de 10 lb con la mano derecha a la altura del hombro. Posiciona el codo a 30° a 45° hacia adelante respecto al cuerpo (en el plano escapular natural, NUNCA abierto a 90° hacia los lados). Mano izquierda apoyada en el muslo.",
+        steps: [
+          "Paso 1: Inhala hondo y aprieta el abdomen para fijar las costillas hacia abajo.",
+          "Paso 2 (Empuje vertical seguro): Exhala y empuja la mancuerna hacia arriba en 2 segundos en una trayectoria recta sobre el hombro hasta extender el brazo casi por completo (mantén una microflexión en el codo para no bloquearlo).",
+          "Paso 3: Pausa de medio segundo arriba sintiendo el trabajo del deltoides.",
+          "Paso 4 (Descenso excéntrico): Inhala y baja la mancuerna en 3 segundos lentos y controlados, regresando a la posición inicial con el codo a 45° por delante.",
+          "Paso 5: Completa las repeticiones con el brazo derecho, cambia al brazo izquierdo y repite."
+        ],
+        breathing: "Tempo 2-1-3-0. Inhala antes de empujar, exhala con fuerza al subir en 2 segundos, inhala al descender en 3 segundos.",
+        mistakes: "Abrir el codo hacia afuera en línea con la oreja (pinza el tendón del supraespinoso); arquear la columna lumbar despegando la espalda del respaldo al empujar la mancuerna.",
+        safety: "Movimiento suave y fluido. El respaldo elimina cualquier carga sobre la columna lumbar a 95 kg."
       },
       {
-        name: "Bird-Dog (Pájaro-Perro en el Suelo)",
-        details: "3 series x 8 reps controladas por lado · Solo peso corporal",
-        cue: "Cuadrupedía (4 puntos). Extiende brazo y pierna opuesta formando una línea horizontal. La columna no rota ni se arquea. Ejercicio McGill de oro.",
+        name: "4. Bird-Dog (Pájaro-Perro en el Suelo - Tríada de McGill)",
+        details: "3 series x 8 repeticiones controladas por lado · Carga: Solo peso corporal en colchoneta",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
         localVideo: "assets/videos/bird_dog.mp4",
         youtubeId: "XOD87c1-DLI",
-        videoUrl: "https://www.youtube.com/watch?v=XOD87c1-DLI"
+        videoUrl: "https://www.youtube.com/watch?v=XOD87c1-DLI",
+        setup: "Colócate en cuadrupedia (4 puntos de apoyo) sobre la colchoneta: manos directamente debajo de los hombros, rodillas directamente debajo de las caderas a 90°. Dedos de las manos bien abiertos en el piso. Cuello neutral mirando hacia la colchoneta entre tus manos. Espalda en posición de mesa plana (neutra).",
+        steps: [
+          "Paso 1: Inhala y aprieta el abdomen como un corsé protector.",
+          "Paso 2 (Extensión simultánea cruzada): Sin mover la columna ni rotar la pelvis, extiende simultáneamente el brazo derecho hacia adelante (pulgar hacia arriba) y la pierna izquierda hacia atrás (pie en flex con los dedos apuntando al suelo).",
+          "Paso 3 (Alineación horizontal): Forma una línea horizontal recta desde la mano derecha hasta el talón izquierdo. No eleves la pierna por encima de la altura de la cadera para no arquear la espalda baja.",
+          "Paso 4 (Pausa isométrica de estabilidad): Mantén la posición estática durante 2 a 3 segundos completos respirando con control.",
+          "Paso 5 (Regreso sin apoyar peso): Regresa el brazo y la rodilla rozando suavemente la colchoneta sin descansar y completa 8 repeticiones. Cambia al brazo izquierdo y pierna derecha."
+        ],
+        breathing: "Inhala al inicio, mantén la respiración diafragmática durante la pausa de 3 segundos, exhala al regresar la mano y rodilla.",
+        mistakes: "Arquear la zona lumbar subiendo demasiado la pierna (comprime las carillas articulares lumbares); rotar la cadera hacia un lado perdiendo el paralelismo con el suelo.",
+        safety: "Este es el estándar de oro del Dr. Stuart McGill para rehabilitar la columna y construir una espalda baja blindada y libre de dolor."
       }
     ]
   },
@@ -181,41 +321,80 @@ const ROUTINES_DATA = {
     subtitle: "Viernes · Coordinación motriz, tendones de brazos y movilidad activa.",
     exercises: [
       {
-        name: "Split Squat Asistido (Zancada estática con apoyo)",
-        details: "3 series x 8 reps por pierna · Mancuerna 10 lb en una mano, otra en pared/silla",
-        cue: "Postura estática (sin dar pasos). Baja la rodilla trasera verticalmente hacia el suelo sin impactar. El apoyo en pared da 100% estabilidad y cuida la rodilla delantera.",
+        name: "1. Split Squat Asistido (Zancada Estática con Apoyo en Pared o Silla)",
+        details: "3 series x 8 repeticiones por pierna · Carga: Mancuerna de 10 lb en mano libre, otra mano apoyada",
         meta: "Descanso: 75s",
         image: "assets/split_squat.jpg",
         youtubeId: "SGHbhdwsA1I",
-        videoUrl: "https://www.youtube.com/watch?v=SGHbhdwsA1I"
+        videoUrl: "https://www.youtube.com/watch?v=SGHbhdwsA1I",
+        setup: "Colócate de pie junto a una pared o silla pesada. Da un paso largo hacia atrás con la pierna izquierda (~80 a 90 cm), manteniendo el talón trasero elevado sobre el metatarso. El pie delantero derecho permanece plantado plano. Apoya firmemente la mano derecha en la pared a la altura del pecho para darte 100% de equilibrio y estabilidad. Toma la mancuerna de 10 lb con la mano izquierda al costado.",
+        steps: [
+          "Paso 1: Mantén el torso completamente erguido, con el peso distribuido 70% en el talón delantero y 30% en el metatarso trasero.",
+          "Paso 2 (Descenso vertical): Inhala y baja el cuerpo en 3 segundos lentos en una trayectoria puramente VERTICAL (como un elevador, no hacia adelante). Ambas rodillas deben flexionarse aproximadamente a 90°.",
+          "Paso 3 (Profundidad segura): Desciende hasta que la rodilla trasera quede a 5-10 cm del suelo sin llegar a golpearlo. La rodilla delantera debe permanecer alineada con los dedos del pie sin sobrepasar excesivamente la punta.",
+          "Paso 4 (Empuje desde el talón): Exhala y empuja con fuerza el suelo a través del talón delantero para subir en 1 segundo de regreso a la posición inicial, manteniendo la postura de zancada estática (sin juntar los pies).",
+          "Paso 5: Completa 8 repeticiones con la pierna derecha al frente, gira, apóyate con la otra mano y repite 8 repeticiones con la pierna izquierda al frente."
+        ],
+        breathing: "Tempo 3-1-1-0. Inhala al descender en 3 segundos, pausa breve abajo, exhala al empujar desde el talón en 1 segundo.",
+        mistakes: "Dar pasos dinámicos caminando hacia adelante (genera desaceleraciones e impacto de choque en la rótula a 95 kg; debe ser zancada ESTÁTICA fija); inclinar el torso hacia adelante cargando todo el peso sobre la rodilla frontal.",
+        safety: "El apoyo en la pared elimina el balanceo y protege las rodillas. Gran activación en cuádriceps y glúteo medio."
       },
       {
-        name: "Curl de Bíceps Excéntrico + Extensión Tríceps Suave",
-        details: "3 series x 10 reps por brazo · Mancuerna 10 lb",
-        cue: "Sube en 1 segundo y baja la mancuerna en 3 a 4 segundos lentos (fase excéntrica). Crea tendones fuertes en codos y previene dolores articulares.",
+        name: "2. Curl de Bíceps Excéntrico + Extensión Tríceps Suave",
+        details: "3 series x 10 repeticiones por cada brazo · Carga: Mancuerna de 10 lb",
         meta: "Descanso: 60s",
         image: "assets/bicep_curl.jpg",
         youtubeId: "ykJmrZ5v0Oo",
-        videoUrl: "https://www.youtube.com/watch?v=ykJmrZ5v0Oo"
+        videoUrl: "https://www.youtube.com/watch?v=ykJmrZ5v0Oo",
+        setup: "Párate erguido con los pies al ancho de caderas y rodillas semi-flexionadas (o siéntate en una silla recta para mayor comodidad). Toma la mancuerna de 10 lb con la mano derecha, brazo extendido a un costado con la palma mirando hacia adelante (supinación). Codo pegado firmemente a las costillas.",
+        steps: [
+          "Paso 1: Inhala hondo y fija el hombro hacia atrás.",
+          "Paso 2 (Subida concéntrica): Exhala y flexiona el codo levantando la mancuerna en 1 segundo hacia el hombro sin mover el codo de su lugar contra las costillas.",
+          "Paso 3 (Pausa en la cima): Aprieta el bíceps en la contracción máxima durante 1 segundo.",
+          "Paso 4 (Bajada excéntrica clínica de 4 segundos): Inhala y baja la mancuerna muy despacio durante 3 a 4 segundos completos resistiendo la gravedad. La fase excéntrica lenta es la que fortalece los tendones del codo y previene la epitrocleitis/tendinitis.",
+          "Paso 5: Al llegar abajo, realiza una ligera contracción del tríceps para extender el brazo por completo antes de la siguiente repetición."
+        ],
+        breathing: "Tempo 1-1-4-0. Exhala al subir en 1 segundo, pausa 1 segundo arriba, inhala y desciende en 4 segundos lentos.",
+        mistakes: "Balancear el torso o arquear la espalda baja para subir la mancuerna con inercia; despegar los codos de las costillas adelantándolos.",
+        safety: "Aislamiento muscular puro. Tendones del codo y muñeca trabajando con máxima protección."
       },
       {
-        name: "Halo con Mancuerna alrededor de la Cabeza",
-        details: "3 series x 8 círculos (4 en cada sentido) · Mancuerna 10 lb sostenida con ambas manos",
-        cue: "Gira la mancuerna en círculo suave alrededor del cráneo manteniendo el abdomen firme y costillas cerradas. Máxima salud y movilidad de hombros.",
+        name: "3. Halo con Mancuerna alrededor de la Cabeza (Movilidad Escapular)",
+        details: "3 series x 8 círculos (4 hacia la derecha, 4 hacia la izquierda) · Carga: Mancuerna de 10 lb con ambas manos",
         meta: "Descanso: 60s",
         image: "assets/dumbbell_halo.jpg",
         youtubeId: "z81fA66Wb7A",
-        videoUrl: "https://www.youtube.com/watch?v=z81fA66Wb7A"
+        videoUrl: "https://www.youtube.com/watch?v=z81fA66Wb7A",
+        setup: "Párate con los pies al ancho de hombros, rodillas desbloqueadas y abdomen muy apretado (o arrodillado sobre una colchoneta para evitar cualquier compensación lumbar). Toma la mancuerna de 10 lb por ambos extremos de forma horizontal, sosteniéndola frente a tu barbilla con los codos flexionados.",
+        steps: [
+          "Paso 1: Inhala y cierra las costillas activando el abdomen (no saques el pecho ni arquees la espalda baja).",
+          "Paso 2 (Trazado del círculo): Mueve la mancuerna en un círculo suave y fluido alrededor de tu cabeza: pasa por la oreja derecha, rodea la nuca por detrás lo más cerca posible de la base del cuello, pasa por la oreja izquierda y regresa frente a tu barbilla.",
+          "Paso 3: Mantén la cabeza y el cuello completamente inmóviles. Es la mancuerna la que se mueve alrededor de tu cabeza, NO tu cabeza esquivando la mancuerna.",
+          "Paso 4: Completa 4 círculos hacia la derecha, haz una pausa de 1 segundo en el centro y ejecuta 4 círculos en sentido inverso hacia la izquierda."
+        ],
+        breathing: "Respiración continua, suave y controlada. Inhala en la primera mitad del círculo y exhala al regresar la mancuerna al frente.",
+        mistakes: "Mover la cabeza de un lado a otro en lugar de rotar los hombros; arquear la espalda baja cuando la mancuerna pasa por detrás de la cabeza.",
+        safety: "Lubricación y apertura total de la cápsula del hombro y movilidad de la columna torácica."
       },
       {
-        name: "Deadbug (Bicho Muerto en el Suelo)",
-        details: "3 series x 8 reps alternadas · Sin peso",
-        cue: "Pega la zona lumbar al suelo con retroversión pélvica activa en todo momento. Extiende extremidades opuestas sin que la espalda baja se despegue del piso.",
+        name: "4. Deadbug (Bicho Muerto en Suelo con Columna Neutra)",
+        details: "3 series x 8-10 repeticiones alternadas · Carga: Solo peso corporal en colchoneta",
         meta: "Descanso: 45s",
         image: "assets/bird_dog.jpg",
         localVideo: "assets/videos/deadbug.mp4",
         youtubeId: "PJ4QT2pMH6g",
-        videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g"
+        videoUrl: "https://www.youtube.com/watch?v=PJ4QT2pMH6g",
+        setup: "Acuéstate boca arriba sobre la colchoneta. Eleva los brazos apuntando verticalmente al techo. Eleva las piernas flexionadas con las caderas y rodillas a 90° (posición de mesa invertida). Aplana completamente la zona lumbar contra el suelo mediante una contracción abdominal activa (retroversión pélvica); no debe caber ni un dedo entre tu espalda baja y el suelo.",
+        steps: [
+          "Paso 1: Inhala hondo y fija la espalda baja pegada al piso como un sello hermético.",
+          "Paso 2 (Extensión contralateral): Exhala lentamente por la boca mientras extiendes el brazo derecho hacia atrás por encima de tu cabeza y simultáneamente extiendes la pierna izquierda hacia adelante en dirección al suelo.",
+          "Paso 3 (Límite seguro): Baja el brazo y el talón hasta unos 10-15 cm del suelo sin llegar a tocarlo. Si notas que la zona lumbar empieza a despegarse del suelo, ese es tu límite: detente ahí y no bajes más.",
+          "Paso 4: Pausa de 1 segundo con el core apretado al máximo.",
+          "Paso 5 (Regreso): Regresa el brazo derecho y la pierna izquierda a la posición inicial a 90° mientras inhalas, y de inmediato alterna extendiendo el brazo izquierdo y la pierna derecha."
+        ],
+        breathing: "Exhala con fuerza por la boca al extender las extremidades (ayuda a compactar el transverso del abdomen). Inhala al regresar al centro.",
+        mistakes: "PERMITIR QUE LA ESPALDA BAJA SE DESPEGUE DEL PISO (el error más grave: transfiere toda la tensión a los discos lumbares; mantén el suelo pegado siempre); mover ambas piernas al mismo tiempo.",
+        safety: "Fortalecimiento del transverso abdominal profundo, el músculo estabilizador más importante para proteger la columna y reducir la cintura."
       }
     ]
   }
@@ -1178,7 +1357,42 @@ function setupRoutinesViewer(initialKey) {
     const routine = ROUTINES_DATA[key];
     if (!routine) return;
 
-    let exercisesHtml = routine.exercises.map((ex, idx) => `
+        let exercisesHtml = routine.exercises.map((ex, idx) => {
+      const setupHtml = ex.setup ? `
+        <div class="guide-section setup-section">
+          <div class="guide-label">📐 1. Posición Inicial y Setup</div>
+          <div class="guide-text">${ex.setup}</div>
+        </div>` : '';
+
+      const stepsHtml = (ex.steps && Array.isArray(ex.steps)) ? `
+        <div class="guide-section steps-section">
+          <div class="guide-label">👣 2. Ejecución Paso a Paso</div>
+          <ol class="guide-steps-list">
+            ${ex.steps.map(s => `<li>${s}</li>`).join('')}
+          </ol>
+        </div>` : '';
+
+      const gridHtml = (ex.breathing || ex.mistakes) ? `
+        <div class="guide-grid-2col">
+          ${ex.breathing ? `
+            <div class="guide-section breathing-section">
+              <div class="guide-label">🫁 3. Respiración y Tempo</div>
+              <div class="guide-text">${ex.breathing}</div>
+            </div>` : ''}
+          ${ex.mistakes ? `
+            <div class="guide-section mistakes-section">
+              <div class="guide-label">⚠️ 4. Errores Prohibidos a 95 kg</div>
+              <div class="guide-text">${ex.mistakes}</div>
+            </div>` : ''}
+        </div>` : '';
+
+      const safetyHtml = ex.safety ? `
+        <div class="guide-section safety-section">
+          <div class="guide-label">🛡️ 5. Criterio de Dolor Cero y Sensación</div>
+          <div class="guide-text">${ex.safety}</div>
+        </div>` : '';
+
+      return `
       <div class="routine-exercise-card" id="card-${key}-${idx}">
         <div class="exercise-left-col">
           <div class="exercise-num">${idx + 1}</div>
@@ -1189,16 +1403,26 @@ function setupRoutinesViewer(initialKey) {
           </label>
         </div>
         <div class="exercise-details">
-          <h4>${ex.name}</h4>
-          <p>${ex.details}</p>
-          <span class="exercise-cue">💡 Técnica segura: ${ex.cue}</span>
+          <div class="exercise-title-row">
+            <h4>${ex.name}</h4>
+            <span class="exercise-meta-badge">${ex.meta || ''}</span>
+          </div>
+          <p class="exercise-details-lead">${ex.details}</p>
+          
+          <div class="exercise-explicit-guide">
+            ${setupHtml}
+            ${stepsHtml}
+            ${gridHtml}
+            ${safetyHtml}
+          </div>
+
           <div class="exercise-actions-bar">
             ${ex.localVideo ? `
-              <button type="button" class="btn-video-guide btn-video-local" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')">
+              <button type="button" class="btn-video-guide btn-video-local" onclick="playLocalExerciseVideo('${ex.localVideo}', '${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${(ex.cue || '').replace(/'/g, "\\'")}')">
                 🎬 Video Local MP4
               </button>
             ` : `
-              <button type="button" class="btn-video-guide" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px dashed rgba(16, 185, 129, 0.35);" onclick="selectAndPlayCustomLocalVideo('${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${ex.cue.replace(/'/g, "\\'")}')" title="Cargar y reproducir archivo MP4 desde tu PC">
+              <button type="button" class="btn-video-guide" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px dashed rgba(16, 185, 129, 0.35);" onclick="selectAndPlayCustomLocalVideo('${ex.name.replace(/'/g, "\\'")}', '${routine.title.replace(/'/g, "\\'")}', '${(ex.cue || '').replace(/'/g, "\\'")}')" title="Cargar y reproducir archivo MP4 desde tu PC">
                 📂 Cargar MP4 Local
               </button>
             `}
@@ -1208,9 +1432,9 @@ function setupRoutinesViewer(initialKey) {
             ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt" title="Ver en YouTube">🌐 YouTube</a>` : ''}
           </div>
         </div>
-        <div class="exercise-meta">${ex.meta}</div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     container.innerHTML = `
       <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
