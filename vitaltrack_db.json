@@ -13,7 +13,7 @@
       "category": "Caminata (Samsung Health)",
       "duration": 30,
       "rpe": 6,
-      "notes": "Caminata 30 min \u2022 3,486 pasos registrados en Samsung Galaxy Watch",
+      "notes": "Caminata 30 min • 3,486 pasos registrados en Samsung Galaxy Watch",
       "noPain": true,
       "wearable": {
         "hrAvg": null,
@@ -32,7 +32,7 @@
       "category": "Caminata (Samsung Health)",
       "duration": 35,
       "rpe": 6,
-      "notes": "Caminata 35 min \u2022 8,108 pasos registrados en Samsung Galaxy Watch",
+      "notes": "Caminata 35 min • 8,108 pasos registrados en Samsung Galaxy Watch",
       "noPain": true,
       "wearable": {
         "hrAvg": 127,
@@ -56,7 +56,7 @@
       "category": "Fuerza C",
       "duration": 30,
       "rpe": 7,
-      "notes": "Sesi\u00f3n recomendada completada con \u00e9xito",
+      "notes": "Sesión recomendada completada con éxito",
       "noPain": true,
       "wearable": {},
       "source": "quick_done"
@@ -102,5 +102,5 @@
     "syncTime": "04:51 p.m.",
     "device": "Samsung Health / Health Connect"
   },
-  "syncedAt": "2026-10-12T21:25:14.494Z"
+  "syncedAt": "2026-10-12T21:25:23.486Z"
 }
