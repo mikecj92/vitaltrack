@@ -310,6 +310,79 @@
           </div>
         </div>
 
+        <!-- PANEL DE HITOS Y GRADUACIÓN AL NIVEL 2 -->
+        <div class="card milestone-roadmap-card" id="milestones-tracker-section">
+          <div class="card-header">
+            <div>
+              <h3>🎯 Hitos de Graduación hacia el Nivel 2 (Fase de Sobrecarga Progresiva)</h3>
+              <p class="text-muted">Criterios biomecánicos y fisiológicos para evolucionar de 10 lb a cargas mayores con Cero Lesión</p>
+            </div>
+            <span class="badge-tag" id="milestone-status-badge">Fase 1: En Progreso</span>
+          </div>
+
+          <div class="milestones-grid">
+            <!-- Hito 1: Peso -->
+            <div class="milestone-item">
+              <div class="milestone-icon">⚖️</div>
+              <div class="milestone-content">
+                <div class="milestone-title-row">
+                  <span class="milestone-name">Hito 1: Descarga Articular (Peso Corporal)</span>
+                  <span class="milestone-val" id="ms-weight-val">95.0 kg / Meta: ≤ 89 kg</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill" id="ms-weight-fill" style="width: 10%;"></div>
+                </div>
+                <p class="milestone-hint">Quita 24 kg de impacto acumulado en cada paso sobre los cartílagos de tus rodillas.</p>
+              </div>
+            </div>
+
+            <!-- Hito 2: Cintura -->
+            <div class="milestone-item">
+              <div class="milestone-icon">📏</div>
+              <div class="milestone-content">
+                <div class="milestone-title-row">
+                  <span class="milestone-name">Hito 2: Reducción de Grasa Visceral (Cintura)</span>
+                  <span class="milestone-val" id="ms-waist-val">Por medir / Meta: &lt; 95 cm</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill" id="ms-waist-fill" style="width: 25%;"></div>
+                </div>
+                <p class="milestone-hint">Medición quincenal en el ombligo. Reduce presión intraabdominal y riesgo metabólico.</p>
+              </div>
+            </div>
+
+            <!-- Hito 3: Cardio Zona 2 -->
+            <div class="milestone-item">
+              <div class="milestone-icon">❤️</div>
+              <div class="milestone-content">
+                <div class="milestone-title-row">
+                  <span class="milestone-name">Hito 3: Eficiencia en Zona 2 (Caminadora)</span>
+                  <span class="milestone-val" id="ms-cardio-val">35 min a 4.5 km/h con FC &lt; 122 BPM</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill" id="ms-cardio-fill" style="width: 50%;"></div>
+                </div>
+                <p class="milestone-hint">Indica mayor volumen sistólico del corazón y densidad mitocondrial activa.</p>
+              </div>
+            </div>
+
+            <!-- Hito 4: Fuerza Base -->
+            <div class="milestone-item">
+              <div class="milestone-icon">💪</div>
+              <div class="milestone-content">
+                <div class="milestone-title-row">
+                  <span class="milestone-name">Hito 4: Fuerza Base & Control Motor (3x12 a 10 lb)</span>
+                  <span class="milestone-val" id="ms-strength-val">Box Squat 3x12 con RPE ≤ 7 (Sin fallo)</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill" id="ms-strength-fill" style="width: 40%;"></div>
+                </div>
+                <p class="milestone-hint">Tempo controlado (3s excéntrico). Al dominarlo, pasarás a Sentadilla Libre y mancuernas de 15-20 lb.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Acceso rápido a las fases y agenda de hoy -->
         <div class="dashboard-columns">
           <div class="card col-left">
@@ -591,6 +664,40 @@
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-current">Control de Peso y Medidas</span>
         </div>
+
+        <!-- CALENDARIO DE FRECUENCIA DE MEDICIONES -->
+        <div class="card schedule-metrics-card">
+          <div class="card-header">
+            <div>
+              <h3>📅 Calendario y Frecuencia Óptima de Medición</h3>
+              <p class="text-muted">Protocolo clínico para saber qué medir, cómo medirlo y evitar obsesión o ruido</p>
+            </div>
+            <span class="badge-tag">Guía Oficial</span>
+          </div>
+          <div class="freq-schedule-grid">
+            <div class="freq-schedule-item freq-daily">
+              <span class="freq-badge">⌚ DIARIO (Automático)</span>
+              <h4>Pasos, Sueño y FC en Reposo (RHR)</h4>
+              <p>Tu Samsung Galaxy Watch los lee al despertar. Entran automáticamente vía Health Connect o en el Asistente Adaptativo para regular la intensidad de tu caminadora.</p>
+            </div>
+            <div class="freq-schedule-item freq-weekly">
+              <span class="freq-badge">⚖️ SEMANAL (1 vez x semana)</span>
+              <h4>Peso Corporal en Ayunas</h4>
+              <p>Pésate una sola vez por semana (ej. viernes o domingos al despertar, tras ir al baño y sin ropa). Evita pesarte a diario para no confundir retención de líquidos con grasa.</p>
+            </div>
+            <div class="freq-schedule-item freq-biweekly">
+              <span class="freq-badge">📏 QUINCENAL (Cada 14 días)</span>
+              <h4>Circunferencia de Cintura</h4>
+              <p>Cinta métrica horizontal sobre la piel a la altura exacta del ombligo, sin apretar y sin meter la panza. Es el indicador más fidedigno de pérdida de grasa visceral real.</p>
+            </div>
+            <div class="freq-schedule-item freq-persession">
+              <span class="freq-badge">📝 POR SESIÓN (Al terminar)</span>
+              <h4>Esfuerzo Percibido (RPE) y Dolor Cero</h4>
+              <p>Registra de 1 a 10 qué tan exigente se sintió y verifica la casilla "Cero dolor articular". Si hay molestia en rodilla o lumbar, el sistema reduce la carga.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="metrics-grid">
           <div class="card">
             <div class="card-header">
