@@ -760,51 +760,22 @@ document.addEventListener('DOMContentLoaded', () => {
     saveStoredHealthConnect(data);
     updateHealthConnectUI(data, false);
 
-    // Auto-detección y auto-registro de actividad de caminata del reloj
+    // Actualizar telemetría del wearable en la sesión de hoy SI el usuario ya la registró
     const todayStr = new Date().toISOString().split('T')[0];
     let workouts = getStoredWorkouts();
     let todayWorkout = workouts.find(w => w.date === todayStr);
 
-    if (data.steps && data.steps > 500) {
-      if (!todayWorkout) {
-        // Crear automáticamente la sesión de caminata sin que el usuario tenga que teclear
-        const autoWalk = {
-          id: 'wk_samsung_' + Date.now(),
-          date: todayStr,
-          timestamp: new Date().toISOString(),
-          category: 'Caminata (Samsung Health)',
-          duration: data.exerciseDuration || data.durationMinutes || 30,
-          rpe: 6,
-          notes: `Caminata ${data.exerciseDuration || 30} min • ${(data.steps || 0).toLocaleString()} pasos registrados en Samsung Galaxy Watch`,
-          noPain: true,
-          wearable: {
-            hrAvg: data.avgHeartRate || null,
-            hrMax: data.maxHeartRate || (data.avgHeartRate ? Math.round(data.avgHeartRate * 1.18) : null),
-            rhr: data.restingHeartRate || null,
-            steps: data.steps || null,
-            calories: data.calories || data.activeCalories || data.totalCalories || null,
-            distanceKm: data.distanceKm || null
-          },
-          source: 'samsung_watch_auto'
-        };
-        workouts.unshift(autoWalk);
-        saveStoredWorkouts(workouts);
-        renderDashboard();
-        renderHistoryTable();
-      } else if (todayWorkout.wearable) {
-        // Actualizar la sesión existente con la telemetría más reciente del reloj
-        if (data.avgHeartRate) todayWorkout.wearable.hrAvg = data.avgHeartRate;
-        if (data.maxHeartRate) todayWorkout.wearable.hrMax = data.maxHeartRate;
-        if (data.restingHeartRate) todayWorkout.wearable.rhr = data.restingHeartRate;
-        if (data.steps) todayWorkout.wearable.steps = data.steps;
-        if (data.calories || data.activeCalories) todayWorkout.wearable.calories = data.calories || data.activeCalories;
-        if (data.distanceKm) todayWorkout.wearable.distanceKm = data.distanceKm;
-        todayWorkout.duration = data.exerciseDuration || todayWorkout.duration || 30;
-        todayWorkout.notes = `Caminata ${todayWorkout.duration} min • ${(data.steps || 0).toLocaleString()} pasos registrados en Samsung Galaxy Watch`;
-        saveStoredWorkouts(workouts);
-        renderDashboard();
-        renderHistoryTable();
-      }
+    // Solo asociar telemetría a una sesión existente; NUNCA crear un entrenamiento falso solo por dar pasos cotidianos
+    if (todayWorkout && todayWorkout.wearable) {
+      if (data.avgHeartRate) todayWorkout.wearable.hrAvg = data.avgHeartRate;
+      if (data.maxHeartRate) todayWorkout.wearable.hrMax = data.maxHeartRate;
+      if (data.restingHeartRate) todayWorkout.wearable.rhr = data.restingHeartRate;
+      if (data.steps) todayWorkout.wearable.steps = data.steps;
+      if (data.calories || data.activeCalories) todayWorkout.wearable.calories = data.calories || data.activeCalories;
+      if (data.distanceKm) todayWorkout.wearable.distanceKm = data.distanceKm;
+      saveStoredWorkouts(workouts);
+      renderDashboard();
+      renderHistoryTable();
     }
 
     showSyncToast(`⌚ Health Connect: ${(data.steps || 0).toLocaleString()} pasos y FC sincronizados`, 'success');
@@ -1895,29 +1866,41 @@ function renderDashboard() {
   const treadmillElem = document.getElementById('dash-treadmill-mins');
   if (treadmillElem) treadmillElem.innerHTML = `${cardioMins} <span class="unit">min</span>`;
 
-  // Pasos de Hoy (Samsung Watch / Health Connect)
+  // Pasos de Hoy (Samsung Watch / Health Connect) con validación estricta de fecha
+  const todayStr = new Date().toISOString().split('T')[0];
   const hcData = getStoredHealthConnect() || {};
-  let todaySteps = hcData.steps || 0;
-  if (!todaySteps) {
-    const walkWk = workouts.find(w => w.wearable && w.wearable.steps);
-    if (walkWk && walkWk.wearable && walkWk.wearable.steps) {
-      todaySteps = walkWk.wearable.steps;
+  let todaySteps = 0;
+  let isFromToday = false;
+
+  if (hcData.timestamp && hcData.timestamp.startsWith(todayStr)) {
+    todaySteps = hcData.steps || 0;
+    isFromToday = true;
+  } else if (hcData.date === todayStr) {
+    todaySteps = hcData.steps || 0;
+    isFromToday = true;
+  } else {
+    // Buscar si hay un workout con telemetría de hoy
+    const todayWalk = workouts.find(w => w.date === todayStr && w.wearable && w.wearable.steps);
+    if (todayWalk) {
+      todaySteps = todayWalk.wearable.steps;
+      isFromToday = true;
     }
   }
+
   const stepsElem = document.getElementById('dash-today-steps');
   if (stepsElem) {
     stepsElem.innerHTML = `${todaySteps.toLocaleString()} <span class="unit">pasos</span>`;
   }
   const stepsCap = document.getElementById('dash-steps-caption');
   if (stepsCap) {
-    if (todaySteps >= 10000) {
+    if (isFromToday && todaySteps >= 10000) {
       stepsCap.textContent = `🎯 ¡Meta de 10k superada! (+${(todaySteps - 10000).toLocaleString()})`;
       stepsCap.className = 'stat-caption text-green';
-    } else if (todaySteps > 0) {
-      stepsCap.textContent = `👟 Sincronizado vía Health Connect`;
+    } else if (isFromToday && todaySteps > 0) {
+      stepsCap.textContent = `👟 Sincronizado hoy vía Health Connect`;
       stepsCap.className = 'stat-caption text-green';
     } else {
-      stepsCap.textContent = `Pendiente sincronizar reloj`;
+      stepsCap.textContent = `Abre la app en el cel para sincronizar pasos de hoy`;
       stepsCap.className = 'stat-caption text-neutral';
     }
   }
