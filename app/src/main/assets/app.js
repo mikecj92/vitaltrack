@@ -381,9 +381,17 @@ async function autoSyncPull(isManual = false) {
       }
 
       if (cloudData.healthConnect) {
-        saveStoredHealthConnect(cloudData.healthConnect);
-        if (typeof updateHealthConnectUI === 'function') {
-          updateHealthConnectUI(cloudData.healthConnect, true);
+        const todayStr = new Date().toISOString().split('T')[0];
+        const localHC = getStoredHealthConnect();
+        const incomingIsToday = (cloudData.healthConnect.timestamp && cloudData.healthConnect.timestamp.startsWith(todayStr)) || cloudData.healthConnect.date === todayStr;
+        const localIsToday = localHC && ((localHC.timestamp && localHC.timestamp.startsWith(todayStr)) || localHC.date === todayStr);
+
+        // Solo sobreescribir si la nube trae datos de hoy O si el local no tiene datos de hoy
+        if (incomingIsToday || !localIsToday) {
+          saveStoredHealthConnect(cloudData.healthConnect);
+          if (typeof updateHealthConnectUI === 'function') {
+            updateHealthConnectUI(cloudData.healthConnect, true);
+          }
         }
         if (cloudData.healthConnect.restingHeartRate && document.getElementById('coach-rhr')) {
           document.getElementById('coach-rhr').value = cloudData.healthConnect.restingHeartRate;
@@ -604,39 +612,8 @@ let timerInterval = null;
 let timerSeconds = 0;
 let isTimerCountdown = false;
 
-// Inicialización
-document.addEventListener('DOMContentLoaded', () => {
-  setupNavigation();
-  setupRoutinesViewer('caminadora');
-  setupTimer();
-  setupFormEvents();
-  setupMetricsEvents();
-  setupAdaptiveCoach();
-  renderDashboard();
-  renderHistoryTable();
-  renderMetricsTable();
-  setupTodayFocus();
-  autoSyncPull();
-  checkAppLiveUpdate();
-
-  const syncStatusElem = document.getElementById('sync-cloud-status');
-  if (syncStatusElem) {
-    syncStatusElem.style.cursor = 'pointer';
-    syncStatusElem.title = 'Haz clic para sincronizar ahora con la nube';
-    syncStatusElem.addEventListener('click', async () => {
-      await autoSyncPush();
-      await autoSyncPull(true);
-      checkAppLiveUpdate();
-    });
-  }
-
-  // Registro de Service Worker para App Móvil Offline / PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
-
-  // Motor Fisiológico de Carga y Fatiga de Actividad Diaria (NEAT / Pasos Cotidianos)
-window.calculateDailyNeatLoad = function(steps = 0, routineKey = 'fuerza-a') {
+// Motor Fisiológico de Carga y Fatiga de Actividad Diaria (NEAT / Pasos Cotidianos)
+function calculateDailyNeatLoad(steps = 0, routineKey = 'fuerza-a') {
   const s = Math.max(0, parseInt(steps, 10) || 0);
   if (s < 4500) {
     return {
@@ -694,7 +671,39 @@ window.calculateDailyNeatLoad = function(steps = 0, routineKey = 'fuerza-a') {
       cardioMod: 'Cuota de cardio cubierta por tus pasos diarios'
     };
   }
-};
+}
+window.calculateDailyNeatLoad = calculateDailyNeatLoad;
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  setupNavigation();
+  setupRoutinesViewer('caminadora');
+  setupTimer();
+  setupFormEvents();
+  setupMetricsEvents();
+  setupAdaptiveCoach();
+  renderDashboard();
+  renderHistoryTable();
+  renderMetricsTable();
+  setupTodayFocus();
+  autoSyncPull();
+  checkAppLiveUpdate();
+
+  const syncStatusElem = document.getElementById('sync-cloud-status');
+  if (syncStatusElem) {
+    syncStatusElem.style.cursor = 'pointer';
+    syncStatusElem.title = 'Haz clic para sincronizar ahora con la nube';
+    syncStatusElem.addEventListener('click', async () => {
+      await autoSyncPush();
+      await autoSyncPull(true);
+      checkAppLiveUpdate();
+    });
+  }
+
+  // Registro de Service Worker para App Móvil Offline / PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
 
   // Helper para persistencia de Health Connect
   function getStoredHealthConnect() {
@@ -937,6 +946,14 @@ function setupNavigation() {
 
 // Configuración de la Sesión Programada para Hoy
 function setupTodayFocus() {
+  try {
+    _setupTodayFocusInternal();
+  } catch (err) {
+    console.error('Error en setupTodayFocus:', err);
+  }
+}
+
+function _setupTodayFocusInternal() {
   const WEEKLY_PLAN = {
     0: {
       dayName: "DOMINGO",
@@ -1930,6 +1947,14 @@ function setupMetricsEvents() {
 
 // Renderizado de Dashboard
 function renderDashboard() {
+  try {
+    _renderDashboardInternal();
+  } catch (err) {
+    console.error('Error en renderDashboard:', err);
+  }
+}
+
+function _renderDashboardInternal() {
   const workouts = getStoredWorkouts();
   const metrics = getStoredMetrics();
 
