@@ -1019,7 +1019,13 @@ function _setupTodayFocusInternal() {
 
   const todayStr = new Date().toISOString().split('T')[0];
   const allWorkouts = getStoredWorkouts();
-  const todayCompleted = allWorkouts.find(w => w.date === todayStr);
+  // Solo considerar completada la sesión programada si se registró explícitamente (Fuerza, Cardio Altera, etc.)
+  // Una caminata automática del día a día (Samsung Watch) cuenta como pasos/NEAT, pero NO da por terminada la Rutina de fuerza
+  const todayCompleted = allWorkouts.find(w => {
+    if (w.date !== todayStr) return false;
+    if (w.source === 'samsung_watch_auto' || (w.category && w.category.includes('Samsung Health'))) return false;
+    return true;
+  });
 
   if (todayCompleted) {
     if (banner) {
@@ -1076,7 +1082,19 @@ function _setupTodayFocusInternal() {
   if ((hcDataFocus.timestamp && hcDataFocus.timestamp.startsWith(todayStr)) || hcDataFocus.date === todayStr) {
     todayStepsFocus = hcDataFocus.steps || 0;
   }
+  if (!todayStepsFocus) {
+    const todayWalk = allWorkouts.find(w => w.date === todayStr && w.wearable && w.wearable.steps);
+    if (todayWalk) todayStepsFocus = todayWalk.wearable.steps;
+  }
   const neatFocus = calculateDailyNeatLoad(todayStepsFocus, todayData.routineKey);
+
+  const todayAutoWalk = allWorkouts.find(w => w.date === todayStr && (w.source === 'samsung_watch_auto' || (w.category && w.category.includes('Samsung Health'))));
+  let autoWalkNote = '';
+  if (todayAutoWalk) {
+    autoWalkNote = `<div style="margin-top: 8px; padding: 6px 10px; background: rgba(56, 189, 248, 0.12); border-radius: 6px; border-left: 3px solid #38bdf8; font-size: 0.83rem; color: #bae6fd;">
+      🚶‍♂️ <strong>Actividad Registrada (${todayAutoWalk.duration || 30} min · ${todayStepsFocus.toLocaleString()} pasos):</strong> Tu caminata cotidiana ya quedó contabilizada en tu gasto calórico. Tu <strong>Rutina A de Fuerza</strong> está lista para realizarse cuando gustes.
+    </div>`;
+  }
 
   if (neatBox) {
     neatBox.style.marginTop = '12px';
@@ -1097,6 +1115,7 @@ function _setupTodayFocusInternal() {
       <p style="margin: 0; color: #e2e8f0; line-height: 1.45;">
         ${neatFocus.summary} <strong>Ajuste para hoy:</strong> ${neatFocus.advice}
       </p>
+      ${autoWalkNote || ''}
     `;
   }
 
