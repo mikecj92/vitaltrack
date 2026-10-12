@@ -436,4 +436,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+        webView.evaluateJavascript("if (window.handleAppBackPress) { window.handleAppBackPress(); } else { false; }") { result ->
+            if (result == "false" || result == null || result == "\"false\"") {
+                super.onBackPressed()
+            }
+        }
+    }
 }
