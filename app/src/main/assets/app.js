@@ -2391,7 +2391,122 @@ function _renderDashboardInternal() {
       `).join('');
     }
   }
+
+  // Actualizar Hitos de Graduación hacia Nivel 2
+  renderMilestonesProgress(metrics, workouts);
 }
+
+// ==========================================
+// Hitos de Graduación al Nivel 2
+// ==========================================
+function renderMilestonesProgress(metrics, workouts) {
+  const currentMetric = (metrics && metrics[0]) || { weight: 95.0, waist: null };
+  const currentWeight = currentMetric.weight || 95.0;
+  const currentWaist = currentMetric.waist;
+
+  // Hito 1: Peso <= 89 kg (Base: 95.0 kg, Meta: 89.0 kg, delta = 6.0 kg)
+  const weightLost = 95.0 - currentWeight;
+  const weightProgress = Math.max(5, Math.min(100, Math.round((Math.max(0, weightLost) / 6.0) * 100)));
+  const msWeightVal = document.getElementById('ms-weight-val');
+  const msWeightFill = document.getElementById('ms-weight-fill');
+  if (msWeightVal) {
+    if (currentWeight <= 89.0) {
+      msWeightVal.innerHTML = `✅ <strong>${currentWeight.toFixed(1)} kg</strong> (¡Hito Cumplido!)`;
+      msWeightVal.style.color = '#34d399';
+    } else {
+      msWeightVal.textContent = `${currentWeight.toFixed(1)} kg / Meta: ≤ 89 kg (${weightLost > 0 ? `-${weightLost.toFixed(1)} kg logrados` : 'Inicio'})`;
+    }
+  }
+  if (msWeightFill) {
+    msWeightFill.style.width = `${weightProgress}%`;
+    if (currentWeight <= 89.0) msWeightFill.style.background = '#10b981';
+  }
+
+  // Hito 2: Cintura < 95 cm
+  const msWaistVal = document.getElementById('ms-waist-val');
+  const msWaistFill = document.getElementById('ms-waist-fill');
+  if (msWaistVal) {
+    if (currentWaist) {
+      if (currentWaist < 95) {
+        msWaistVal.innerHTML = `✅ <strong>${currentWaist} cm</strong> (¡Hito Cumplido!)`;
+        msWaistVal.style.color = '#34d399';
+      } else {
+        msWaistVal.textContent = `${currentWaist} cm / Meta: < 95 cm`;
+      }
+    } else {
+      msWaistVal.textContent = `Pendiente medir / Meta: < 95 cm`;
+    }
+  }
+  if (msWaistFill) {
+    if (currentWaist && currentWaist < 95) {
+      msWaistFill.style.width = '100%';
+      msWaistFill.style.background = '#10b981';
+    } else if (currentWaist) {
+      msWaistFill.style.width = '40%';
+    } else {
+      msWaistFill.style.width = '15%';
+    }
+  }
+
+  // Hito 3: Cardio Zona 2 eficiente
+  const treadmillWorkouts = (workouts || []).filter(w => w.category === 'Caminadora' && w.wearable && w.wearable.hrAvg);
+  const bestTreadmill = treadmillWorkouts.find(w => w.duration >= 30 && w.wearable.hrAvg <= 122);
+  const msCardioVal = document.getElementById('ms-cardio-val');
+  const msCardioFill = document.getElementById('ms-cardio-fill');
+  if (msCardioVal) {
+    if (bestTreadmill) {
+      msCardioVal.innerHTML = `✅ <strong>${bestTreadmill.wearable.hrAvg} BPM</strong> en ${bestTreadmill.duration}m (¡Hito Cumplido!)`;
+      msCardioVal.style.color = '#34d399';
+      if (msCardioFill) {
+        msCardioFill.style.width = '100%';
+        msCardioFill.style.background = '#10b981';
+      }
+    } else {
+      const lastWk = treadmillWorkouts[0];
+      if (lastWk) {
+        msCardioVal.textContent = `Último: ${lastWk.wearable.hrAvg} BPM / Meta: < 122 BPM a 4.5 km/h`;
+        if (msCardioFill) msCardioFill.style.width = '60%';
+      } else {
+        msCardioVal.textContent = `Meta: 35 min a 4.5 km/h con FC < 122 BPM`;
+        if (msCardioFill) msCardioFill.style.width = '30%';
+      }
+    }
+  }
+
+  // Hito 4: Fuerza Base (Fuerza A completada sin dolor)
+  const strengthAWorkouts = (workouts || []).filter(w => (w.category === 'Fuerza A' || (w.notes && w.notes.includes('Sentadilla'))) && w.noPain);
+  const msStrengthVal = document.getElementById('ms-strength-val');
+  const msStrengthFill = document.getElementById('ms-strength-fill');
+  if (msStrengthVal) {
+    if (strengthAWorkouts.length >= 6) {
+      msStrengthVal.innerHTML = `✅ <strong>${strengthAWorkouts.length} sesiones consolidadas</strong> (¡Hito Cumplido!)`;
+      msStrengthVal.style.color = '#34d399';
+      if (msStrengthFill) {
+        msStrengthFill.style.width = '100%';
+        msStrengthFill.style.background = '#10b981';
+      }
+    } else {
+      msStrengthVal.textContent = `${strengthAWorkouts.length} de 6 sesiones técnicas completadas`;
+      if (msStrengthFill) msStrengthFill.style.width = `${Math.max(15, Math.round((strengthAWorkouts.length / 6) * 100))}%`;
+    }
+  }
+
+  // Badge global de graduación
+  const statusBadge = document.getElementById('milestone-status-badge');
+  if (statusBadge) {
+    const passedAll = (currentWeight <= 89.0) && (currentWaist && currentWaist < 95) && bestTreadmill && (strengthAWorkouts.length >= 6);
+    if (passedAll) {
+      statusBadge.textContent = '🏆 ¡Listo para Graduación a Nivel 2!';
+      statusBadge.style.background = 'rgba(16, 185, 129, 0.25)';
+      statusBadge.style.color = '#34d399';
+    } else {
+      statusBadge.textContent = 'Fase 1: En Progreso Activo';
+      statusBadge.style.background = 'rgba(245, 158, 11, 0.18)';
+      statusBadge.style.color = '#fbbf24';
+    }
+  }
+}
+
 
 // Renderizado de Tabla de Historial
 function renderHistoryTable() {
