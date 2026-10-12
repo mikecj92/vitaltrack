@@ -35,26 +35,26 @@
         </div>
       </div>
 
-      <nav class="nav-menu">
-        <button class="nav-item active" data-tab="tab-dashboard" id="nav-btn-dash">
+      <nav class="nav-menu" id="main-nav-bar">
+        <button class="nav-item active" data-tab="tab-dashboard" id="nav-btn-dash" title="Panel Principal">
           <span class="nav-icon">📊</span>
-          <span>Panel Principal</span>
+          <span class="nav-label"><span class="label-full">Panel Principal</span><span class="label-short">Inicio</span></span>
         </button>
-        <button class="nav-item" data-tab="tab-rutinas" id="nav-btn-routines">
+        <button class="nav-item" data-tab="tab-rutinas" id="nav-btn-routines" title="Plan y Rutinas Paso a Paso">
           <span class="nav-icon">📋</span>
-          <span>Plan y Rutinas</span>
+          <span class="nav-label"><span class="label-full">Plan y Rutinas</span><span class="label-short">Rutinas</span></span>
         </button>
-        <button class="nav-item" data-tab="tab-registro" id="nav-btn-log">
-          <span class="nav-icon">✍️</span>
-          <span>Registrar Sesión</span>
+        <button class="nav-item nav-item-action" data-tab="tab-registro" id="nav-btn-log" title="Registrar Nueva Sesión">
+          <span class="nav-icon nav-icon-fab">➕</span>
+          <span class="nav-label"><span class="label-full">Registrar Sesión</span><span class="label-short">Registrar</span></span>
         </button>
-        <button class="nav-item" data-tab="tab-historial" id="nav-btn-history">
+        <button class="nav-item" data-tab="tab-historial" id="nav-btn-history" title="Historial y Telemetría">
           <span class="nav-icon">📈</span>
-          <span>Historial y Datos Duros</span>
+          <span class="nav-label"><span class="label-full">Historial y Datos</span><span class="label-short">Historial</span></span>
         </button>
-        <button class="nav-item" data-tab="tab-metricas" id="nav-btn-metrics">
+        <button class="nav-item" data-tab="tab-metricas" id="nav-btn-metrics" title="Control de Peso y Medidas">
           <span class="nav-icon">⚖️</span>
-          <span>Control de Peso / Cintura</span>
+          <span class="nav-label"><span class="label-full">Control de Peso</span><span class="label-short">Métricas</span></span>
         </button>
       </nav>
 
@@ -370,6 +370,14 @@
 
       <!-- SECCIÓN 2: PLAN Y RUTINAS DETALLADAS -->
       <section id="tab-rutinas" class="tab-pane">
+        <div class="nav-breadcrumb-bar">
+          <button type="button" class="btn-breadcrumb-back" onclick="window.switchTab('tab-dashboard')">
+            <span class="back-arrow">←</span>
+            <span>Volver al Inicio</span>
+          </button>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Plan y Rutinas Paso a Paso</span>
+        </div>
         <div class="routines-nav">
           <button class="sub-tab-btn active" data-routine="caminadora">🚶‍♂️ Caminadora (Cardio Zona 2)</button>
           <button class="sub-tab-btn" data-routine="boxing">🥊 Fitness Boxing (Nintendo Switch)</button>
@@ -406,6 +414,14 @@
 
       <!-- SECCIÓN 3: REGISTRAR SESIÓN -->
       <section id="tab-registro" class="tab-pane">
+        <div class="nav-breadcrumb-bar">
+          <button type="button" class="btn-breadcrumb-back" onclick="window.switchTab('tab-dashboard')">
+            <span class="back-arrow">←</span>
+            <span>Volver al Inicio</span>
+          </button>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Registro de Sesión</span>
+        </div>
         <div class="form-container card">
           <div class="card-header">
             <h3>📝 Registrar Nueva Sesión de Entrenamiento</h3>
@@ -514,6 +530,14 @@
 
       <!-- SECCIÓN 4: HISTORIAL Y DATOS DUROS -->
       <section id="tab-historial" class="tab-pane">
+        <div class="nav-breadcrumb-bar">
+          <button type="button" class="btn-breadcrumb-back" onclick="window.switchTab('tab-dashboard')">
+            <span class="back-arrow">←</span>
+            <span>Volver al Inicio</span>
+          </button>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Historial y Datos Duros</span>
+        </div>
         <div class="card">
           <div class="card-header">
             <div>
@@ -559,6 +583,14 @@
 
       <!-- SECCIÓN 5: MÉTRICAS Y PESO -->
       <section id="tab-metricas" class="tab-pane">
+        <div class="nav-breadcrumb-bar">
+          <button type="button" class="btn-breadcrumb-back" onclick="window.switchTab('tab-dashboard')">
+            <span class="back-arrow">←</span>
+            <span>Volver al Inicio</span>
+          </button>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Control de Peso y Medidas</span>
+        </div>
         <div class="metrics-grid">
           <div class="card">
             <div class="card-header">
