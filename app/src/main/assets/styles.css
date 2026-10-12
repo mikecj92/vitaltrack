@@ -1542,3 +1542,155 @@ textarea:focus {
   color: #e2e8f0;
   margin-bottom: 6px;
 }
+
+
+/* --- Navegación SPA y Mobile App Bar Avanzada --- */
+.label-full {
+  display: inline;
+}
+
+.label-short {
+  display: none;
+}
+
+.nav-breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(8px);
+}
+
+.btn-breadcrumb-back {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-breadcrumb-back:hover {
+  background: rgba(56, 189, 248, 0.22);
+  color: #fff;
+  transform: translateX(-2px);
+  border-color: #38bdf8;
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.85rem;
+}
+
+.breadcrumb-current {
+  color: #94a3b8;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+@keyframes fadeInPane {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-pane.active {
+  display: block !important;
+  animation: fadeInPane 0.22s ease-out;
+}
+
+/* Optimización de Bottom Nav en Móviles */
+@media (max-width: 768px) {
+  .label-full {
+    display: none;
+  }
+  .label-short {
+    display: block;
+    font-size: 0.66rem;
+    letter-spacing: 0.1px;
+    margin-top: 1px;
+  }
+
+  .nav-menu {
+    height: 64px !important;
+    padding: 4px 6px max(8px, env(safe-area-inset-bottom)) 6px !important;
+    background: rgba(13, 18, 28, 0.98) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .nav-item {
+    padding: 4px 2px !important;
+    border-radius: 6px !important;
+  }
+
+  .nav-item.nav-item-action {
+    position: relative;
+  }
+
+  .nav-item.nav-item-action .nav-icon-fab {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.55);
+    border: 2px solid #0f172a;
+    font-size: 1rem;
+    transition: transform 0.15s ease;
+  }
+
+  .nav-item.nav-item-action:active .nav-icon-fab {
+    transform: scale(0.92);
+  }
+
+  .top-bar {
+    padding: 8px 4px !important;
+    margin-bottom: 12px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .top-bar h1 {
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+  }
+
+  .top-bar p {
+    display: none !important;
+  }
+
+  .header-actions {
+    gap: 6px !important;
+  }
+
+  #btn-quick-workout {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+
+  #app-version-badge {
+    display: none !important;
+  }
+}
