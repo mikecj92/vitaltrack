@@ -1,1 +1,106 @@
-{"profile":{"age":38,"heightM":1.75,"initialWeightKg":95,"dumbbellWeightLb":10},"workouts":[{"id":"wk_samsung_1791661529241","date":"2026-10-10","timestamp":"2026-10-10T19:45:29.241Z","category":"Caminata (Samsung Health)","duration":35,"rpe":6,"notes":"Caminata 35 min • 8,108 pasos registrados en Samsung Galaxy Watch","noPain":true,"wearable":{"hrAvg":127,"hrMax":146,"hrMin":78,"rhr":105,"steps":8108,"distanceKm":6.4,"calories":209,"activeCalories":240,"zone2Mins":22,"zone3Mins":6,"peakMins":2},"source":"samsung_watch_auto"},{"id":"wk_1791569972229","date":"2026-10-09","timestamp":"2026-10-09T18:19:32.229Z","category":"Fuerza C","duration":30,"rpe":7,"notes":"Sesión recomendada completada con éxito","noPain":true,"wearable":{},"source":"quick_done"}],"metrics":[{"id":"init-0","date":"2026-10-08","weight":95,"waist":null,"energy":"Bueno","imc":31}],"healthConnect":{"steps":8108,"avgHeartRate":127,"maxHeartRate":146,"minHeartRate":105,"restingHeartRate":105,"zone2Mins":16,"zone3Mins":17,"peakMins":0,"sleepHours":5.5,"sleepMinutes":330,"sleepStartTime":"2026-10-10T06:39:21.374Z","sleepEndTime":"2026-10-10T12:09:21.374Z","deepSleepMinutes":31,"lightSleepMinutes":139,"remSleepMinutes":88,"awakeMinutes":4,"distanceKm":6.4,"totalCalories":2056,"activeCalories":209,"calories":209,"exerciseDuration":35,"exerciseTitle":"Caminata","exerciseStartTime":"2026-10-10T18:23:09Z","exerciseEndTime":"2026-10-10T18:58:32Z","avgSpeedKmh":4.3,"timestamp":"2026-10-10T22:51:04.497468Z","syncTime":"04:51 p.m.","device":"Samsung Health / Health Connect"},"syncedAt":"2026-10-10T22:51:05.075Z"}
+{
+  "profile": {
+    "age": 38,
+    "heightM": 1.75,
+    "initialWeightKg": 95,
+    "dumbbellWeightLb": 10
+  },
+  "workouts": [
+    {
+      "id": "wk_samsung_1791835420704",
+      "date": "2026-10-12",
+      "timestamp": "2026-10-12T20:03:40.704Z",
+      "category": "Caminata (Samsung Health)",
+      "duration": 30,
+      "rpe": 6,
+      "notes": "Caminata 30 min • 3,486 pasos registrados en Samsung Galaxy Watch",
+      "noPain": true,
+      "wearable": {
+        "hrAvg": null,
+        "hrMax": null,
+        "rhr": 72,
+        "steps": 3486,
+        "calories": 212,
+        "distanceKm": 2.66
+      },
+      "source": "samsung_watch_auto"
+    },
+    {
+      "id": "wk_samsung_1791661529241",
+      "date": "2026-10-10",
+      "timestamp": "2026-10-10T19:45:29.241Z",
+      "category": "Caminata (Samsung Health)",
+      "duration": 35,
+      "rpe": 6,
+      "notes": "Caminata 35 min • 8,108 pasos registrados en Samsung Galaxy Watch",
+      "noPain": true,
+      "wearable": {
+        "hrAvg": 127,
+        "hrMax": 146,
+        "hrMin": 78,
+        "rhr": 105,
+        "steps": 8108,
+        "distanceKm": 6.4,
+        "calories": 209,
+        "activeCalories": 240,
+        "zone2Mins": 22,
+        "zone3Mins": 6,
+        "peakMins": 2
+      },
+      "source": "samsung_watch_auto"
+    },
+    {
+      "id": "wk_1791569972229",
+      "date": "2026-10-09",
+      "timestamp": "2026-10-09T18:19:32.229Z",
+      "category": "Fuerza C",
+      "duration": 30,
+      "rpe": 7,
+      "notes": "Sesión recomendada completada con éxito",
+      "noPain": true,
+      "wearable": {},
+      "source": "quick_done"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "init-0",
+      "date": "2026-10-08",
+      "weight": 95,
+      "waist": null,
+      "energy": "Bueno",
+      "imc": 31
+    }
+  ],
+  "healthConnect": {
+    "steps": 8108,
+    "avgHeartRate": 127,
+    "maxHeartRate": 146,
+    "minHeartRate": 105,
+    "restingHeartRate": 105,
+    "zone2Mins": 16,
+    "zone3Mins": 17,
+    "peakMins": 0,
+    "sleepHours": 5.5,
+    "sleepMinutes": 330,
+    "sleepStartTime": "2026-10-10T06:39:21.374Z",
+    "sleepEndTime": "2026-10-10T12:09:21.374Z",
+    "deepSleepMinutes": 31,
+    "lightSleepMinutes": 139,
+    "remSleepMinutes": 88,
+    "awakeMinutes": 4,
+    "distanceKm": 6.4,
+    "totalCalories": 2056,
+    "activeCalories": 209,
+    "calories": 209,
+    "exerciseDuration": 35,
+    "exerciseTitle": "Caminata",
+    "exerciseStartTime": "2026-10-10T18:23:09Z",
+    "exerciseEndTime": "2026-10-10T18:58:32Z",
+    "avgSpeedKmh": 4.3,
+    "timestamp": "2026-10-10T22:51:04.497468Z",
+    "syncTime": "04:51 p.m.",
+    "device": "Samsung Health / Health Connect"
+  },
+  "syncedAt": "2026-10-12T20:03:41.016Z"
+}
