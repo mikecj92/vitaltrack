@@ -21,6 +21,7 @@ import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.RestingHeartRateRecord
 import androidx.health.connect.client.records.SpeedRecord
+import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +31,8 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import android.util.Base64
 import java.time.Duration
@@ -111,30 +114,43 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val now = Instant.now()
-                val startOfDay = now.truncatedTo(ChronoUnit.DAYS)
+                val zoneId = ZoneId.systemDefault()
+                val localToday = LocalDate.now(zoneId)
+                val startOfDay = localToday.atStartOfDay(zoneId).toInstant()
                 val timeRange = TimeRangeFilter.between(startOfDay, now)
 
-                // 1. Leer Pasos del Día con Deduplicación rigurosa por Origen de Datos (Watch vs Celular)
+                // 1. Leer Pasos del Día con Deduplicación rigurosa oficial de Health Connect (Aggregate)
                 var totalSteps: Long = 0
                 try {
-                    val stepsResponse = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = StepsRecord::class,
+                    val aggregateResponse = client.aggregate(
+                        AggregateRequest(
+                            metrics = setOf(StepsRecord.COUNT_TOTAL),
                             timeRangeFilter = timeRange
                         )
                     )
-                    // Filtrar preferentemente por Samsung Health (reloj Galaxy Watch)
-                    val sHealthRecords = stepsResponse.records.filter { 
-                        it.metadata.dataOrigin.packageName.lowercase().contains("shealth") 
-                    }
-                    totalSteps = if (sHealthRecords.isNotEmpty()) {
-                        sHealthRecords.sumOf { it.count }
-                    } else {
-                        // Si no hay etiqueta explícita de shealth, agrupar por origen y tomar la fuente máxima única para evitar duplicar
-                        val byOrigin = stepsResponse.records.groupBy { it.metadata.dataOrigin.packageName }
-                        byOrigin.values.maxOfOrNull { list -> list.sumOf { it.count } } ?: 0L
-                    }
+                    totalSteps = aggregateResponse[StepsRecord.COUNT_TOTAL] ?: 0L
                 } catch (e: Exception) {}
+
+                // Fallback de contingencia si aggregate no reporta métrica
+                if (totalSteps <= 0L) {
+                    try {
+                        val stepsResponse = client.readRecords(
+                            ReadRecordsRequest(
+                                recordType = StepsRecord::class,
+                                timeRangeFilter = timeRange
+                            )
+                        )
+                        val sHealthRecords = stepsResponse.records.filter { 
+                            it.metadata.dataOrigin.packageName.lowercase().contains("shealth") 
+                        }
+                        totalSteps = if (sHealthRecords.isNotEmpty()) {
+                            sHealthRecords.sumOf { it.count }
+                        } else {
+                            val byOrigin = stepsResponse.records.groupBy { it.metadata.dataOrigin.packageName }
+                            byOrigin.values.maxOfOrNull { list -> list.sumOf { it.count } } ?: 0L
+                        }
+                    } catch (e: Exception) {}
+                }
 
                 // 2. Leer Frecuencia Cardíaca Completa (Promedio, Máximo, Mínimo y Distribución de Zonas)
                 var avgHr = 0
@@ -298,6 +314,7 @@ class MainActivity : AppCompatActivity() {
                 // 9. Crear Estructura JSON Completa con toda la telemetría recopilada
                 val data = JSONObject().apply {
                     put("steps", totalSteps)
+                    put("date", localToday.toString())
                     put("avgHeartRate", avgHr)
                     put("maxHeartRate", maxHr)
                     put("minHeartRate", minHr)
