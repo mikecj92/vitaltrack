@@ -1525,7 +1525,11 @@ function setupRoutinesViewer(initialKey) {
             <button type="button" class="btn-video-guide btn-video-drive" onclick="openDriveExerciseVideo('${key}', ${idx})">
               📁 Google Drive
             </button>
-            ${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-video-guide btn-video-yt" title="Ver en YouTube">🌐 YouTube</a>` : ''}
+            ${ex.videoUrl ? `
+              <button type="button" class="btn-video-guide btn-video-yt" onclick="openYouTubeApp('${ex.youtubeId || ''}', '${ex.videoUrl}')" title="Ver en YouTube App sin perder la aplicación">
+                ▶ YouTube
+              </button>
+            ` : ''}
           </div>
         </div>
       </div>
@@ -1829,6 +1833,12 @@ function setupVideoModal() {
 
 // Reproducción Directa de Video Local MP4 en PC
 window.playLocalExerciseVideo = function(videoPath, title, routineTitle, cue) {
+  const cleanFileName = (videoPath || '').split('/').pop();
+  if (window.AndroidHealthConnect && window.AndroidHealthConnect.playVideo) {
+    window.AndroidHealthConnect.playVideo(cleanFileName, title || 'Demostración Técnica');
+    return;
+  }
+
   const modal = document.getElementById('video-modal');
   const titleElem = document.getElementById('video-modal-title');
   const subElem = document.getElementById('video-modal-subtitle');
@@ -1872,6 +1882,48 @@ window.playLocalExerciseVideo = function(videoPath, title, routineTitle, cue) {
   }
 
   modal.classList.add('open');
+};
+
+// Abre YouTube de forma nativa en app de YouTube o en modal incrustado sin perder la aplicación
+window.openYouTubeApp = function(youtubeId, videoUrl) {
+  if (window.AndroidHealthConnect && window.AndroidHealthConnect.openYouTube) {
+    window.AndroidHealthConnect.openYouTube(youtubeId || videoUrl);
+    return;
+  }
+  if (/Android/i.test(navigator.userAgent) && youtubeId) {
+    window.location.href = `vnd.youtube:${youtubeId}`;
+    setTimeout(() => {
+      window.open(videoUrl || `https://www.youtube.com/watch?v=${youtubeId}`, '_blank');
+    }, 500);
+    return;
+  }
+  if (youtubeId) {
+    const modal = document.getElementById('video-modal');
+    const titleElem = document.getElementById('video-modal-title');
+    const subElem = document.getElementById('video-modal-subtitle');
+    const container = document.getElementById('video-player-container');
+    const btnYtExt = document.getElementById('video-btn-yt-external');
+    if (modal && container) {
+      if (titleElem) titleElem.textContent = 'Demostración Técnica';
+      if (subElem) subElem.textContent = 'Reproducción de YouTube';
+      if (btnYtExt) {
+        btnYtExt.style.display = 'inline-flex';
+        btnYtExt.href = videoUrl || `https://www.youtube.com/watch?v=${youtubeId}`;
+      }
+      container.innerHTML = `
+        <iframe 
+          src="https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&playsinline=1" 
+          title="Demostración Técnica YouTube" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen 
+          style="width: 100%; height: 100%; min-height: 380px; border: none; border-radius: 8px;">
+        </iframe>
+      `;
+      modal.classList.add('open');
+      return;
+    }
+  }
+  window.open(videoUrl || `https://www.youtube.com/watch?v=${youtubeId}`, '_blank');
 };
 
 // Reproducción e Integración con Google Drive
