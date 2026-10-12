@@ -36,11 +36,28 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import android.util.Base64
 import java.time.Duration
+import android.app.Dialog
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.webkit.WebResourceRequest
+import android.widget.FrameLayout
+import android.widget.MediaController
+import android.widget.TextView
+import android.widget.VideoView
+import java.io.File
+import java.io.FileOutputStream
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var healthConnectClient: HealthConnectClient? = null
+    private var activeVideoDialog: Dialog? = null
     private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
 
     private val PERMISSIONS = setOf(
@@ -64,8 +81,42 @@ class MainActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
+        webView.settings.allowFileAccessFromFileURLs = true
+        webView.settings.allowUniversalAccessFromFileURLs = true
+        webView.settings.mediaPlaybackRequiresUserGesture = false
+
         webView.webChromeClient = WebChromeClient()
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val url = request?.url?.toString() ?: return false
+                return handleExternalUrl(url)
+            }
+
+            @Suppress("DEPRECATION")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                if (url == null) return false
+                return handleExternalUrl(url)
+            }
+
+            private fun handleExternalUrl(url: String): Boolean {
+                if (url.startsWith("file:///android_asset/")) {
+                    return false
+                }
+                if (url.contains("youtube.com") || url.contains("youtu.be") || url.startsWith("vnd.youtube:")) {
+                    launchYouTubeApp(url)
+                    return true
+                }
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
+                    return true
+                } catch (e: Exception) {
+                    return false
+                }
+            }
+        }
 
         // Inyectar el puente nativo para JavaScript
         webView.addJavascriptInterface(HealthConnectWebBridge(), "AndroidHealthConnect")
@@ -360,6 +411,20 @@ class MainActivity : AppCompatActivity() {
 
     inner class HealthConnectWebBridge {
         @JavascriptInterface
+        fun playVideo(videoFileName: String, title: String) {
+            runOnUiThread {
+                this@MainActivity.playVideoNative(videoFileName, title)
+            }
+        }
+
+        @JavascriptInterface
+        fun openYouTube(videoIdOrUrl: String) {
+            runOnUiThread {
+                this@MainActivity.launchYouTubeApp(videoIdOrUrl)
+            }
+        }
+
+        @JavascriptInterface
         fun syncData() {
             runOnUiThread {
                 checkAndRequestPermissions()
@@ -437,7 +502,167 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+        fun playVideoNative(videoFileName: String, title: String) {
+        try {
+            val cleanName = File(videoFileName).name
+            val extDir = getExternalFilesDir("videos")
+            var targetFile: File? = if (extDir != null) File(extDir, cleanName) else null
+
+            if (targetFile == null || !targetFile.exists() || targetFile.length() == 0L) {
+                val fallback = File("/sdcard/VitalTrack/videos/$cleanName")
+                if (fallback.exists() && fallback.length() > 0L) {
+                    targetFile = fallback
+                }
+            }
+
+            if (targetFile == null || !targetFile.exists() || targetFile.length() == 0L) {
+                val intDir = File(filesDir, "videos")
+                if (!intDir.exists()) intDir.mkdirs()
+                val candidate = File(intDir, cleanName)
+                if (candidate.exists() && candidate.length() > 0L) {
+                    targetFile = candidate
+                } else {
+                    try {
+                        assets.open("assets/videos/$cleanName").use { input ->
+                            FileOutputStream(candidate).use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                        if (candidate.exists() && candidate.length() > 0L) {
+                            targetFile = candidate
+                        }
+                    } catch (e: Exception) {}
+                }
+            }
+
+            if (targetFile != null && targetFile.exists() && targetFile.length() > 0L) {
+                showNativeVideoDialog(targetFile.absolutePath, title)
+            } else {
+                Toast.makeText(this, "Video local no encontrado: $cleanName", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al reproducir: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showNativeVideoDialog(filePath: String, title: String) {
+        try {
+            activeVideoDialog?.dismiss()
+            val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            val rootLayout = FrameLayout(this).apply {
+                setBackgroundColor(Color.BLACK)
+                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+
+            val videoView = VideoView(this).apply {
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER)
+            }
+
+            val mediaController = MediaController(this)
+            mediaController.setAnchorView(videoView)
+            videoView.setMediaController(mediaController)
+            videoView.setVideoPath(filePath)
+
+            val headerBar = FrameLayout(this).apply {
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP).apply {
+                    setPadding(32, 48, 32, 24)
+                }
+                setBackgroundColor(Color.parseColor("#D90B1329"))
+            }
+
+            val titleView = TextView(this).apply {
+                text = title
+                setTextColor(Color.WHITE)
+                textSize = 17f
+                paint.isFakeBoldText = true
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.START or Gravity.CENTER_VERTICAL).apply {
+                    marginEnd = 160
+                }
+            }
+
+            val closeButton = TextView(this).apply {
+                text = "✕ Volver a la App"
+                setTextColor(Color.WHITE)
+                textSize = 15f
+                paint.isFakeBoldText = true
+                setPadding(32, 20, 32, 20)
+                setBackgroundColor(Color.parseColor("#10B981"))
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.END or Gravity.CENTER_VERTICAL)
+                setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+
+            headerBar.addView(titleView)
+            headerBar.addView(closeButton)
+
+            rootLayout.addView(videoView)
+            rootLayout.addView(headerBar)
+
+            dialog.setContentView(rootLayout)
+            dialog.setOnDismissListener {
+                videoView.stopPlayback()
+                activeVideoDialog = null
+            }
+
+            videoView.setOnPreparedListener { mp ->
+                mp.isLooping = true
+                videoView.start()
+            }
+
+            videoView.setOnErrorListener { _, what, extra ->
+                Toast.makeText(this@MainActivity, "Error en reproducción ($what, $extra)", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                true
+            }
+
+            activeVideoDialog = dialog
+            dialog.show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun launchYouTubeApp(videoIdOrUrl: String) {
+        try {
+            val videoId = if (videoIdOrUrl.length == 11 && !videoIdOrUrl.contains("/") && !videoIdOrUrl.contains(".")) {
+                videoIdOrUrl
+            } else {
+                val pattern = Regex("""(?:youtu\.be/|youtube\.com/(?:embed/|v/|watch\?v=|watch\?.+&v=))([\w-]{11})""")
+                pattern.find(videoIdOrUrl)?.groupValues?.get(1) ?: videoIdOrUrl
+            }
+            val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoId")).apply {
+                setPackage("com.google.android.youtube")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(appIntent)
+        } catch (e: Exception) {
+            try {
+                val webUrl = if (videoIdOrUrl.startsWith("http")) videoIdOrUrl else "https://www.youtube.com/watch?v=$videoIdOrUrl"
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUrl)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(webIntent)
+            } catch (e2: Exception) {
+                Toast.makeText(this, "No se pudo abrir el enlace de YouTube", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onBackPressed() {
+        if (activeVideoDialog != null && activeVideoDialog?.isShowing == true) {
+            activeVideoDialog?.dismiss()
+            return
+        }
+        if (webView.canGoBack()) {
+            webView.goBack()
+            return
+        }
+
         webView.evaluateJavascript("if (window.handleAppBackPress) { window.handleAppBackPress(); } else { false; }") { result ->
             if (result == "false" || result == null || result == "\"false\"") {
                 super.onBackPressed()
