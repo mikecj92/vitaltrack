@@ -1,6 +1,6 @@
 {
-  "version": "1.3.3",
-  "buildDate": "2026-10-10T12:10:00Z",
-  "name": "VitalTrack: Sincronización en la Nube de Health Connect",
-  "notes": "Sincronización bidireccional en la nube de métricas del Samsung Watch (pasos, FC en reposo, FC promedio y sueño) entre celular y PC."
+  "version": "1.4.0",
+  "buildDate": "2026-10-12T17:35:00Z",
+  "name": "VitalTrack: Reproduccion Nativa de Videos Locales e Integracion YouTube",
+  "notes": "Videos locales integrados en el paquete, reproductor nativo con aceleracion de hardware y enlace directo a la App oficial de YouTube sin perder la sesion."
 }
