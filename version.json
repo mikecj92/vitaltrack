@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
-  "buildDate": "2026-10-12T17:35:00Z",
-  "name": "VitalTrack: Reproduccion Nativa de Videos Locales e Integracion YouTube",
-  "notes": "Videos locales integrados en el paquete, reproductor nativo con aceleracion de hardware y enlace directo a la App oficial de YouTube sin perder la sesion."
+  "version": "1.4.1",
+  "buildDate": "2026-10-12T18:35:00Z",
+  "name": "VitalTrack: Registro Modular Individual de Parámetros y Métricas",
+  "notes": "Registro individual por tarjetas independientes para Peso, Cintura, FC Reposo, Horas de Sueño y Energía con actualización en tiempo real."
 }
