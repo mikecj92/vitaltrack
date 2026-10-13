@@ -2294,43 +2294,213 @@ function saveStoredMetrics(metrics) {
   localStorage.setItem(STORAGE_KEYS.METRICS, JSON.stringify(metrics));
 }
 
+// Obtener el valor más reciente de cualquier parámetro medido individualmente
+function getLatestMetricValue(field) {
+  const metrics = getStoredMetrics();
+  for (const m of metrics) {
+    if (m && m[field] !== undefined && m[field] !== null && m[field] !== '') {
+      return m[field];
+    }
+  }
+  return null;
+}
+window.getLatestMetricValue = getLatestMetricValue;
+
+// Filtrar tarjetas individuales en el hub de métricas
+window.filterMetricCards = function(filter) {
+  const pills = document.querySelectorAll('.metric-filter-pill');
+  pills.forEach(p => p.classList.remove('active'));
+  const activePill = document.getElementById(`pill-metric-${filter}`);
+  if (activePill) activePill.classList.add('active');
+
+  const cards = document.querySelectorAll('.single-metric-card');
+  cards.forEach(card => {
+    if (filter === 'all' || card.getAttribute('data-metric-type') === filter) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+};
+
+// Toast de confirmación al registrar métrica individual
+window.showIndivMetricToast = function(msg) {
+  const toast = document.getElementById('indiv-metric-toast');
+  if (!toast) return;
+  toast.innerHTML = msg;
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 4500);
+};
+
+// Actualizar etiquetas de último valor en cada tarjeta individual
+window.updateIndividualMetricBadges = function() {
+  const latestWeight = getLatestMetricValue('weight');
+  const latestWaist = getLatestMetricValue('waist');
+  const latestRhr = getLatestMetricValue('rhr');
+  const latestSleep = getLatestMetricValue('sleep');
+  const latestEnergy = getLatestMetricValue('energy');
+
+  const bWeight = document.getElementById('badge-last-weight');
+  if (bWeight) bWeight.textContent = latestWeight != null ? `Último: ${latestWeight.toFixed(1)} kg` : 'Último: 95.0 kg';
+
+  const bWaist = document.getElementById('badge-last-waist');
+  if (bWaist) bWaist.textContent = latestWaist != null ? `Último: ${latestWaist} cm` : 'Último: Pendiente';
+
+  const bRhr = document.getElementById('badge-last-rhr');
+  if (bRhr) bRhr.textContent = latestRhr != null ? `Último: ${latestRhr} BPM` : 'Último: 68 BPM';
+
+  const bSleep = document.getElementById('badge-last-sleep');
+  if (bSleep) bSleep.textContent = latestSleep != null ? `Último: ${latestSleep} h` : 'Último: 7.5 h';
+
+  const bEnergy = document.getElementById('badge-last-energy');
+  if (bEnergy) bEnergy.textContent = latestEnergy != null ? `Último: ${latestEnergy}` : 'Último: Bueno';
+
+  const hintWeight = document.getElementById('hint-weight-imc');
+  if (hintWeight && latestWeight != null) {
+    const imc = +(latestWeight / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1);
+    const delta = (latestWeight - 89.0).toFixed(1);
+    hintWeight.textContent = `IMC actual: ${imc} · Meta: ≤ 89.0 kg (${delta > 0 ? `faltan ${delta} kg` : '¡Hito cumplido!'})`;
+  }
+};
+
+// Guardar medición individual por parámetro
+window.saveIndividualMetric = function(type) {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById(`indiv-${type}-date`);
+  const dateVal = dateInput && dateInput.value ? dateInput.value : todayStr;
+  const valElem = document.getElementById(`indiv-${type}-val`);
+  if (!valElem) return;
+
+  const rawVal = valElem.value;
+  if (rawVal === '' || rawVal === undefined) {
+    alert('Por favor introduce un valor antes de guardar esta medición.');
+    valElem.focus();
+    return;
+  }
+
+  let metrics = getStoredMetrics();
+  let entry = metrics.find(m => m.date === dateVal);
+  let isNew = false;
+
+  if (!entry) {
+    isNew = true;
+    entry = {
+      id: Date.now().toString(),
+      date: dateVal,
+      weight: null,
+      waist: null,
+      rhr: null,
+      sleep: null,
+      energy: null,
+      imc: null
+    };
+  }
+
+  let feedbackText = '';
+  if (type === 'weight') {
+    const num = parseFloat(rawVal);
+    entry.weight = num;
+    entry.imc = +(num / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1);
+    feedbackText = `⚖️ Peso registrado: ${num.toFixed(1)} kg (IMC: ${entry.imc})`;
+  } else if (type === 'waist') {
+    const num = parseFloat(rawVal);
+    entry.waist = num;
+    feedbackText = `📏 Cintura registrada: ${num} cm`;
+  } else if (type === 'rhr') {
+    const num = parseInt(rawVal, 10);
+    entry.rhr = num;
+    feedbackText = `💓 FC en Reposo registrada: ${num} BPM`;
+  } else if (type === 'sleep') {
+    const num = parseFloat(rawVal);
+    entry.sleep = num;
+    feedbackText = `😴 Horas de Sueño registradas: ${num} h`;
+  } else if (type === 'energy') {
+    entry.energy = rawVal;
+    feedbackText = `⚡ Nivel de Energía registrado: ${rawVal}`;
+  }
+
+  if (isNew) {
+    metrics.unshift(entry);
+  }
+
+  metrics.sort((a, b) => new Date(b.date) - new Date(a.date));
+  saveStoredMetrics(metrics);
+  autoSyncPush();
+
+  showIndivMetricToast(`✅ ${feedbackText} para la fecha ${dateVal}`);
+
+  // Limpiar valor de input numérico
+  if (type !== 'energy') {
+    valElem.value = '';
+  }
+
+  updateIndividualMetricBadges();
+  renderDashboard();
+  renderMetricsTable();
+  if (typeof calculateAdaptivePrescription === 'function') {
+    calculateAdaptivePrescription();
+  }
+};
+
 function setupMetricsEvents() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  ['weight', 'waist', 'rhr', 'sleep', 'energy'].forEach(t => {
+    const dElem = document.getElementById(`indiv-${t}-date`);
+    if (dElem && !dElem.value) dElem.value = todayStr;
+  });
+
+  updateIndividualMetricBadges();
+
   const form = document.getElementById('metrics-form');
   if (!form) return;
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const date = document.getElementById('metric-date').value;
-    const weight = parseFloat(document.getElementById('metric-weight').value);
+    const date = document.getElementById('metric-date').value || todayStr;
+    const weightVal = document.getElementById('metric-weight').value;
+    const weight = weightVal ? parseFloat(weightVal) : null;
     const waist = document.getElementById('metric-waist').value ? parseFloat(document.getElementById('metric-waist').value) : null;
-    const energy = document.getElementById('metric-energy').value;
+    const energy = document.getElementById('metric-energy').value || null;
     const rhr = document.getElementById('metric-rhr') && document.getElementById('metric-rhr').value ? parseInt(document.getElementById('metric-rhr').value, 10) : null;
     const sleep = document.getElementById('metric-sleep') && document.getElementById('metric-sleep').value ? parseFloat(document.getElementById('metric-sleep').value) : null;
 
-    const imc = +(weight / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1);
+    const imc = weight ? +(weight / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1) : null;
 
-    const newMetric = {
-      id: Date.now().toString(),
-      date,
-      weight,
-      waist,
-      energy,
-      rhr,
-      sleep,
-      imc
-    };
+    let metrics = getStoredMetrics();
+    let entry = metrics.find(m => m.date === date);
 
-    const metrics = getStoredMetrics();
-    metrics.unshift(newMetric);
+    if (entry) {
+      if (weight !== null) { entry.weight = weight; entry.imc = imc; }
+      if (waist !== null) entry.waist = waist;
+      if (energy !== null) entry.energy = energy;
+      if (rhr !== null) entry.rhr = rhr;
+      if (sleep !== null) entry.sleep = sleep;
+    } else {
+      entry = {
+        id: Date.now().toString(),
+        date,
+        weight,
+        waist,
+        energy,
+        rhr,
+        sleep,
+        imc
+      };
+      metrics.unshift(entry);
+    }
+
+    metrics.sort((a, b) => new Date(b.date) - new Date(a.date));
     saveStoredMetrics(metrics);
-
-    // Sincronización automática inmediata a la nube
     autoSyncPush();
 
     form.reset();
-    document.getElementById('metric-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('metric-date').value = todayStr;
+    showIndivMetricToast(`✅ Medición combinada guardada para ${date}`);
 
+    updateIndividualMetricBadges();
     renderDashboard();
     renderMetricsTable();
   });
@@ -2349,16 +2519,17 @@ function _renderDashboardInternal() {
   const workouts = getStoredWorkouts();
   const metrics = getStoredMetrics();
 
-  // Peso actual
-  const currentMetric = metrics[0] || { weight: 95.0, imc: 31.0 };
+  // Peso actual obtenido de la medición más reciente disponible
+  const currentWeight = getLatestMetricValue('weight') || 95.0;
+  const currentImc = +(currentWeight / (USER_PROFILE.heightM * USER_PROFILE.heightM)).toFixed(1);
   const currentWeightElem = document.getElementById('dash-current-weight');
   const imcElem = document.getElementById('dash-imc');
   const weightDiffElem = document.getElementById('dash-weight-diff');
 
-  if (currentWeightElem) currentWeightElem.innerHTML = `${currentMetric.weight.toFixed(1)} <span class="unit">kg</span>`;
-  if (imcElem) imcElem.textContent = currentMetric.imc.toFixed(1);
+  if (currentWeightElem) currentWeightElem.innerHTML = `${currentWeight.toFixed(1)} <span class="unit">kg</span>`;
+  if (imcElem) imcElem.textContent = currentImc.toFixed(1);
 
-  const diff = currentMetric.weight - USER_PROFILE.initialWeightKg;
+  const diff = currentWeight - USER_PROFILE.initialWeightKg;
   if (weightDiffElem) {
     if (diff === 0) {
       weightDiffElem.textContent = 'Punto de partida (95.0 kg)';
@@ -2452,9 +2623,8 @@ function _renderDashboardInternal() {
 // Hitos de Graduación al Nivel 2
 // ==========================================
 function renderMilestonesProgress(metrics, workouts) {
-  const currentMetric = (metrics && metrics[0]) || { weight: 95.0, waist: null };
-  const currentWeight = currentMetric.weight || 95.0;
-  const currentWaist = currentMetric.waist;
+  const currentWeight = getLatestMetricValue('weight') || 95.0;
+  const currentWaist = getLatestMetricValue('waist');
 
   // Hito 1: Peso <= 89 kg (Base: 95.0 kg, Meta: 89.0 kg, delta = 6.0 kg)
   const weightLost = 95.0 - currentWeight;
@@ -2632,13 +2802,13 @@ function renderMetricsTable() {
   const metrics = getStoredMetrics();
   tbody.innerHTML = metrics.map(m => `
     <tr>
-      <td>${m.date}</td>
-      <td><strong>${m.weight.toFixed(1)}</strong> kg</td>
-      <td>${m.imc.toFixed(1)}</td>
-      <td>${m.waist ? `${m.waist} cm` : '-'}</td>
-      <td>${m.rhr ? `${m.rhr} bpm` : '-'}</td>
-      <td>${m.sleep ? `${m.sleep} h` : '-'}</td>
-      <td>${m.energy}</td>
+      <td><strong>${m.date}</strong></td>
+      <td>${m.weight != null ? `<strong>${m.weight.toFixed(1)}</strong> kg` : '<span class="text-dim">-</span>'}</td>
+      <td>${m.imc != null ? m.imc.toFixed(1) : '<span class="text-dim">-</span>'}</td>
+      <td>${m.waist != null ? `${m.waist} cm` : '<span class="text-dim">-</span>'}</td>
+      <td>${m.rhr != null ? `${m.rhr} bpm` : '<span class="text-dim">-</span>'}</td>
+      <td>${m.sleep != null ? `${m.sleep} h` : '<span class="text-dim">-</span>'}</td>
+      <td>${m.energy ? m.energy : '<span class="text-dim">-</span>'}</td>
       <td>
         ${m.id === 'init-0' ? '<span class="text-dim">Base</span>' : `<button class="btn-del" onclick="deleteMetric('${m.id}')">Eliminar</button>`}
       </td>
@@ -2687,8 +2857,10 @@ function setupAdaptiveCoach() {
 }
 
 function calculateAdaptivePrescription() {
-  const rhrVal = document.getElementById('coach-rhr') ? parseInt(document.getElementById('coach-rhr').value, 10) || 68 : 68;
-  const sleepVal = document.getElementById('coach-sleep') ? parseFloat(document.getElementById('coach-sleep').value) || 7.5 : 7.5;
+  const latestRhr = getLatestMetricValue('rhr');
+  const latestSleep = getLatestMetricValue('sleep');
+  const rhrVal = document.getElementById('coach-rhr') ? parseInt(document.getElementById('coach-rhr').value, 10) || (latestRhr || 68) : (latestRhr || 68);
+  const sleepVal = document.getElementById('coach-sleep') ? parseFloat(document.getElementById('coach-sleep').value) || (latestSleep || 7.5) : (latestSleep || 7.5);
   const sorenessVal = document.getElementById('coach-soreness') ? document.getElementById('coach-soreness').value : 'none';
 
   // Obtener pasos del día para calibrar fatiga mecánica a 95 kg
