@@ -88,7 +88,7 @@
           <p class="text-muted" id="page-subtitle">Progreso acumulado, métricas biomecánicas y plan activo</p>
         </div>
         <div class="header-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <span id="app-version-badge" style="font-size: 0.72rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;">v1.3.3 ✨ Live</span>
+          <span id="app-version-badge" style="font-size: 0.72rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;">v1.4.1 ✨ Live</span>
           <span id="sync-cloud-status" class="readiness-pill readiness-green" style="font-size: 0.75rem; padding: 5px 12px; font-weight: 600;">
             ☁️ Nube Activa
           </span>
@@ -699,48 +699,218 @@
         </div>
 
         <div class="metrics-grid">
-          <div class="card">
-            <div class="card-header">
-              <h3>Registro Periódico de Peso y Medidas</h3>
-              <span class="text-muted">Recomendación: Pésate 1 vez a la semana en ayunas</span>
+          <!-- HUB DE REGISTRO INDIVIDUAL DE PARÁMETROS -->
+          <div class="card individual-metrics-hub-card">
+            <div class="card-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+                <h3 style="margin: 0; font-size: 1.22rem; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                  <span>🎯</span> Registro Individual de Parámetros y Métricas
+                </h3>
+                <span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Medición Modular</span>
+              </div>
+              <p class="text-muted" style="margin: 0; font-size: 0.88rem; line-height: 1.4;">
+                Registra cada parámetro por separado a su propio ritmo sin verte obligado a llenar todo a la vez. Cada medición se guarda de forma independiente.
+              </p>
             </div>
 
-            <form id="metrics-form">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="metric-date">Fecha de Medición</label>
-                  <input type="date" id="metric-date" required>
+            <!-- Selector rápido de vista de métrica -->
+            <div class="metric-quick-selector-bar">
+              <button type="button" class="metric-filter-pill active" onclick="filterMetricCards('all')" id="pill-metric-all">🌟 Todas las Métricas</button>
+              <button type="button" class="metric-filter-pill" onclick="filterMetricCards('weight')" id="pill-metric-weight">⚖️ Peso (Semanal)</button>
+              <button type="button" class="metric-filter-pill" onclick="filterMetricCards('waist')" id="pill-metric-waist">📏 Cintura (Quincenal)</button>
+              <button type="button" class="metric-filter-pill" onclick="filterMetricCards('rhr')" id="pill-metric-rhr">💓 FC Reposo (Diario)</button>
+              <button type="button" class="metric-filter-pill" onclick="filterMetricCards('sleep')" id="pill-metric-sleep">😴 Sueño (Diario)</button>
+              <button type="button" class="metric-filter-pill" onclick="filterMetricCards('energy')" id="pill-metric-energy">⚡ Energía (Diario)</button>
+            </div>
+
+            <!-- Contenedor de Tarjetas Individuales -->
+            <div class="individual-metric-cards-grid" id="individual-metric-cards-container">
+              
+              <!-- 1. Tarjeta Individual de Peso -->
+              <div class="single-metric-card card-metric-weight" data-metric-type="weight">
+                <div class="single-metric-header">
+                  <div class="single-metric-title-group">
+                    <span class="single-metric-icon">⚖️</span>
+                    <div>
+                      <h4>Peso Corporal</h4>
+                      <span class="single-metric-freq">Semanal · En ayunas al despertar</span>
+                    </div>
+                  </div>
+                  <div class="single-metric-last-badge" id="badge-last-weight">Último: 95.0 kg</div>
                 </div>
-                <div class="form-group">
-                  <label for="metric-weight">Peso Corporal (kg)</label>
-                  <input type="number" step="0.1" id="metric-weight" placeholder="Ej. 94.5" required>
-                </div>
-                <div class="form-group">
-                  <label for="metric-waist">Cintura a nivel del ombligo (cm)</label>
-                  <input type="number" step="0.5" id="metric-waist" placeholder="Ej. 102">
-                </div>
-                <div class="form-group">
-                  <label for="metric-energy">Nivel de Energía General</label>
-                  <select id="metric-energy">
-                    <option value="Excelente">Excelente (vital, descansado)</option>
-                    <option value="Bueno" selected>Bueno (normal y activo)</option>
-                    <option value="Regular">Regular (algo de fatiga acumulada)</option>
-                    <option value="Bajo">Bajo (requiere más descanso/sueño)</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="metric-rhr">FC en Reposo al Despertar (BPM)</label>
-                  <input type="number" id="metric-rhr" placeholder="Ej. 68 (Samsung Health)">
-                </div>
-                <div class="form-group">
-                  <label for="metric-sleep">Horas de Sueño Anoche</label>
-                  <input type="number" step="0.5" id="metric-sleep" placeholder="Ej. 7.5">
+                <div class="single-metric-body">
+                  <div class="single-metric-input-row">
+                    <div class="input-with-unit">
+                      <input type="number" step="0.1" id="indiv-weight-val" placeholder="Ej. 94.2" class="metric-single-input">
+                      <span class="input-unit-label">kg</span>
+                    </div>
+                    <input type="date" id="indiv-weight-date" class="metric-date-input">
+                  </div>
+                  <div class="single-metric-hint" id="hint-weight-imc">Meta: ≤ 89.0 kg · Altura: 1.75 m</div>
+                  <button type="button" class="btn btn-primary btn-sm btn-save-indiv" onclick="saveIndividualMetric('weight')">
+                    <span>💾 Guardar Peso</span>
+                  </button>
                 </div>
               </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Registrar Medición</button>
+
+              <!-- 2. Tarjeta Individual de Cintura -->
+              <div class="single-metric-card card-metric-waist" data-metric-type="waist">
+                <div class="single-metric-header">
+                  <div class="single-metric-title-group">
+                    <span class="single-metric-icon">📏</span>
+                    <div>
+                      <h4>Circunferencia de Cintura</h4>
+                      <span class="single-metric-freq">Quincenal · Ombligo relajado</span>
+                    </div>
+                  </div>
+                  <div class="single-metric-last-badge" id="badge-last-waist">Último: Pendiente</div>
+                </div>
+                <div class="single-metric-body">
+                  <div class="single-metric-input-row">
+                    <div class="input-with-unit">
+                      <input type="number" step="0.5" id="indiv-waist-val" placeholder="Ej. 101.5" class="metric-single-input">
+                      <span class="input-unit-label">cm</span>
+                    </div>
+                    <input type="date" id="indiv-waist-date" class="metric-date-input">
+                  </div>
+                  <div class="single-metric-hint">Meta clínica: &lt; 95 cm (Grasa visceral segura)</div>
+                  <button type="button" class="btn btn-primary btn-sm btn-save-indiv" onclick="saveIndividualMetric('waist')">
+                    <span>💾 Guardar Cintura</span>
+                  </button>
+                </div>
               </div>
-            </form>
+
+              <!-- 3. Tarjeta Individual de FC Reposo -->
+              <div class="single-metric-card card-metric-rhr" data-metric-type="rhr">
+                <div class="single-metric-header">
+                  <div class="single-metric-title-group">
+                    <span class="single-metric-icon">💓</span>
+                    <div>
+                      <h4>FC en Reposo (RHR)</h4>
+                      <span class="single-metric-freq">Diario · Galaxy Watch al despertar</span>
+                    </div>
+                  </div>
+                  <div class="single-metric-last-badge" id="badge-last-rhr">Último: 68 BPM</div>
+                </div>
+                <div class="single-metric-body">
+                  <div class="single-metric-input-row">
+                    <div class="input-with-unit">
+                      <input type="number" step="1" id="indiv-rhr-val" placeholder="Ej. 66" class="metric-single-input">
+                      <span class="input-unit-label">BPM</span>
+                    </div>
+                    <input type="date" id="indiv-rhr-date" class="metric-date-input">
+                  </div>
+                  <div class="single-metric-hint">Zona óptima de recuperación: 58 a 72 BPM</div>
+                  <button type="button" class="btn btn-primary btn-sm btn-save-indiv" onclick="saveIndividualMetric('rhr')">
+                    <span>💾 Guardar FC Reposo</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4. Tarjeta Individual de Horas de Sueño -->
+              <div class="single-metric-card card-metric-sleep" data-metric-type="sleep">
+                <div class="single-metric-header">
+                  <div class="single-metric-title-group">
+                    <span class="single-metric-icon">😴</span>
+                    <div>
+                      <h4>Horas de Sueño</h4>
+                      <span class="single-metric-freq">Diario · Noche previa</span>
+                    </div>
+                  </div>
+                  <div class="single-metric-last-badge" id="badge-last-sleep">Último: 7.5 h</div>
+                </div>
+                <div class="single-metric-body">
+                  <div class="single-metric-input-row">
+                    <div class="input-with-unit">
+                      <input type="number" step="0.5" id="indiv-sleep-val" placeholder="Ej. 7.5" class="metric-single-input">
+                      <span class="input-unit-label">horas</span>
+                    </div>
+                    <input type="date" id="indiv-sleep-date" class="metric-date-input">
+                  </div>
+                  <div class="single-metric-hint">Meta regenerativa: 7.0 a 8.5 horas continuas</div>
+                  <button type="button" class="btn btn-primary btn-sm btn-save-indiv" onclick="saveIndividualMetric('sleep')">
+                    <span>💾 Guardar Horas de Sueño</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 5. Tarjeta Individual de Nivel de Energía -->
+              <div class="single-metric-card card-metric-energy" data-metric-type="energy">
+                <div class="single-metric-header">
+                  <div class="single-metric-title-group">
+                    <span class="single-metric-icon">⚡</span>
+                    <div>
+                      <h4>Sensación de Energía</h4>
+                      <span class="single-metric-freq">Diario · Disposición física</span>
+                    </div>
+                  </div>
+                  <div class="single-metric-last-badge" id="badge-last-energy">Último: Bueno</div>
+                </div>
+                <div class="single-metric-body">
+                  <div class="single-metric-input-row">
+                    <select id="indiv-energy-val" class="metric-single-select">
+                      <option value="Excelente">⚡ Excelente (vital y recuperado)</option>
+                      <option value="Bueno" selected>👍 Bueno (activo y normal)</option>
+                      <option value="Regular">😐 Regular (fatiga leve)</option>
+                      <option value="Bajo">🔋 Bajo (requiere descanso)</option>
+                    </select>
+                    <input type="date" id="indiv-energy-date" class="metric-date-input">
+                  </div>
+                  <div class="single-metric-hint">Ajusta automáticamente el Asistente Adaptativo</div>
+                  <button type="button" class="btn btn-primary btn-sm btn-save-indiv" onclick="saveIndividualMetric('energy')">
+                    <span>💾 Guardar Energía</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notificación Toast de Éxito al Registrar -->
+            <div id="indiv-metric-toast" class="indiv-metric-toast" style="display: none;"></div>
+
+            <!-- Acordeón colapsable para formulario completo combinado -->
+            <details class="full-metric-accordion">
+              <summary class="full-metric-summary">
+                <span>📋 ¿Prefieres capturar todo junto en un solo formulario? (Haz clic aquí)</span>
+              </summary>
+              <div class="full-metric-body">
+                <form id="metrics-form">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="metric-date">Fecha de Medición</label>
+                      <input type="date" id="metric-date">
+                    </div>
+                    <div class="form-group">
+                      <label for="metric-weight">Peso Corporal (kg)</label>
+                      <input type="number" step="0.1" id="metric-weight" placeholder="Ej. 94.5">
+                    </div>
+                    <div class="form-group">
+                      <label for="metric-waist">Cintura a nivel del ombligo (cm)</label>
+                      <input type="number" step="0.5" id="metric-waist" placeholder="Ej. 102">
+                    </div>
+                    <div class="form-group">
+                      <label for="metric-energy">Nivel de Energía General</label>
+                      <select id="metric-energy">
+                        <option value="Excelente">Excelente (vital, descansado)</option>
+                        <option value="Bueno" selected>Bueno (normal y activo)</option>
+                        <option value="Regular">Regular (algo de fatiga acumulada)</option>
+                        <option value="Bajo">Bajo (requiere más descanso/sueño)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="metric-rhr">FC en Reposo al Despertar (BPM)</label>
+                      <input type="number" id="metric-rhr" placeholder="Ej. 68">
+                    </div>
+                    <div class="form-group">
+                      <label for="metric-sleep">Horas de Sueño Anoche</label>
+                      <input type="number" step="0.5" id="metric-sleep" placeholder="Ej. 7.5">
+                    </div>
+                  </div>
+                  <div class="form-actions" style="margin-top: 14px;">
+                    <button type="submit" class="btn btn-secondary btn-sm">Guardar Fila Combinada</button>
+                  </div>
+                </form>
+              </div>
+            </details>
           </div>
 
           <div class="card">
